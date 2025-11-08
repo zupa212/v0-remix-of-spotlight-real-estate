@@ -3,9 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef, useState } from "react"
-import { ChevronLeft, ChevronRight, Home, Leaf, Palmtree } from "lucide-react"
+import { Home, Leaf, Palmtree } from "lucide-react"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
 
 const services = [
   {
@@ -43,24 +42,21 @@ export function AnimatedServices() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % services.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + services.length) % services.length)
-  }
-
   const handleHover = (index: number) => {
     setHoveredIndex(index)
-    setCurrentIndex(index)
   }
 
   const handleHoverEnd = () => {
     setHoveredIndex(null)
   }
 
-  const currentService = services[currentIndex]
+  const handleClick = (index: number) => {
+    setCurrentIndex(index)
+  }
+
+  // Determine which service to show based on hover or current index
+  const displayIndex = hoveredIndex !== null ? hoveredIndex : currentIndex
+  const currentService = services[displayIndex]
   const nextService = services[(currentIndex + 1) % services.length]
 
   return (
@@ -115,92 +111,76 @@ export function AnimatedServices() {
             >
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentService.id}
+                  key={displayIndex}
                   initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  animate={{ 
+                    opacity: 1, 
+                    x: hoveredIndex !== null && hoveredIndex !== currentIndex ? -15 : 0 
+                  }}
                   exit={{ opacity: 0, x: -30 }}
                   transition={{ 
-                    duration: 0.7,
-                    ease: [0.4, 0, 0.2, 1] // Custom easing for smooth transition
+                    duration: hoveredIndex !== null ? 0.4 : 0.7,
+                    ease: [0.4, 0, 0.2, 1]
                   }}
                 >
                   <motion.div 
                     className="w-16 h-16 bg-[#333333] rounded-2xl flex items-center justify-center mb-6"
-                    initial={{ scale: 0.8, rotate: -10 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
+                    animate={{ 
+                      scale: hoveredIndex !== null && hoveredIndex !== currentIndex ? 0.95 : 1,
+                      rotate: hoveredIndex !== null && hoveredIndex !== currentIndex ? -5 : 0
+                    }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     <currentService.icon className="w-8 h-8 text-white" />
                   </motion.div>
                   <motion.h3 
                     className="text-4xl font-bold text-[#333333] mb-6"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
+                    animate={{ 
+                      y: hoveredIndex !== null && hoveredIndex !== currentIndex ? 10 : 0,
+                      opacity: hoveredIndex !== null && hoveredIndex !== currentIndex ? 0.7 : 1
+                    }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     {currentService.title}
                   </motion.h3>
                   <motion.p 
                     className="text-lg text-[#666666] leading-relaxed mb-8"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
+                    animate={{ 
+                      y: hoveredIndex !== null && hoveredIndex !== currentIndex ? 10 : 0,
+                      opacity: hoveredIndex !== null && hoveredIndex !== currentIndex ? 0.7 : 1
+                    }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     {currentService.description}
                   </motion.p>
-
-                  <div className="flex gap-4">
-                    <Button
-                      onClick={prevSlide}
-                      variant="outline"
-                      size="icon"
-                      className="rounded-full w-12 h-12 border-slate-300 bg-transparent"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </Button>
-                    <Button
-                      onClick={nextSlide}
-                      variant="outline"
-                      size="icon"
-                      className="rounded-full w-12 h-12 border-slate-300 bg-transparent"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </Button>
-                  </div>
                 </motion.div>
               </AnimatePresence>
 
-              {/* Vertical Labels - Left Side */}
+              {/* Vertical Labels - Left Side (NO NAVIGATION BUTTONS) */}
               <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full hidden xl:block">
                 <div className="flex flex-col gap-6 items-center">
-                  <motion.button
-                    onClick={prevSlide}
-                    className="text-[#333333] hover:text-[#E50000] transition-colors mb-2"
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </motion.button>
                   {services.map((service, index) => (
                     <motion.button
                       key={service.id}
-                      onClick={() => setCurrentIndex(index)}
+                      onClick={() => handleClick(index)}
                       onMouseEnter={() => handleHover(index)}
                       onMouseLeave={handleHoverEnd}
-                      className={`writing-mode-vertical text-sm font-medium cursor-pointer relative ${
+                      className={`writing-mode-vertical text-sm font-medium cursor-pointer relative group ${
                         index === currentIndex ? "text-[#333333]" : "text-[#999999]"
                       }`}
                       style={{ writingMode: "vertical-rl" }}
                       whileHover={{ 
-                        scale: 1.1,
-                        color: "#333333"
+                        scale: 1.05,
+                        x: -5
                       }}
                       transition={{ 
                         duration: 0.3,
                         ease: [0.4, 0, 0.2, 1]
                       }}
                     >
-                      {service.number} {service.title.toUpperCase()}
+                      <span className="relative z-10">
+                        {service.number} {service.title.toUpperCase()}
+                      </span>
                       {index === currentIndex && (
                         <motion.div
                           className="absolute left-0 top-0 w-1 h-full bg-[#E50000]"
@@ -210,14 +190,6 @@ export function AnimatedServices() {
                       )}
                     </motion.button>
                   ))}
-                  <motion.button
-                    onClick={nextSlide}
-                    className="text-[#333333] hover:text-[#E50000] transition-colors mt-2"
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <ChevronRight className="w-4 h-4 rotate-90" />
-                  </motion.button>
                 </div>
               </div>
             </motion.div>
@@ -231,20 +203,29 @@ export function AnimatedServices() {
             >
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentService.id}
+                  key={displayIndex}
                   initial={{ opacity: 0, scale: 0.9, x: 50 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: hoveredIndex !== null && hoveredIndex !== currentIndex ? 0.98 : 1,
+                    x: hoveredIndex !== null && hoveredIndex !== currentIndex ? 20 : 0
+                  }}
                   exit={{ opacity: 0, scale: 0.9, x: -50 }}
                   transition={{ 
-                    duration: 0.7,
-                    ease: [0.4, 0, 0.2, 1] // Smooth cubic-bezier easing
+                    duration: hoveredIndex !== null ? 0.4 : 0.7,
+                    ease: [0.4, 0, 0.2, 1]
                   }}
                   className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl"
                 >
                   <motion.div
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+                    animate={{ 
+                      scale: hoveredIndex !== null && hoveredIndex !== currentIndex ? 1.05 : 1,
+                      x: hoveredIndex !== null && hoveredIndex !== currentIndex ? -10 : 0
+                    }}
+                    transition={{ 
+                      duration: 0.4,
+                      ease: [0.4, 0, 0.2, 1]
+                    }}
                   >
                     <Image
                       src={currentService.image || "/placeholder.svg"}
@@ -255,9 +236,11 @@ export function AnimatedServices() {
                   </motion.div>
                   <motion.div 
                     className="absolute bottom-8 right-8 bg-white/95 backdrop-blur-sm rounded-2xl px-6 py-4 shadow-xl border border-white/20"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
+                    animate={{ 
+                      opacity: hoveredIndex !== null && hoveredIndex !== currentIndex ? 0.8 : 1,
+                      y: hoveredIndex !== null && hoveredIndex !== currentIndex ? 10 : 0
+                    }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     <div className="text-4xl font-bold text-[#333333]">{currentService.number}</div>
                     <div className="text-sm text-[#666666] font-medium">{currentService.title}</div>
@@ -268,10 +251,13 @@ export function AnimatedServices() {
               {/* Vertical Label Right */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full hidden xl:block">
                 <motion.div
-                  className="text-sm font-medium text-[#999999] cursor-pointer hover:text-[#333333] transition-colors"
+                  className="text-sm font-medium text-[#999999] cursor-pointer"
                   style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-                  whileHover={{ scale: 1.1 }}
-                  onClick={nextSlide}
+                  onMouseEnter={() => handleHover((currentIndex + 1) % services.length)}
+                  onMouseLeave={handleHoverEnd}
+                  onClick={() => handleClick((currentIndex + 1) % services.length)}
+                  whileHover={{ scale: 1.05, x: 5 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
                   {nextService.number} {nextService.title.toUpperCase()}
                 </motion.div>
