@@ -24,9 +24,9 @@ export function AnimatedAbout() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-block px-6 py-2 bg-white rounded-full text-sm font-medium text-slate-700 mb-6 shadow-sm"
+              className="inline-block px-6 py-2 bg-[#F0F0F0] rounded-full text-sm font-medium text-[#333333] mb-6 shadow-sm"
             >
-              Who We Are
+              What We Offer
             </motion.span>
 
             <motion.h2
