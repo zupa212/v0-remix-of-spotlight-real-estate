@@ -72,22 +72,29 @@ export function VistahavenHero() {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <Image
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
-          alt="Luxury modern home at dusk"
-          fill
-          className="object-cover"
-          priority
-        />
+        <motion.div
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute inset-0"
+        >
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
+            alt="Luxury modern home at dusk"
+            fill
+            className="object-cover"
+            priority
+          />
+        </motion.div>
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
       </div>
 
       {/* Content Container */}
       <div className="relative z-10 w-full">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-32 pb-20">
-          {/* White Container with Padding and Border */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl relative">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+          {/* White Container with Padding and Border - Rounded on Mobile */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl md:rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               {/* Left Side - Main Content */}
               <div className="space-y-8">
@@ -170,20 +177,27 @@ export function VistahavenHero() {
                 </motion.div>
               </div>
 
-              {/* Right Side - Image INSIDE the border */}
+              {/* Right Side - Image INSIDE the border with Zoom Out Animation */}
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
                 className="hidden lg:block relative aspect-[4/3] rounded-xl overflow-hidden"
               >
-                <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
-                  alt="Luxury modern home at dusk"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+                <motion.div
+                  initial={{ scale: 1.3 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.8 }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
+                    alt="Luxury modern home at dusk"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
               </motion.div>
             </div>
           </div>
