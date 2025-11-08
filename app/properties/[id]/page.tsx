@@ -13,9 +13,9 @@ import { Separator } from "@/components/ui/separator"
 import { Bed, Bath, Maximize, MapPin, Calendar, Home, Zap, Share2, Heart, Phone, Mail, User } from "lucide-react"
 
 type PropertyDetailParams = {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 type PropertyListItem = {
@@ -89,6 +89,7 @@ function formatNumeric(value: number | null | undefined, options?: Intl.NumberFo
 }
 
 export default async function PropertyDetailPage({ params }: PropertyDetailParams) {
+  const { id } = await params
   const supabase = await createClient()
 
   const { data: propertyData, error: propertyError } = await supabase
@@ -126,19 +127,19 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
         )
       `,
     )
-    .eq("id", params.id)
+    .eq("id", id)
     .single()
 
   if (propertyError) {
     console.error("Error fetching property:", propertyError)
-    console.error("Property ID:", params.id)
+    console.error("Property ID:", id)
     console.error("Error details:", JSON.stringify(propertyError, null, 2))
     notFound()
   }
 
   if (!propertyData) {
     console.error("Property not found - no data returned")
-    console.error("Property ID:", params.id)
+    console.error("Property ID:", id)
     notFound()
   }
 
@@ -146,7 +147,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
   if (!propertyData.published) {
     // In production, you might want to check if user is admin here
     // For now, we'll show it but you can add admin check
-    console.warn("Property is not published:", params.id)
+    console.warn("Property is not published:", id)
   }
 
   const [imagesResponse, similarResponse] = await Promise.all([
