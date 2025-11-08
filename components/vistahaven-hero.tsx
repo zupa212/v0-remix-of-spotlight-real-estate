@@ -86,15 +86,17 @@ export function VistahavenHero() {
       {/* Content Container */}
       <div className="relative z-10 w-full">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-32 pb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            {/* Left Side - Main Content */}
-            <div className="space-y-8">
+          {/* White Container with Padding and Border */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              {/* Left Side - Main Content */}
+              <div className="space-y-8">
               {/* Main Headline - Each word on new line */}
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-6"
+                className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#333333] leading-[1.1] mb-6"
                 style={{ fontFamily: "var(--font-sans)", letterSpacing: "-0.02em" }}
               >
                 FIND YOUR
@@ -109,7 +111,7 @@ export function VistahavenHero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-lg md:text-xl text-white/95 max-w-xl leading-relaxed"
+                className="text-lg md:text-xl text-[#666666] max-w-xl leading-relaxed"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
                 We provide tailored real estate solutions, guiding you through every step with personalized experiences
@@ -142,34 +144,35 @@ export function VistahavenHero() {
                 className="flex flex-wrap gap-8 md:gap-12 pt-6"
               >
                 <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                  <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
                     {stats.projects}+
                   </div>
-                  <div className="text-sm md:text-base text-white/90 font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                  <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
                     Projects Complete
                   </div>
                 </div>
                 <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                  <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
                     {stats.clients}+
                   </div>
-                  <div className="text-sm md:text-base text-white/90 font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                  <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
                     Happy Clients
                   </div>
                 </div>
                 <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                  <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
                     ${stats.value}M+
                   </div>
-                  <div className="text-sm md:text-base text-white/90 font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                  <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
                     Project Value
                   </div>
                 </div>
               </motion.div>
             </div>
 
-            {/* Right Side - Empty for now, image takes space */}
-            <div className="hidden lg:block" />
+              {/* Right Side - Empty for now, image takes space */}
+              <div className="hidden lg:block" />
+            </div>
           </div>
         </div>
 
