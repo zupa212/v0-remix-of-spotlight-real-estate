@@ -58,41 +58,42 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
 
   if (success) {
     return (
-      <Card>
+      <Card className="border-[#E0E0E0]">
         <CardContent className="p-8 text-center">
           <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
             <Send className="h-6 w-6 text-green-600" />
           </div>
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">Inquiry Sent Successfully!</h3>
-          <p className="text-slate-600">Thank you for your interest. Our team will contact you shortly.</p>
+          <h3 className="text-xl font-semibold text-[#333333] mb-2">Inquiry Sent Successfully!</h3>
+          <p className="text-[#666666]">Thank you for your interest. Our team will contact you shortly.</p>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card>
+    <Card className="border-[#E0E0E0]">
       <CardHeader>
-        <CardTitle>Request Information</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-[#333333]">Request Information</CardTitle>
+        <CardDescription className="text-[#666666]">
           Interested in {propertyTitle}? Send us your details and we'll get back to you.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name *</Label>
+            <Label htmlFor="fullName" className="text-[#333333]">Full Name *</Label>
             <Input
               id="fullName"
               required
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
               placeholder="John Doe"
+              className="border-[#E0E0E0] focus:border-[#333333]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email" className="text-[#333333]">Email *</Label>
             <Input
               id="email"
               type="email"
@@ -100,34 +101,37 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="john@example.com"
+              className="border-[#E0E0E0] focus:border-[#333333]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone" className="text-[#333333]">Phone</Label>
             <Input
               id="phone"
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+30 123 456 7890"
+              className="border-[#E0E0E0] focus:border-[#333333]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
+            <Label htmlFor="message" className="text-[#333333]">Message</Label>
             <Textarea
               id="message"
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               placeholder="I'm interested in this property..."
               rows={4}
+              className="border-[#E0E0E0] focus:border-[#333333]"
             />
           </div>
 
-          {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>}
+          {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</div>}
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-[#E50000] hover:bg-[#CC0000] text-white" disabled={isSubmitting}>
             {isSubmitting ? "Sending..." : "Send Inquiry"}
             <Send className="ml-2 h-4 w-4" />
           </Button>

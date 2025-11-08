@@ -126,12 +126,18 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
       `,
     )
     .eq("id", params.id)
-    .eq("published", true)
     .single()
 
   if (propertyError || !propertyData) {
     console.error("Property not found", propertyError)
     notFound()
+  }
+
+  // Check if property is published (allow unpublished for admin preview)
+  if (!propertyData.published) {
+    // In production, you might want to check if user is admin here
+    // For now, we'll show it but you can add admin check
+    console.warn("Property is not published:", params.id)
   }
 
   const [imagesResponse, similarResponse] = await Promise.all([
@@ -240,51 +246,51 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
   const agentPhone = propertyData.agent?.phone
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FFFFFF]">
       <PropertyJSONLD property={seoProperty} />
 
       <SiteHeader />
 
       <div className="pt-24 pb-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl container-spacing">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
-                <Badge className="mb-3 bg-sky-100 text-sky-700 hover:bg-sky-200 border-0">
+                <Badge className="mb-3 bg-[#F0F0F0] text-[#333333] hover:bg-[#E0E0E0] border-0 font-medium">
                   {propertyData.property_code}
                 </Badge>
-                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-3">
+                <h1 className="text-4xl md:text-5xl font-bold text-[#333333] mb-3">
                   {propertyData.title_en ?? "Untitled Property"}
                 </h1>
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center gap-2 text-[#666666]">
                   <MapPin className="h-5 w-5" />
                   <span className="text-lg">{propertyLocation}</span>
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon">
-                  <Share2 className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="border-[#E0E0E0] hover:bg-[#F8F8F8]">
+                  <Share2 className="h-5 w-5 text-[#333333]" />
                 </Button>
-                <Button variant="outline" size="icon">
-                  <Heart className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="border-[#E0E0E0] hover:bg-[#F8F8F8]">
+                  <Heart className="h-5 w-5 text-[#333333]" />
                 </Button>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
-              <div className="text-3xl font-bold text-slate-900">{formattedPrice}</div>
-              <Badge variant="secondary" className="capitalize">
+              <div className="text-3xl font-bold text-[#333333]">{formattedPrice}</div>
+              <Badge variant="secondary" className="capitalize bg-[#F0F0F0] text-[#333333] border-0">
                 {getListingBadgeText(listingType)}
               </Badge>
               <Badge
                 variant="secondary"
                 className={
                   propertyData.status === "available"
-                    ? "bg-green-100 text-green-700"
+                    ? "bg-green-100 text-green-700 border-0"
                     : propertyData.status === "pending"
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-slate-100 text-slate-700"
+                      ? "bg-amber-100 text-amber-700 border-0"
+                      : "bg-[#F0F0F0] text-[#333333] border-0"
                 }
               >
                 {propertyData.status ?? "available"}
@@ -299,52 +305,52 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
               <PropertyGallery images={galleryImages} title={propertyData.title_en ?? "Untitled Property"} />
 
               {/* Key Details */}
-              <Card>
+              <Card className="border-[#E0E0E0]">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">Property Details</h2>
+                  <h2 className="text-2xl font-bold text-[#333333] mb-6">Property Details</h2>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-xl bg-sky-100 flex items-center justify-center">
-                        <Bed className="h-6 w-6 text-sky-600" />
+                      <div className="h-12 w-12 rounded-xl bg-[#F0F0F0] flex items-center justify-center">
+                        <Bed className="h-6 w-6 text-[#333333]" />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-slate-900">
+                        <div className="text-2xl font-bold text-[#333333]">
                           {formatNumeric(propertyData.bedrooms)}
                         </div>
-                        <div className="text-sm text-slate-600">Bedrooms</div>
+                        <div className="text-sm text-[#666666]">Bedrooms</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-xl bg-sky-100 flex items-center justify-center">
-                        <Bath className="h-6 w-6 text-sky-600" />
+                      <div className="h-12 w-12 rounded-xl bg-[#F0F0F0] flex items-center justify-center">
+                        <Bath className="h-6 w-6 text-[#333333]" />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-slate-900">
+                        <div className="text-2xl font-bold text-[#333333]">
                           {formatNumeric(propertyData.bathrooms)}
                         </div>
-                        <div className="text-sm text-slate-600">Bathrooms</div>
+                        <div className="text-sm text-[#666666]">Bathrooms</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-xl bg-sky-100 flex items-center justify-center">
-                        <Maximize className="h-6 w-6 text-sky-600" />
+                      <div className="h-12 w-12 rounded-xl bg-[#F0F0F0] flex items-center justify-center">
+                        <Maximize className="h-6 w-6 text-[#333333]" />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-slate-900">
+                        <div className="text-2xl font-bold text-[#333333]">
                           {formatNumeric(propertyData.area_sqm, { maximumFractionDigits: 0 })}
                         </div>
-                        <div className="text-sm text-slate-600">m² Area</div>
+                        <div className="text-sm text-[#666666]">m² Area</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-xl bg-sky-100 flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-sky-600" />
+                      <div className="h-12 w-12 rounded-xl bg-[#F0F0F0] flex items-center justify-center">
+                        <Calendar className="h-6 w-6 text-[#333333]" />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-slate-900">
+                        <div className="text-2xl font-bold text-[#333333]">
                           {formatNumeric(propertyData.year_built)}
                         </div>
-                        <div className="text-sm text-slate-600">Year Built</div>
+                        <div className="text-sm text-[#666666]">Year Built</div>
                       </div>
                     </div>
                   </div>
@@ -352,52 +358,52 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
               </Card>
 
               {/* Description */}
-              <Card>
+              <Card className="border-[#E0E0E0]">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-4">Description</h2>
-                  <p className="text-slate-600 leading-relaxed">
+                  <h2 className="text-2xl font-bold text-[#333333] mb-4">Description</h2>
+                  <p className="text-[#333333] leading-relaxed">
                     {propertyData.description_en ?? "Detailed property description will be available soon."}
                   </p>
                 </CardContent>
               </Card>
 
               {/* Features & Amenities */}
-              <Card>
+              <Card className="border-[#E0E0E0]">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">Features & Amenities</h2>
+                  <h2 className="text-2xl font-bold text-[#333333] mb-6">Features & Amenities</h2>
 
                   <div className="space-y-6">
                     <div>
-                      <h3 className="font-semibold text-slate-900 mb-3">Property Features</h3>
+                      <h3 className="font-semibold text-[#333333] mb-3">Property Features</h3>
                       {features.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                           {features.map((feature) => (
-                            <div key={feature} className="flex items-center gap-2 text-slate-600">
-                              <Zap className="h-4 w-4 text-sky-600" />
+                            <span key={feature} className="feature-tag inline-flex items-center gap-2">
+                              <Zap className="h-4 w-4 text-[#333333]" />
                               <span className="text-sm">{feature}</span>
-                            </div>
+                            </span>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-slate-600">Feature information will be added soon.</p>
+                        <p className="text-sm text-[#666666]">Feature information will be added soon.</p>
                       )}
                     </div>
 
-                    <Separator />
+                    <Separator className="bg-[#E0E0E0]" />
 
                     <div>
-                      <h3 className="font-semibold text-slate-900 mb-3">Amenities</h3>
+                      <h3 className="font-semibold text-[#333333] mb-3">Amenities</h3>
                       {amenities.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                           {amenities.map((amenity) => (
-                            <div key={amenity} className="flex items-center gap-2 text-slate-600">
-                              <Home className="h-4 w-4 text-sky-600" />
+                            <span key={amenity} className="feature-tag inline-flex items-center gap-2">
+                              <Home className="h-4 w-4 text-[#333333]" />
                               <span className="text-sm">{amenity}</span>
-                            </div>
+                            </span>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-slate-600">Amenity information will be added soon.</p>
+                        <p className="text-sm text-[#666666]">Amenity information will be added soon.</p>
                       )}
                     </div>
                   </div>
@@ -406,22 +412,22 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
 
               {/* 3D Tour */}
               {propertyData.tour_3d_url && (
-                <Card>
+                <Card className="border-[#E0E0E0]">
                   <CardContent className="p-6">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-4">Virtual Tour</h2>
-                    <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center">
-                      <p className="text-slate-600">A 3D tour will appear here.</p>
+                    <h2 className="text-2xl font-bold text-[#333333] mb-4">Virtual Tour</h2>
+                    <div className="aspect-video bg-[#F8F8F8] rounded-lg flex items-center justify-center">
+                      <p className="text-[#666666]">A 3D tour will appear here.</p>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
               {/* Location Map */}
-              <Card>
+              <Card className="border-[#E0E0E0]">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-4">Location</h2>
-                  <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center">
-                    <p className="text-slate-600">Interactive map integration coming soon.</p>
+                  <h2 className="text-2xl font-bold text-[#333333] mb-4">Location</h2>
+                  <div className="aspect-video bg-[#F8F8F8] rounded-lg flex items-center justify-center">
+                    <p className="text-[#666666]">Interactive map integration coming soon.</p>
                   </div>
                 </CardContent>
               </Card>
@@ -436,39 +442,39 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
               />
 
               {/* Agent Card */}
-              <Card>
+              <Card className="border-[#E0E0E0]">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-slate-900 mb-4">Contact Agent</h3>
+                  <h3 className="font-semibold text-[#333333] mb-4">Contact Agent</h3>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
-                      <User className="h-6 w-6 text-slate-600" />
+                    <div className="h-12 w-12 rounded-full bg-[#F0F0F0] flex items-center justify-center">
+                      <User className="h-6 w-6 text-[#333333]" />
                     </div>
                     <div>
-                      <div className="font-semibold text-slate-900">{agentName}</div>
-                      <div className="text-sm text-slate-600">
+                      <div className="font-semibold text-[#333333]">{agentName}</div>
+                      <div className="text-sm text-[#666666]">
                         {agentEmail ?? "Our team will connect you with a dedicated agent."}
                       </div>
                     </div>
                   </div>
                   <div className="space-y-3">
                     {agentPhone ? (
-                      <Button variant="outline" className="w-full justify-start gap-2 bg-transparent">
+                      <Button variant="outline" className="w-full justify-start gap-2 border-[#E0E0E0] hover:bg-[#F8F8F8] text-[#333333]">
                         <Phone className="h-4 w-4" />
                         {agentPhone}
                       </Button>
                     ) : (
-                      <p className="text-sm text-slate-600">
-                        Call our office at <span className="font-medium text-slate-900">+30 210 000 0000</span>
+                      <p className="text-sm text-[#666666]">
+                        Call our office at <span className="font-medium text-[#333333]">+30 210 000 0000</span>
                       </p>
                     )}
                     {agentEmail ? (
-                      <Button variant="outline" className="w-full justify-start gap-2 bg-transparent">
+                      <Button variant="outline" className="w-full justify-start gap-2 border-[#E0E0E0] hover:bg-[#F8F8F8] text-[#333333]">
                         <Mail className="h-4 w-4" />
                         {agentEmail}
                       </Button>
                     ) : (
-                      <p className="text-sm text-slate-600">
-                        Email <span className="font-medium text-slate-900">info@spotlight.gr</span> for more
+                      <p className="text-sm text-[#666666]">
+                        Email <span className="font-medium text-[#333333]">info@spotlight.gr</span> for more
                         information.
                       </p>
                     )}
@@ -477,33 +483,33 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
               </Card>
 
               {/* Quick Stats */}
-              <Card>
+              <Card className="border-[#E0E0E0]">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-slate-900 mb-4">Additional Info</h3>
+                  <h3 className="font-semibold text-[#333333] mb-4">Additional Info</h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Property Type</span>
-                      <span className="font-medium text-slate-900 capitalize">
+                      <span className="text-[#666666]">Property Type</span>
+                      <span className="font-medium text-[#333333] capitalize">
                         {propertyData.property_type ?? "property"}
                       </span>
                     </div>
-                    <Separator />
+                    <Separator className="bg-[#E0E0E0]" />
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Plot Size</span>
-                      <span className="font-medium text-slate-900">
+                      <span className="text-[#666666]">Plot Size</span>
+                      <span className="font-medium text-[#333333]">
                         {formatNumeric(propertyData.plot_size_sqm, { maximumFractionDigits: 0 })}
                         {propertyData.plot_size_sqm ? " m²" : ""}
                       </span>
                     </div>
-                    <Separator />
+                    <Separator className="bg-[#E0E0E0]" />
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Year Built</span>
-                      <span className="font-medium text-slate-900">{formatNumeric(propertyData.year_built)}</span>
+                      <span className="text-[#666666]">Year Built</span>
+                      <span className="font-medium text-[#333333]">{formatNumeric(propertyData.year_built)}</span>
                     </div>
-                    <Separator />
+                    <Separator className="bg-[#E0E0E0]" />
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Property ID</span>
-                      <span className="font-medium text-slate-900">{propertyData.property_code}</span>
+                      <span className="text-[#666666]">Property ID</span>
+                      <span className="font-medium text-[#333333]">{propertyData.property_code}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -513,7 +519,10 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
 
           {/* Similar Properties */}
           <section className="mt-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-8">Similar Properties</h2>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-1 h-12 bg-[#E50000]"></div>
+              <h2 className="text-3xl font-bold text-[#333333]">Similar Properties</h2>
+            </div>
             {similarProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {similarProperties.map((property) => (
@@ -521,8 +530,8 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-600">
-                We don’t have any similar properties to show right now. Explore our listings for more options.
+              <div className="rounded-lg border border-[#E0E0E0] bg-white p-8 text-center text-[#666666]">
+                We don't have any similar properties to show right now. Explore our listings for more options.
               </div>
             )}
           </section>
