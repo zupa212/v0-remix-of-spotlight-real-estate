@@ -1,7 +1,7 @@
 "use client"
 
 import { SmoothScrollProvider } from "@/components/smooth-scroll-provider"
-import { AnimatedHero } from "@/components/animated-hero"
+import { VistahavenHero } from "@/components/vistahaven-hero"
 import { AnimatedAbout } from "@/components/animated-about"
 import { AnimatedTestimonials } from "@/components/animated-testimonials"
 import { AnimatedServices } from "@/components/animated-services"
@@ -15,7 +15,7 @@ export default function HomePage() {
     <SmoothScrollProvider>
       <div className="min-h-screen bg-white">
         <SiteHeader />
-        <AnimatedHero />
+        <VistahavenHero />
         <AnimatedAbout />
         <AnimatedTestimonials />
         <AnimatedServices />
