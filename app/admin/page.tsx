@@ -116,9 +116,9 @@ export default async function AdminDashboardPage() {
           scheduled_date,
           status,
           client_name,
-          property:property_id ( title_en, property_code ),
-          lead:lead_id ( full_name ),
-          agent:agent_id ( name_en )
+          properties:property_id ( title_en, property_code ),
+          leads:lead_id ( full_name, email ),
+          agents:agent_id ( name_en, name_gr )
         `,
       )
       .gte("scheduled_date", nowIso)
@@ -181,14 +181,14 @@ export default async function AdminDashboardPage() {
     createdAt: lead.created_at ?? nowIso,
   }))
 
-  const upcomingViewings = (upcomingViewingsResponse.data ?? []).map((viewing) => {
+  const upcomingViewings = (upcomingViewingsResponse.data ?? []).map((viewing: any) => {
     const scheduledDate = viewing.scheduled_date ? new Date(viewing.scheduled_date) : null
     return {
       id: viewing.id,
-      property: viewing.property?.title_en ?? "Property",
-      client: viewing.lead?.full_name ?? viewing.client_name ?? "Prospective client",
+      property: viewing.properties?.title_en ?? "Property",
+      client: viewing.leads?.full_name ?? viewing.client_name ?? "Prospective client",
       date: scheduledDate ? format(scheduledDate, "PPpp") : "To be confirmed",
-      agent: viewing.agent?.name_en ?? "Unassigned",
+      agent: viewing.agents?.name_en ?? "Unassigned",
       status: viewing.status ?? "scheduled",
     }
   })

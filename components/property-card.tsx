@@ -44,8 +44,8 @@ export function PropertyCard({
 
   return (
     <Link href={`/properties/${id}`}>
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-slate-200">
-        <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+      <Card className="property-card group overflow-hidden border-[#E0E0E0]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#F8F8F8]">
           <Image
             src={imageUrl || "/placeholder.svg"}
             alt={title}
@@ -53,27 +53,27 @@ export function PropertyCard({
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {featured && (
-            <Badge className="absolute top-4 left-4 bg-amber-500 hover:bg-amber-600 text-white border-0">
+            <Badge className="absolute top-4 left-4 bg-[#E50000] hover:bg-[#CC0000] text-white border-0 font-medium">
               Featured
             </Badge>
           )}
-          <Badge className="absolute top-4 right-4 bg-white/95 text-slate-900 hover:bg-white border-0">
+          <Badge className="absolute top-4 right-4 bg-white/95 text-[#333333] hover:bg-white border-0 font-medium">
             For {listingType === "sale" ? "Sale" : "Rent"}
           </Badge>
         </div>
         <CardContent className="p-6">
           <div className="flex items-start justify-between gap-2 mb-3">
-            <h3 className="font-semibold text-lg text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-1">
+            <h3 className="font-bold text-lg text-[#333333] group-hover:text-[#E50000] transition-colors line-clamp-1">
               {title}
             </h3>
           </div>
 
-          <div className="flex items-center gap-1.5 text-sm text-slate-600 mb-4">
+          <div className="flex items-center gap-1.5 text-sm text-[#666666] mb-4">
             <MapPin className="h-4 w-4" />
             <span className="line-clamp-1">{location}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-slate-600 mb-4 pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-4 text-sm text-[#666666] mb-4 pb-4 border-b border-[#E0E0E0]">
             {bedrooms !== undefined && bedrooms !== null && (
               <div className="flex items-center gap-1.5">
                 <Bed className="h-4 w-4" />
@@ -95,8 +95,8 @@ export function PropertyCard({
           </div>
 
           <div className="flex items-center justify-between">
-            <p className="text-2xl font-bold text-slate-900">{formatPrice(price)}</p>
-            <Badge variant="secondary" className="capitalize">
+            <p className="text-2xl font-bold text-[#333333]">{formatPrice(price)}</p>
+            <Badge variant="secondary" className="capitalize bg-[#F0F0F0] text-[#333333] border-0">
               {propertyType}
             </Badge>
           </div>

@@ -27,7 +27,10 @@ export default function AdminMarketingPage() {
   }, [])
 
   async function fetchMappings() {
-    const { data, error } = await supabase.from("syndication_mappings").select("*").order("portal")
+    const { data, error } = await supabase
+      .from("syndication_mappings")
+      .select("*")
+      .order("portal", { ascending: true })
 
     if (error) {
       console.error("Error fetching mappings:", error)

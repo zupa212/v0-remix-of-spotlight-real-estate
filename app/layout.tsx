@@ -1,17 +1,14 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Space_Grotesk, Inter } from "next/font/google"
+import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-heading",
-})
-
+// Framer-style: Use Inter for both body and headings (clean, modern)
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap", // Better font loading
 })
 
 export const metadata: Metadata = {
@@ -27,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>

@@ -4,40 +4,75 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color palette for luxury real estate brand */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.145 0 0); /* Ink black */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.646 0.222 41.116); /* Sky blue accent */
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Framer-style Modern Real Estate Theme */
+  /* Based on clean, minimalist design with precise color matching */
+  
+  /* Primary Colors - White & Dark Gray */
+  --background: #FFFFFF; /* Pure white background */
+  --foreground: #333333; /* Dark gray/black for main text */
+  
+  /* Card Colors */
+  --card: #FFFFFF; /* White cards */
+  --card-foreground: #333333; /* Dark text on cards */
+  
+  /* Popover */
+  --popover: #FFFFFF;
+  --popover-foreground: #333333;
+  
+  /* Primary Actions - Black buttons/text */
+  --primary: #333333; /* Dark gray/black for buttons */
+  --primary-foreground: #FFFFFF; /* White text on dark buttons */
+  
+  /* Secondary - Light gray backgrounds */
+  --secondary: #F0F0F0; /* Very light gray for tags/features */
+  --secondary-foreground: #333333; /* Dark text on light gray */
+  
+  /* Muted - Light gray for secondary text */
+  --muted: #F8F8F8; /* Very light gray backgrounds */
+  --muted-foreground: #666666; /* Medium gray for locations/details */
+  
+  /* Accent - Red for CTAs and highlights */
+  --accent: #E50000; /* Red accent (#E50000 or #CC0000) */
+  --accent-foreground: #FFFFFF; /* White text on red */
+  
+  /* Destructive - Red for errors */
+  --destructive: #DC3545; /* Red for destructive actions */
+  --destructive-foreground: #FFFFFF;
+  
+  /* Borders - Light gray */
+  --border: #E0E0E0; /* Light gray borders (#E0E0E0 or #CCCCCC) */
+  --input: #E0E0E0; /* Input borders */
+  --ring: #CCCCCC; /* Focus rings */
+  
+  /* Chart Colors */
+  --chart-1: #E50000; /* Red */
+  --chart-2: #333333; /* Dark gray */
+  --chart-3: #666666; /* Medium gray */
+  --chart-4: #999999; /* Light gray */
+  --chart-5: #CCCCCC; /* Very light gray */
+  
+  /* Border Radius - Subtle rounded corners */
+  --radius: 0.5rem; /* 8px - subtle rounding */
+  
+  /* Sidebar */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #333333;
+  --sidebar-primary: #333333;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F0F0F0;
+  --sidebar-accent-foreground: #333333;
+  --sidebar-border: #E0E0E0;
+  --sidebar-ring: #CCCCCC;
+  
+  /* Property Theme Specific Colors */
+  --property-red: #E50000; /* Primary red accent */
+  --property-red-alt: #CC0000; /* Alternative red */
+  --property-red-light: #FF3333; /* Light red for hover */
+  --property-gray-dark: #333333; /* Main text */
+  --property-gray-medium: #666666; /* Secondary text */
+  --property-gray-light: #E0E0E0; /* Borders */
+  --property-gray-very-light: #F0F0F0; /* Tag backgrounds */
+  --property-gray-ultra-light: #F8F8F8; /* Subtle backgrounds */
 }
 
 .dark {
@@ -76,10 +111,12 @@
 }
 
 @theme inline {
-  /* Added Space Grotesk for headings, Inter for body */
-  --font-sans: "Inter", "Geist", "Geist Fallback", system-ui, -apple-system, sans-serif;
-  --font-heading: "Space Grotesk", "Geist", "Geist Fallback", system-ui, -apple-system, sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  /* Framer-style Typography - Clean Sans-serif */
+  /* Primary: Inter (modern, clean) */
+  /* Fallback: Roboto, Arial, Helvetica, system fonts */
+  --font-sans: "Inter", "Roboto", "Arial", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --font-heading: "Inter", "Roboto", "Arial", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", "Courier New", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -122,10 +159,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
   body {
     @apply bg-background text-foreground;
+    /* Framer-style: Clean, modern typography */
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  /* Added heading font class */
+  
+  /* Typography Hierarchy - Framer-style */
   h1,
   h2,
   h3,
@@ -133,5 +178,131 @@
   h5,
   h6 {
     font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #333333;
+    letter-spacing: -0.02em; /* Tighter letter spacing for modern look */
+  }
+  
+  h1 {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+  }
+  
+  h2 {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+  }
+  
+  h3 {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+  }
+  
+  /* Body text */
+  p {
+    font-size: 1rem; /* 16px */
+    line-height: 1.6;
+    color: #333333;
+  }
+  
+  /* Secondary text (locations, details) */
+  .text-secondary {
+    color: #666666;
+    font-size: 0.875rem; /* 14px */
+  }
+  
+  /* Small text (breadcrumbs, captions) */
+  .text-small {
+    color: #666666;
+    font-size: 0.75rem; /* 12px */
+  }
+  
+  /* Links */
+  a {
+    color: #333333;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover {
+    color: #E50000; /* Red on hover */
+  }
+  
+  /* Buttons - Framer-style */
+  button {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  
+  /* Input fields - Clean borders */
+  input,
+  textarea,
+  select {
+    font-family: var(--font-sans);
+    border-color: #E0E0E0;
+    transition: border-color 0.2s ease;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #333333;
+    outline: none;
+  }
+  
+  /* Cards - Subtle shadows */
+  .card {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Property cards - Enhanced shadow */
+  .property-card {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  
+  .property-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+  
+  /* Feature tags - Light gray background */
+  .feature-tag {
+    background: #F0F0F0;
+    color: #333333;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Red accent line */
+  .accent-line {
+    width: 4px;
+    background: #E50000;
+    height: 100%;
+  }
+  
+  /* Generous spacing - Framer-style */
+  .section-spacing {
+    padding: 4rem 0; /* 64px vertical spacing */
+  }
+  
+  .container-spacing {
+    padding: 0 1.5rem; /* 24px horizontal padding */
+  }
+  
+  @media (min-width: 768px) {
+    .container-spacing {
+      padding: 0 3rem; /* 48px on larger screens */
+    }
   }
 }

@@ -42,18 +42,18 @@ export default function AdminViewingsPage() {
       .from("viewings")
       .select(`
         *,
-        leads(id, name, email),
-        properties(title, property_code, city),
-        agents(name)
+        leads:lead_id(id, full_name, email),
+        properties:property_id(title_en, property_code, city),
+        agents:agent_id(name_en, name_gr)
       `)
-      .order("scheduled_at", { ascending: true })
+      .order("scheduled_date", { ascending: true })
 
     const now = new Date().toISOString()
 
     if (filter === "upcoming") {
-      query = query.gte("scheduled_at", now)
+      query = query.gte("scheduled_date", now)
     } else if (filter === "past") {
-      query = query.lt("scheduled_at", now)
+      query = query.lt("scheduled_date", now)
     }
 
     const { data, error } = await query
@@ -61,7 +61,21 @@ export default function AdminViewingsPage() {
     if (error) {
       console.error("Error fetching viewings:", error)
     } else {
-      setViewings(data || [])
+      // Transform data to match expected format
+      const transformed = (data || []).map((v: any) => ({
+        ...v,
+        scheduled_at: v.scheduled_date,
+        leads: v.leads ? { id: v.leads.id, name: v.leads.full_name, email: v.leads.email } : null,
+        properties: v.properties ? { 
+          title: v.properties.title_en || v.properties.title_gr, 
+          property_code: v.properties.property_code, 
+          city: v.properties.city 
+        } : null,
+        agents: v.agents ? { 
+          name: v.agents.name_en || v.agents.name_gr 
+        } : null,
+      }))
+      setViewings(transformed)
     }
     setLoading(false)
   }
