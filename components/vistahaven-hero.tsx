@@ -87,101 +87,114 @@ export function VistahavenHero() {
       <div className="relative z-10 w-full">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-32 pb-20">
           {/* White Container with Padding and Border */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               {/* Left Side - Main Content */}
               <div className="space-y-8">
-              {/* Main Headline - Each word on new line */}
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#333333] leading-[1.1] mb-6"
-                style={{ fontFamily: "var(--font-sans)", letterSpacing: "-0.02em" }}
-              >
-                FIND YOUR
-                <br />
-                PERFECT HOME
-                <br />
-                TODAY
-              </motion.h1>
-
-              {/* Descriptive Text */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-lg md:text-xl text-[#666666] max-w-xl leading-relaxed"
-                style={{ fontFamily: "var(--font-sans)" }}
-              >
-                We provide tailored real estate solutions, guiding you through every step with personalized experiences
-                that meet your unique needs and aspirations.
-              </motion.p>
-
-              {/* Explore Properties Button */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="pt-2"
-              >
-                <Button
-                  asChild
-                  className="bg-white text-[#333333] hover:bg-white/95 border border-[#333333] rounded-lg px-6 py-3 text-base font-medium h-auto shadow-sm"
+                {/* Main Headline - Each word on new line */}
+                <motion.h1
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#333333] leading-[1.1] mb-6"
+                  style={{ fontFamily: "var(--font-sans)", letterSpacing: "-0.02em" }}
                 >
-                  <a href="/properties" className="flex items-center gap-2">
-                    Explore Properties
-                    <ArrowUpRight className="h-5 w-5" />
-                  </a>
-                </Button>
-              </motion.div>
+                  FIND YOUR
+                  <br />
+                  PERFECT HOME
+                  <br />
+                  TODAY
+                </motion.h1>
 
-              {/* Statistics */}
+                {/* Descriptive Text */}
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                  className="text-lg md:text-xl text-[#666666] max-w-xl leading-relaxed"
+                  style={{ fontFamily: "var(--font-sans)" }}
+                >
+                  We provide tailored real estate solutions, guiding you through every step with personalized experiences
+                  that meet your unique needs and aspirations.
+                </motion.p>
+
+                {/* Explore Properties Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="pt-2"
+                >
+                  <Button
+                    asChild
+                    className="bg-white text-[#333333] hover:bg-white/95 border border-[#333333] rounded-lg px-6 py-3 text-base font-medium h-auto shadow-sm"
+                  >
+                    <a href="/properties" className="flex items-center gap-2">
+                      Explore Properties
+                      <ArrowUpRight className="h-5 w-5" />
+                    </a>
+                  </Button>
+                </motion.div>
+
+                {/* Statistics */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                  className="flex flex-wrap gap-8 md:gap-12 pt-6"
+                >
+                  <div>
+                    <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                      {stats.projects}+
+                    </div>
+                    <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                      Projects Complete
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                      {stats.clients}+
+                    </div>
+                    <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                      Happy Clients
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                      ${stats.value}M+
+                    </div>
+                    <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                      Project Value
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Right Side - Image INSIDE the border */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="flex flex-wrap gap-8 md:gap-12 pt-6"
+                className="hidden lg:block relative aspect-[4/3] rounded-xl overflow-hidden"
               >
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
-                    {stats.projects}+
-                  </div>
-                  <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
-                    Projects Complete
-                  </div>
-                </div>
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
-                    {stats.clients}+
-                  </div>
-                  <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
-                    Happy Clients
-                  </div>
-                </div>
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
-                    ${stats.value}M+
-                  </div>
-                  <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
-                    Project Value
-                  </div>
-                </div>
+                <Image
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
+                  alt="Luxury modern home at dusk"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </motion.div>
-            </div>
-
-              {/* Right Side - Empty for now, image takes space */}
-              <div className="hidden lg:block" />
             </div>
           </div>
         </div>
 
-        {/* Featured Agents Card - Bottom Right */}
+        {/* Featured Agents Card - OUTSIDE the border, Bottom Right */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8, duration: 0.8 }}
-          className="absolute bottom-8 right-4 lg:bottom-12 lg:right-12 bg-white/95 backdrop-blur-sm rounded-xl p-4 md:p-5 shadow-xl border border-white/20"
+          className="absolute bottom-8 right-4 lg:bottom-12 lg:right-12 bg-white/95 backdrop-blur-sm rounded-xl p-4 md:p-5 shadow-xl border border-white/20 z-20"
         >
           <div className="flex items-center gap-3 md:gap-4">
             {/* Agent Profile Pictures */}

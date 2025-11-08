@@ -16,9 +16,9 @@ export default function HomePage() {
       <div className="min-h-screen bg-white">
         <SiteHeader />
         <VistahavenHero />
+        <AnimatedServices />
         <AnimatedAbout />
         <AnimatedTestimonials />
-        <AnimatedServices />
         <AnimatedFeaturedProperties />
         <AnimatedTeam />
         <SiteFooter />
