@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Building2, Menu, X, ArrowUpRight } from "lucide-react"
+import { Menu, X, ArrowUpRight } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -21,11 +22,16 @@ export function SiteHeader() {
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo - Left Side */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Building2 className="h-7 w-7 text-[#333333] group-hover:text-[#E50000] transition-colors" />
-            <span className="text-xl font-bold text-[#333333]" style={{ fontFamily: "var(--font-sans)" }}>
-              VISTAHAVEN
-            </span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative h-10 w-32">
+              <Image
+                src="/IMG_5457.jpg"
+                alt="spot-less logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </Link>
 
           {/* Desktop Navigation - Center */}
