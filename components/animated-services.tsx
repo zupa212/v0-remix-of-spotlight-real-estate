@@ -248,7 +248,36 @@ export function AnimatedServices() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Vertical Label Right */}
+              {/* Vertical Line and Text Behind Photo */}
+              <div className="absolute right-0 top-0 bottom-0 w-px bg-[#E0E0E0] hidden xl:block" />
+              <div className="absolute right-8 top-1/2 -translate-y-1/2 translate-x-0 hidden xl:flex flex-col items-center gap-8 pointer-events-none">
+                {/* Vertical Text */}
+                <motion.div
+                  className="text-sm font-medium text-[#999999]"
+                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                  animate={{
+                    opacity: hoveredIndex !== null ? 0.6 : 1,
+                    y: hoveredIndex !== null ? -5 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  {currentService.title.toUpperCase()}
+                </motion.div>
+                {/* Vertical Number */}
+                <motion.div
+                  className="text-2xl font-bold text-[#999999]"
+                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                  animate={{
+                    opacity: hoveredIndex !== null ? 0.6 : 1,
+                    y: hoveredIndex !== null ? -5 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  {currentService.number}
+                </motion.div>
+              </div>
+
+              {/* Vertical Label Right (Next Service) */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full hidden xl:block">
                 <motion.div
                   className="text-sm font-medium text-[#999999] cursor-pointer"
