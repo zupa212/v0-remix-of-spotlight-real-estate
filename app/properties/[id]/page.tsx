@@ -92,6 +92,13 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
   const { id } = await params
   const supabase = await createClient()
 
+  // Validate UUID format
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!uuidRegex.test(id)) {
+    console.error("Invalid UUID format:", id)
+    notFound()
+  }
+
   const { data: propertyData, error: propertyError } = await supabase
     .from("properties")
     .select(
@@ -130,16 +137,24 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
     .eq("id", id)
     .single()
 
-  if (propertyError) {
+  // Check for error (even if it's an empty object, it might indicate an issue)
+  if (propertyError && Object.keys(propertyError).length > 0) {
     console.error("Error fetching property:", propertyError)
     console.error("Property ID:", id)
+    console.error("Error code:", propertyError.code)
+    console.error("Error message:", propertyError.message)
     console.error("Error details:", JSON.stringify(propertyError, null, 2))
     notFound()
   }
 
+  // Check if data is null or undefined
   if (!propertyData) {
     console.error("Property not found - no data returned")
     console.error("Property ID:", id)
+    console.error("This might be due to:")
+    console.error("1. Property doesn't exist in database")
+    console.error("2. RLS (Row Level Security) policy blocking access")
+    console.error("3. Property is not published and user doesn't have permission")
     notFound()
   }
 
@@ -183,12 +198,18 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
       .limit(3),
   ])
 
-  if (imagesResponse.error) {
+  // Only log errors if they have actual content
+  if (imagesResponse.error && Object.keys(imagesResponse.error).length > 0) {
     console.error("Failed to load property images", imagesResponse.error)
+    console.error("Error code:", imagesResponse.error.code)
+    console.error("Error message:", imagesResponse.error.message)
   }
 
-  if (similarResponse.error) {
+  // Only log errors if they have actual content
+  if (similarResponse.error && Object.keys(similarResponse.error).length > 0) {
     console.error("Failed to load similar properties", similarResponse.error)
+    console.error("Error code:", similarResponse.error.code)
+    console.error("Error message:", similarResponse.error.message)
   }
 
   const galleryImages = (() => {
