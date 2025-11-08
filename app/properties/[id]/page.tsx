@@ -115,6 +115,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
         amenities,
         tour_3d_url,
         main_image_url,
+        published,
         region:regions(name_en),
         agent:agents (
           id,
@@ -128,8 +129,16 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
     .eq("id", params.id)
     .single()
 
-  if (propertyError || !propertyData) {
-    console.error("Property not found", propertyError)
+  if (propertyError) {
+    console.error("Error fetching property:", propertyError)
+    console.error("Property ID:", params.id)
+    console.error("Error details:", JSON.stringify(propertyError, null, 2))
+    notFound()
+  }
+
+  if (!propertyData) {
+    console.error("Property not found - no data returned")
+    console.error("Property ID:", params.id)
     notFound()
   }
 
