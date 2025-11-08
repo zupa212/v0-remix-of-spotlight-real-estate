@@ -6,7 +6,19 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "migrate": "node run-migrations-auto.js",
+    "migrate:manual": "node run-migrations.js",
+    "deploy:online": "powershell -ExecutionPolicy Bypass -File scripts/online_deploy.ps1",
+    "deploy:online:bash": "bash scripts/online_deploy.sh",
+    "db:push": "supabase db push",
+    "db:watch": "chokidar \"supabase/**/*.sql\" -c \"npm run db:push\"",
+    "db:pull": "supabase db pull",
+    "db:reset": "supabase db reset",
+    "db:reset:safe": "node scripts/safe-reset.js",
+    "db:seed": "type supabase\\seed.sql | supabase db execute",
+    "db:verify": "type supabase\\verify.sql | supabase db execute",
+    "db:types": "supabase gen types typescript --linked > lib/database.types.ts"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -71,6 +83,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "chokidar-cli": "^3.0.0",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",

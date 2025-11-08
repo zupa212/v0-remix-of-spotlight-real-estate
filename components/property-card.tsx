@@ -74,19 +74,19 @@ export function PropertyCard({
           </div>
 
           <div className="flex items-center gap-4 text-sm text-slate-600 mb-4 pb-4 border-b border-slate-100">
-            {bedrooms && (
+            {bedrooms !== undefined && bedrooms !== null && (
               <div className="flex items-center gap-1.5">
                 <Bed className="h-4 w-4" />
                 <span>{bedrooms}</span>
               </div>
             )}
-            {bathrooms && (
+            {bathrooms !== undefined && bathrooms !== null && (
               <div className="flex items-center gap-1.5">
                 <Bath className="h-4 w-4" />
                 <span>{bathrooms}</span>
               </div>
             )}
-            {area && (
+            {area !== undefined && area !== null && (
               <div className="flex items-center gap-1.5">
                 <Maximize className="h-4 w-4" />
                 <span>{area} m²</span>

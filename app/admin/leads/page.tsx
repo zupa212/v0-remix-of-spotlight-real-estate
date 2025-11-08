@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Eye, Mail, Phone } from "lucide-react"
+import { Search, Eye, Mail, Phone, ArrowLeft, LayoutGrid } from "lucide-react"
 import Link from "next/link"
 
 type Lead = {
@@ -42,6 +43,7 @@ export default function AdminLeadsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sourceFilter, setSourceFilter] = useState("all")
+  const router = useRouter()
 
   const supabase = createBrowserClient()
 
@@ -86,11 +88,26 @@ export default function AdminLeadsPage() {
   )
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-3xl font-bold">Leads</h1>
-          <p className="text-muted-foreground">Manage and track all property inquiries</p>
+    <div className="p-8 space-y-6">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => router.push('/admin')}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex-1 flex items-center justify-between">
+          <div>
+            <h1 className="font-heading text-3xl font-bold">Leads</h1>
+            <p className="text-muted-foreground">Manage and track all property inquiries</p>
+          </div>
+          <Button asChild variant="outline">
+            <Link href="/admin/leads/pipeline">
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Pipeline View
+            </Link>
+          </Button>
         </div>
       </div>
 

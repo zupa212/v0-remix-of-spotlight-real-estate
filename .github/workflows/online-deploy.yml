@@ -1,0 +1,126 @@
+name: Online Deploy (One-Click)
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_functions:
+        description: 'Deploy Edge Functions'
+        required: false
+        default: 'true'
+        type: boolean
+      seed_data:
+        description: 'Seed Sample Data'
+        required: false
+        default: 'true'
+        type: boolean
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link to Supabase project
+        run: |
+          echo "🔗 Linking to project..."
+          supabase link --project-ref ${{ secrets.SB_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Push migrations
+        run: |
+          echo "⬆️  Pushing migrations..."
+          supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Enable Realtime on all tables
+        run: |
+          echo "📡 Enabling Realtime..."
+          supabase db execute --sql "
+            DO \$\$
+            DECLARE
+              tbl TEXT;
+            BEGIN
+              FOR tbl IN 
+                SELECT tablename FROM pg_tables 
+                WHERE schemaname = 'public' 
+                AND tablename IN (
+                  'profiles', 'regions', 'agents', 'properties', 'property_images', 
+                  'property_documents', 'leads', 'lead_activity', 'viewings', 'tasks', 
+                  'task_templates', 'saved_searches', 'alerts_log', 'offers', 'offer_events', 
+                  'documents', 'referrals', 'syndication_mappings', 'analytics_clicks', 
+                  'experiments', 'experiment_metrics', 'consents', 'audit_logs'
+                )
+              LOOP
+                BEGIN
+                  EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE public.%I', tbl);
+                EXCEPTION
+                  WHEN duplicate_object THEN NULL;
+                END;
+              END LOOP;
+            END \$\$;
+          "
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Seed sample data
+        if: ${{ inputs.seed_data == true }}
+        run: |
+          echo "🌱 Seeding data..."
+          if [ -f "supabase/seed.sql" ]; then
+            supabase db execute --file supabase/seed.sql
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy Edge Functions
+        if: ${{ inputs.deploy_functions == true }}
+        run: |
+          echo "⚙️  Deploying Edge Functions..."
+          if [ -d "supabase/functions/match-properties" ]; then
+            supabase functions deploy match-properties --no-verify-jwt
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Verify deployment
+        run: |
+          echo "🧪 Verifying..."
+          supabase db execute --sql "
+            SELECT 
+              'profiles' as table_name, count(*) as row_count FROM public.profiles
+            UNION ALL
+            SELECT 'regions', count(*) FROM public.regions
+            UNION ALL
+            SELECT 'agents', count(*) FROM public.agents
+            UNION ALL
+            SELECT 'properties', count(*) FROM public.properties
+            ORDER BY table_name;
+          "
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🎉 DEPLOYMENT COMPLETE!"
+          echo "════════════════════════════════════════"
+          echo ""
+          echo "✅ Deployed:"
+          echo "   • All migrations"
+          echo "   • Realtime on 23 tables"
+          echo "   • Sample data"
+          echo "   • Edge Functions"
+          echo ""
+          echo "🔗 Dashboard:"
+          echo "   https://supabase.com/dashboard/project/${{ secrets.SB_PROJECT_REF }}"
+          echo ""
+

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=katlwauxbsbrbegpsawk",
+      "headers": {
+        "Authorization": "Bearer sb_secret_WQgMq6THo5hj7zZEKrTVNw_JxaguNpg"
+      }
+    }
+  }
+}
+
+
+
