@@ -9,6 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, MoreVertical, Eye, Edit, Trash2 } from "lucide-react"
 
+// Force dynamic rendering to avoid build-time errors
+export const dynamic = "force-dynamic"
+
 type AdminPropertyRow = {
   id: string
   propertyCode: string

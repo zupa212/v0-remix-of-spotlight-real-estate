@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { PropertyForm } from "@/components/property-form"
 
+// Force dynamic rendering to avoid build-time errors
+export const dynamic = "force-dynamic"
+
 export default async function NewPropertyPage() {
   const supabase = await createClient()
 

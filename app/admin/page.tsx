@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Building2, MessageSquare, Calendar, TrendingUp, Eye, Clock } from "lucide-react"
 
+// Force dynamic rendering to avoid build-time errors
+export const dynamic = "force-dynamic"
+
 function titleCase(value: string) {
   if (!value) return value
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()

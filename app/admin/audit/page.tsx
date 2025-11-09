@@ -30,13 +30,20 @@ export default function AdminAuditPage() {
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
 
-  const supabase = createBrowserClient()
-
   useEffect(() => {
-    fetchAuditLogs()
+    // Only create client and fetch on client side
+    if (typeof window === "undefined") return
+
+    try {
+      const supabase = createBrowserClient()
+      fetchAuditLogs(supabase)
+    } catch (error) {
+      console.error("Failed to initialize Supabase client:", error)
+      setLoading(false)
+    }
   }, [])
 
-  async function fetchAuditLogs() {
+  async function fetchAuditLogs(supabase: ReturnType<typeof createBrowserClient>) {
     const { data, error } = await supabase
       .from("audit_logs")
       .select(`
