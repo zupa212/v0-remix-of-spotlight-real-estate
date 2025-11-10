@@ -60,6 +60,7 @@ export default function LeadDetailPage() {
     fetchLeadDetails()
     fetchViewings()
     fetchAgents()
+    fetchActivities()
   }, [params.id])
 
   async function fetchLeadDetails() {
@@ -95,8 +96,41 @@ export default function LeadDetailPage() {
     }
   }
 
+  async function fetchActivities() {
+    // Fetch from lead_activity table if it exists, otherwise create mock activities from lead updates
+    const { data: activityData } = await supabase
+      .from("lead_activity")
+      .select("*")
+      .eq("lead_id", params.id)
+      .order("created_at", { ascending: false })
+      .limit(20)
+
+    if (activityData && activityData.length > 0) {
+      setActivities(
+        activityData.map((a) => ({
+          id: a.id,
+          type: a.activity_type || "note",
+          description: a.description || a.notes || "",
+          created_at: a.created_at,
+        }))
+      )
+    } else {
+      // Create activity from lead creation
+      if (lead) {
+        setActivities([
+          {
+            id: "1",
+            type: "created",
+            description: `Lead created from ${lead.source}`,
+            created_at: lead.created_at,
+          },
+        ])
+      }
+    }
+  }
+
   async function fetchAgents() {
-    const { data, error } = await supabase.from("agents").select("id, name").eq("is_active", true).order("name")
+    const { data, error } = await supabase.from("agents").select("id, name_en").order("name_en")
 
     if (error) {
       console.error("Error fetching agents:", error)
@@ -107,6 +141,7 @@ export default function LeadDetailPage() {
 
   async function updateStatus(newStatus: string) {
     setUpdatingStatus(true)
+    const oldStatus = lead?.status
     const { error } = await supabase.from("leads").update({ status: newStatus }).eq("id", params.id)
 
     if (error) {
@@ -114,18 +149,35 @@ export default function LeadDetailPage() {
       alert("Failed to update status")
     } else {
       setLead((prev) => (prev ? { ...prev, status: newStatus } : null))
+      // Create activity log entry
+      await supabase.from("lead_activity").insert({
+        lead_id: params.id,
+        activity_type: "status_change",
+        description: `Status changed from ${oldStatus} to ${newStatus}`,
+        notes: `Status updated`,
+      })
+      fetchActivities()
     }
     setUpdatingStatus(false)
   }
 
   async function assignAgent(agentId: string) {
-    const { error } = await supabase.from("leads").update({ agent_id: agentId }).eq("id", params.id)
+    const agentName = agents.find((a) => a.id === agentId)?.name_en || "Unassigned"
+    const { error } = await supabase.from("leads").update({ agent_id: agentId || null }).eq("id", params.id)
 
     if (error) {
       console.error("Error assigning agent:", error)
       alert("Failed to assign agent")
     } else {
       fetchLeadDetails()
+      // Create activity log entry
+      await supabase.from("lead_activity").insert({
+        lead_id: params.id,
+        activity_type: "assignment",
+        description: agentId ? `Assigned to ${agentName}` : "Unassigned from agent",
+        notes: agentId ? `Agent assignment: ${agentName}` : "Agent unassigned",
+      })
+      fetchActivities()
     }
   }
 
@@ -318,6 +370,38 @@ export default function LeadDetailPage() {
                   <Badge variant="outline" className="capitalize">
                     {viewing.status}
                   </Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Activity Timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Activity Timeline</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {activities.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No activity recorded yet</p>
+          ) : (
+            <div className="space-y-4">
+              {activities.map((activity, index) => (
+                <div key={activity.id} className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    <div className="h-2 w-2 rounded-full bg-slate-400"></div>
+                    {index < activities.length - 1 && <div className="w-px h-full bg-slate-200 mt-2"></div>}
+                  </div>
+                  <div className="flex-1 pb-4">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium capitalize">{activity.type}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(activity.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
+                  </div>
                 </div>
               ))}
             </div>

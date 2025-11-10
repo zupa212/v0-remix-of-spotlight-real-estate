@@ -6,6 +6,7 @@ import { PropertyGallery } from "@/components/property-gallery"
 import { InquiryForm } from "@/components/inquiry-form"
 import { PropertyCard } from "@/components/property-card"
 import { PropertyJSONLD } from "@/components/property-seo"
+import { PropertyDetailTracking } from "./page-client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -279,6 +280,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
   return (
     <div className="min-h-screen bg-[#FFFFFF]">
       <PropertyJSONLD property={seoProperty} />
+      <PropertyDetailTracking propertyId={propertyData.id} />
 
       <SiteHeader />
 

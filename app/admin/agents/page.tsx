@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ArrowLeft, Plus, Edit, Trash2, Star, Mail, Phone, User } from 'lucide-react'
+import Link from 'next/link'
+import { PropertyDeleteDialog } from '@/components/property-delete-dialog'
 
 interface Agent {
   id: string
@@ -72,16 +74,20 @@ export default function AdminAgentsPage() {
     }
   }
 
-  async function deleteAgent(agentId: string) {
-    if (!confirm('Are you sure you want to delete this agent?')) return
+  const [deleteDialog, setDeleteDialog] = useState<{ id: string; name: string } | null>(null)
 
-    const { error } = await supabase
-      .from('agents')
-      .delete()
-      .eq('id', agentId)
+  async function deleteAgent(agentId: string, agentName: string) {
+    setDeleteDialog({ id: agentId, name: agentName })
+  }
+
+  async function confirmDelete(agentId: string) {
+    const { error } = await supabase.from('agents').delete().eq('id', agentId)
 
     if (!error) {
       fetchAgents()
+      setDeleteDialog(null)
+    } else {
+      alert('Failed to delete agent. Please try again.')
     }
   }
 
@@ -113,9 +119,11 @@ export default function AdminAgentsPage() {
           <h1 className="text-3xl font-bold">Agents Management</h1>
           <p className="text-muted-foreground">Manage your real estate agents</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Agent
+        <Button asChild>
+          <Link href="/admin/agents/new">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Agent
+          </Link>
         </Button>
       </div>
 
@@ -246,13 +254,15 @@ export default function AdminAgentsPage() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm">
-                      <Edit className="h-4 w-4" />
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={`/admin/agents/${agent.id}/edit`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => deleteAgent(agent.id)}
+                      onClick={() => deleteAgent(agent.id, agent.name_en)}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
@@ -267,13 +277,38 @@ export default function AdminAgentsPage() {
           <div className="text-center py-12 text-muted-foreground">
             <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No agents found</p>
-            <Button className="mt-4">
-              <Plus className="h-4 w-4 mr-2" />
-              Add First Agent
+            <Button className="mt-4" asChild>
+              <Link href="/admin/agents/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Agent
+              </Link>
             </Button>
           </div>
         )}
       </Card>
+
+      {/* Delete Dialog */}
+      {deleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-2">Delete Agent</h3>
+            <p className="text-slate-600 mb-4">
+              Are you sure you want to delete "{deleteDialog.name}"? This action cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setDeleteDialog(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => confirmDelete(deleteDialog.id)}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

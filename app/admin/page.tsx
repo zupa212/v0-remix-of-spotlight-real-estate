@@ -134,17 +134,48 @@ export default async function AdminDashboardPage() {
       .gte("updated_at", startOfMonthIso),
   ])
 
-  if (propertiesCountResponse.error) console.error("Failed to count properties", propertiesCountResponse.error)
-  if (newPropertiesResponse.error) console.error("Failed to count new properties", newPropertiesResponse.error)
-  if (propertyDistributionResponse.error) console.error("Failed to load property distribution", propertyDistributionResponse.error)
-  if (activeLeadsCountResponse.error) console.error("Failed to count leads", activeLeadsCountResponse.error)
-  if (newLeadsResponse.error) console.error("Failed to count new leads", newLeadsResponse.error)
-  if (recentLeadsResponse.error) console.error("Failed to load recent leads", recentLeadsResponse.error)
-  if (scheduledViewingsCountResponse.error)
+  // Collect errors for display
+  const errors: string[] = []
+  if (propertiesCountResponse.error) {
+    console.error("Failed to count properties", propertiesCountResponse.error)
+    errors.push("Failed to load property count")
+  }
+  if (newPropertiesResponse.error) {
+    console.error("Failed to count new properties", newPropertiesResponse.error)
+    errors.push("Failed to load new properties")
+  }
+  if (propertyDistributionResponse.error) {
+    console.error("Failed to load property distribution", propertyDistributionResponse.error)
+    errors.push("Failed to load property distribution")
+  }
+  if (activeLeadsCountResponse.error) {
+    console.error("Failed to count leads", activeLeadsCountResponse.error)
+    errors.push("Failed to load leads count")
+  }
+  if (newLeadsResponse.error) {
+    console.error("Failed to count new leads", newLeadsResponse.error)
+    errors.push("Failed to load new leads")
+  }
+  if (recentLeadsResponse.error) {
+    console.error("Failed to load recent leads", recentLeadsResponse.error)
+    errors.push("Failed to load recent leads")
+  }
+  if (scheduledViewingsCountResponse.error) {
     console.error("Failed to count upcoming viewings", scheduledViewingsCountResponse.error)
-  if (viewingsCreatedResponse.error) console.error("Failed to count created viewings", viewingsCreatedResponse.error)
-  if (upcomingViewingsResponse.error) console.error("Failed to load upcoming viewings", upcomingViewingsResponse.error)
-  if (soldPropertiesResponse.error) console.error("Failed to calculate revenue", soldPropertiesResponse.error)
+    errors.push("Failed to load viewings count")
+  }
+  if (viewingsCreatedResponse.error) {
+    console.error("Failed to count created viewings", viewingsCreatedResponse.error)
+    errors.push("Failed to load created viewings")
+  }
+  if (upcomingViewingsResponse.error) {
+    console.error("Failed to load upcoming viewings", upcomingViewingsResponse.error)
+    errors.push("Failed to load upcoming viewings")
+  }
+  if (soldPropertiesResponse.error) {
+    console.error("Failed to calculate revenue", soldPropertiesResponse.error)
+    errors.push("Failed to load revenue data")
+  }
 
   const totalProperties = propertiesCountResponse.count ?? 0
   const newPropertiesThisMonth = newPropertiesResponse.count ?? 0
@@ -224,6 +255,18 @@ export default async function AdminDashboardPage() {
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
             <p className="text-slate-600">Welcome back! Here's what's happening today.</p>
           </div>
+
+          {/* Error Display */}
+          {errors.length > 0 && (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+              <h3 className="text-sm font-semibold text-red-800 mb-2">Some data failed to load:</h3>
+              <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
+                {errors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

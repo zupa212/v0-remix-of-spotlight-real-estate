@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/client"
 import { Send } from "lucide-react"
+import { trackClick, trackEvent } from "@/lib/utils/analytics"
 
 interface InquiryFormProps {
   propertyId: string
@@ -46,6 +47,20 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
       })
 
       if (insertError) throw insertError
+
+      // Track form submission
+      trackEvent("inquiry_form_submitted", {
+        property_id: propertyId,
+        property_title: propertyTitle,
+      })
+
+      // Track click on inquiry form
+      trackClick({
+        element_type: "inquiry_form",
+        element_id: propertyId,
+        property_id: propertyId,
+        url: typeof window !== "undefined" ? window.location.href : "",
+      })
 
       setSuccess(true)
       setFormData({ fullName: "", email: "", phone: "", message: "" })

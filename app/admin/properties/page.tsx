@@ -5,9 +5,8 @@ import { AdminSidebar } from "@/components/admin-sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Search, Plus, MoreVertical, Eye, Edit, Trash2 } from "lucide-react"
+import { Search, Plus } from "lucide-react"
+import { PropertiesTableClient } from "./page-client"
 
 // Force dynamic rendering to avoid build-time errors
 export const dynamic = "force-dynamic"
@@ -149,104 +148,13 @@ export default async function AdminPropertiesPage() {
           )}
 
           {/* Properties Table */}
-          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-            {properties.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Property Code</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Published</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {properties.map((property) => (
-                    <TableRow key={property.id}>
-                      <TableCell className="font-mono text-sm">{property.propertyCode}</TableCell>
-                      <TableCell className="font-medium">{property.titleEn}</TableCell>
-                      <TableCell className="text-slate-600">{property.location}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="capitalize">
-                          {property.propertyType}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{property.displayPrice}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className={
-                            property.status === "available"
-                              ? "bg-green-100 text-green-700"
-                              : property.status === "pending"
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-slate-100 text-slate-700"
-                          }
-                        >
-                          {property.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className={property.published ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-700"}
-                        >
-                          {property.published ? "Published" : "Draft"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link href={`/properties/${property.id}`}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link href={`/admin/properties/${property.id}/edit`}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="p-8 text-center text-slate-600">No properties found. Create your first listing to get started.</div>
-            )}
-          </div>
+          <PropertiesTableClient properties={properties} />
 
           {/* Pagination */}
           <div className="mt-6 flex items-center justify-between">
             <p className="text-sm text-slate-600">
               Showing <span className="font-medium">{properties.length}</span> properties
             </p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled>
-                Previous
-              </Button>
-              <Button variant="outline" size="sm" disabled>
-                Next
-              </Button>
-            </div>
           </div>
         </div>
       </div>

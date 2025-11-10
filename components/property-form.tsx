@@ -75,6 +75,31 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
     setIsSubmitting(true)
     setError(null)
 
+    // Form validation
+    if (!formData.titleEn.trim()) {
+      setError("Property title (English) is required")
+      setIsSubmitting(false)
+      return
+    }
+
+    if (!formData.titleGr.trim()) {
+      setError("Property title (Greek) is required")
+      setIsSubmitting(false)
+      return
+    }
+
+    if (formData.listingType === "sale" && !formData.priceSale) {
+      setError("Sale price is required for sale listings")
+      setIsSubmitting(false)
+      return
+    }
+
+    if (formData.listingType === "rent" && !formData.priceRent) {
+      setError("Rent price is required for rental listings")
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       const supabase = createClient()
       const {
@@ -136,6 +161,11 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
       {/* Property Code Display (for edit mode) */}
       {isEdit && initialData?.property_code && (
         <Card>

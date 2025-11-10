@@ -43,13 +43,27 @@ export default function AdminLeadsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sourceFilter, setSourceFilter] = useState("all")
+  const [agentFilter, setAgentFilter] = useState("all")
+  const [dateRangeFilter, setDateRangeFilter] = useState("all")
+  const [agents, setAgents] = useState<Array<{ id: string; name_en: string }>>([])
   const router = useRouter()
 
   const supabase = createBrowserClient()
 
   useEffect(() => {
+    fetchAgents()
+  }, [])
+
+  useEffect(() => {
     fetchLeads()
-  }, [statusFilter, sourceFilter])
+  }, [statusFilter, sourceFilter, agentFilter, dateRangeFilter])
+
+  async function fetchAgents() {
+    const { data } = await supabase.from("agents").select("id, name_en").order("name_en")
+    if (data) {
+      setAgents(data)
+    }
+  }
 
   async function fetchLeads() {
     setLoading(true)
@@ -67,7 +81,27 @@ export default function AdminLeadsPage() {
     }
 
     if (sourceFilter !== "all") {
-      query = query.eq("source", sourceFilter)
+      query = query.eq("lead_source", sourceFilter)
+    }
+
+    if (agentFilter !== "all") {
+      query = query.eq("agent_id", agentFilter)
+    }
+
+    // Date range filter
+    if (dateRangeFilter !== "all") {
+      const now = new Date()
+      let startDate: Date
+      if (dateRangeFilter === "today") {
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      } else if (dateRangeFilter === "week") {
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      } else if (dateRangeFilter === "month") {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      } else {
+        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      }
+      query = query.gte("created_at", startDate.toISOString())
     }
 
     const { data, error } = await query
@@ -150,6 +184,33 @@ export default function AdminLeadsPage() {
               <SelectItem value="email">Email</SelectItem>
               <SelectItem value="referral">Referral</SelectItem>
               <SelectItem value="walk-in">Walk-in</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={agentFilter} onValueChange={setAgentFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Agent" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Agents</SelectItem>
+              {agents.map((agent) => (
+                <SelectItem key={agent.id} value={agent.id}>
+                  {agent.name_en}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={dateRangeFilter} onValueChange={setDateRangeFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Date Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Time</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">Last 7 Days</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+              <SelectItem value="lastMonth">Last Month</SelectItem>
             </SelectContent>
           </Select>
         </div>
