@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
+import { generatePropertyMetadata } from "@/components/property-seo"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { PropertyGallery } from "@/components/property-gallery"
+import { PropertyDocuments } from "@/components/property-documents"
+import { ShareButtons } from "@/components/share-buttons"
 import { InquiryForm } from "@/components/inquiry-form"
 import { PropertyCard } from "@/components/property-card"
 import { PropertyJSONLD } from "@/components/property-seo"
@@ -89,6 +93,44 @@ function formatNumeric(value: number | null | undefined, options?: Intl.NumberFo
   return Number(value).toLocaleString("en-US", options)
 }
 
+export async function generateMetadata({ params }: PropertyDetailParams): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: property } = await supabase
+    .from("properties")
+    .select("property_code, title_en, description_en, price_sale, price_rent, currency, property_type, listing_type, city_en, bedrooms, bathrooms, area_sqm, main_image_url, region:regions(name_en)")
+    .eq("id", id)
+    .single()
+
+  if (!property) {
+    return {
+      title: "Property Not Found",
+    }
+  }
+
+  const listingType = property.listing_type ?? "sale"
+  const priceValue = listingType === "rent" 
+    ? (property.price_rent ?? 0) 
+    : (property.price_sale ?? 0)
+
+  return generatePropertyMetadata({
+    property_code: property.property_code,
+    title: property.title_en ?? "Untitled Property",
+    description: property.description_en,
+    price: priceValue,
+    currency: property.currency ?? "EUR",
+    type: property.property_type ?? "apartment",
+    category: listingType,
+    city: property.city_en ?? "Greece",
+    region: property.region?.name_en ?? "",
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    area_sqm: property.area_sqm,
+    hero_image: property.main_image_url,
+  })
+}
+
 export default async function PropertyDetailPage({ params }: PropertyDetailParams) {
   const { id } = await params
   const supabase = await createClient()
@@ -166,12 +208,17 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
     console.warn("Property is not published:", id)
   }
 
-  const [imagesResponse, similarResponse] = await Promise.all([
+  const [imagesResponse, documentsResponse, similarResponse] = await Promise.all([
     supabase
       .from("property_images")
       .select("image_url, is_main, display_order")
       .eq("property_id", propertyData.id)
       .order("display_order", { ascending: true }),
+    supabase
+      .from("property_documents")
+      .select("id, document_url, document_type, title_en, title_gr, file_size_kb")
+      .eq("property_id", propertyData.id)
+      .order("created_at", { ascending: true }),
     supabase
       .from("properties")
       .select(
@@ -302,9 +349,11 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon" className="border-[#E0E0E0] hover:bg-[#F8F8F8]">
-                  <Share2 className="h-5 w-5 text-[#333333]" />
-                </Button>
+                <ShareButtons
+                  url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://spotlight.gr"}/properties/${propertyData.property_code}`}
+                  title={propertyData.title_en ?? "Untitled Property"}
+                  description={propertyData.description_en || undefined}
+                />
                 <Button variant="outline" size="icon" className="border-[#E0E0E0] hover:bg-[#F8F8F8]">
                   <Heart className="h-5 w-5 text-[#333333]" />
                 </Button>
@@ -442,6 +491,11 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Documents */}
+              {documentsResponse.data && documentsResponse.data.length > 0 && (
+                <PropertyDocuments documents={documentsResponse.data} />
+              )}
 
               {/* 3D Tour */}
               {propertyData.tour_3d_url && (
