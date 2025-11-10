@@ -18,7 +18,11 @@
     "db:reset:safe": "node scripts/safe-reset.js",
     "db:seed": "type supabase\\seed.sql | supabase db execute",
     "db:verify": "type supabase\\verify.sql | supabase db execute",
-    "db:types": "supabase gen types typescript --linked > lib/database.types.ts"
+    "db:types": "supabase gen types typescript --linked > lib/database.types.ts",
+    "db:write": "node scripts/write-to-supabase.js",
+    "db:write:insert": "node scripts/write-to-supabase.js insert",
+    "db:write:update": "node scripts/write-to-supabase.js update",
+    "db:write:delete": "node scripts/write-to-supabase.js delete"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
