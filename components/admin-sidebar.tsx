@@ -36,6 +36,7 @@ export function AdminSidebar() {
     { name: "Viewings", href: "/admin/viewings", icon: Calendar },
     { name: "Agents", href: "/admin/agents", icon: Users },
     { name: "Regions", href: "/admin/regions", icon: MapPin },
+    { name: "Analytics", href: "/admin/analytics", icon: TrendingUp },
     { name: "Marketing", href: "/admin/marketing", icon: TrendingUp },
     { name: "Privacy", href: "/admin/privacy", icon: Shield },
     { name: "Audit Logs", href: "/admin/audit", icon: FileText },

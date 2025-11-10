@@ -2,50 +2,116 @@
 
 import { motion } from "framer-motion"
 import { useInView } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useEffect, useState } from "react"
 import { Bed, Bath, Maximize, MapPin } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { createClient } from "@/lib/supabase/client"
 
-const properties = [
-  {
-    id: 1,
-    name: "The One",
-    location: "Bel Air, LA",
-    bedrooms: 6,
-    bathrooms: 4,
-    sqft: 2780,
-    price: 690000,
-    image: "/luxury-modern-home-dark-wood.jpg",
-    badge: "For Investment",
-  },
-  {
-    id: 2,
-    name: "Billionaire Mansion",
-    location: "Bel Air, LA",
-    bedrooms: 5,
-    bathrooms: 3,
-    sqft: 3800,
-    price: 500000,
-    image: "/luxury-mansion-pool.png",
-    badge: "For Sell",
-  },
-  {
-    id: 3,
-    name: "The Beverly House",
-    location: "Beverly Hills, CA",
-    bedrooms: 3,
-    bathrooms: 2,
-    sqft: 1500,
-    price: 290000,
-    image: "/modern-concrete-house-with-pool.jpg",
-    badge: "For Rent",
-  },
-]
+type Property = {
+  id: string
+  title_en: string
+  city_en: string | null
+  region: { name_en: string } | null
+  bedrooms: number | null
+  bathrooms: number | null
+  area_sqm: number | null
+  price_sale: number | null
+  price_rent: number | null
+  currency: string
+  listing_type: string
+  main_image_url: string | null
+  property_type: string
+}
 
 export function AnimatedFeaturedProperties() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const [properties, setProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchFeaturedProperties = async () => {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from("properties")
+          .select(
+            `
+            id,
+            title_en,
+            city_en,
+            listing_type,
+            property_type,
+            price_sale,
+            price_rent,
+            currency,
+            bedrooms,
+            bathrooms,
+            area_sqm,
+            main_image_url,
+            region:regions(name_en)
+          `
+          )
+          .eq("published", true)
+          .eq("featured", true)
+          .order("created_at", { ascending: false })
+          .limit(6)
+
+        if (error) {
+          console.error("Error fetching featured properties:", error)
+        } else {
+          setProperties(data || [])
+        }
+      } catch (error) {
+        console.error("Error fetching featured properties:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFeaturedProperties()
+  }, [])
+
+  const formatLocation = (city: string | null, region: { name_en: string } | null) => {
+    const parts = [city, region?.name_en].filter(Boolean) as string[]
+    if (parts.length === 0) return "Greece"
+    return parts.join(", ")
+  }
+
+  const formatPrice = (property: Property) => {
+    const listingType = property.listing_type === "rent" ? "rent" : "sale"
+    const priceValue = listingType === "rent" ? property.price_rent : property.price_sale
+    if (!priceValue) return "Price on request"
+    const currency = property.currency || "EUR"
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(priceValue)
+  }
+
+  const getBadgeText = (listingType: string) => {
+    return listingType === "rent" ? "For Rent" : "For Sale"
+  }
+
+  if (loading) {
+    return (
+      <section ref={ref} className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center">
+            <p className="text-slate-600">Loading featured properties...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (properties.length === 0) {
+    return null
+  }
 
   return (
     <section ref={ref} className="py-24 bg-white">
@@ -84,43 +150,50 @@ export function AnimatedFeaturedProperties() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.4 + index * 0.15, duration: 0.8 }}
-              className="group cursor-pointer"
             >
-              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-lg">
-                <Image
-                  src={property.image || "/placeholder.svg"}
-                  alt={property.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <Badge className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm text-slate-900 hover:bg-white border-0 px-4 py-2">
-                  {property.badge}
-                </Badge>
-              </div>
-
-              <div className="flex items-start gap-2 mb-3">
-                <MapPin className="w-5 h-5 text-slate-400 mt-0.5 flex-shrink-0" />
-                <span className="text-slate-600">{property.location}</span>
-              </div>
-
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">{property.name}</h3>
-
-              <div className="flex items-center gap-6 mb-4 text-slate-600">
-                <div className="flex items-center gap-2">
-                  <Bed className="w-5 h-5" />
-                  <span>{property.bedrooms}</span>
+              <Link href={`/properties/${property.id}`} className="group cursor-pointer block">
+                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-lg">
+                  <Image
+                    src={property.main_image_url || "/placeholder.svg"}
+                    alt={property.title_en || "Property"}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <Badge className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm text-slate-900 hover:bg-white border-0 px-4 py-2">
+                    {getBadgeText(property.listing_type)}
+                  </Badge>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Bath className="w-5 h-5" />
-                  <span>{property.bathrooms}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Maximize className="w-5 h-5" />
-                  <span>{property.sqft.toLocaleString()} sq.ft</span>
-                </div>
-              </div>
 
-              <div className="text-3xl font-bold text-slate-900">$ {property.price.toLocaleString()}</div>
+                <div className="flex items-start gap-2 mb-3">
+                  <MapPin className="w-5 h-5 text-slate-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-slate-600">{formatLocation(property.city_en, property.region)}</span>
+                </div>
+
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{property.title_en || "Untitled Property"}</h3>
+
+                <div className="flex items-center gap-6 mb-4 text-slate-600">
+                  {property.bedrooms != null && property.bedrooms > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Bed className="w-5 h-5" />
+                      <span>{property.bedrooms}</span>
+                    </div>
+                  )}
+                  {property.bathrooms != null && property.bathrooms > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Bath className="w-5 h-5" />
+                      <span>{property.bathrooms}</span>
+                    </div>
+                  )}
+                  {property.area_sqm != null && property.area_sqm > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Maximize className="w-5 h-5" />
+                      <span>{property.area_sqm.toLocaleString()} m²</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-3xl font-bold text-slate-900">{formatPrice(property)}</div>
+              </Link>
             </motion.div>
           ))}
         </div>

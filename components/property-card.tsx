@@ -1,8 +1,11 @@
+"use client"
+
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bed, Bath, Maximize, MapPin } from "lucide-react"
 import Image from "next/image"
+import { trackClick } from "@/lib/utils/analytics"
 
 interface PropertyCardProps {
   id: string
@@ -42,8 +45,17 @@ export function PropertyCard({
     }).format(price)
   }
 
+  const handleClick = () => {
+    trackClick({
+      element_type: "property_card",
+      element_id: id,
+      property_id: id,
+      url: typeof window !== "undefined" ? window.location.href : "",
+    })
+  }
+
   return (
-    <Link href={`/properties/${id}`}>
+    <Link href={`/properties/${id}`} onClick={handleClick}>
       <Card className="property-card group overflow-hidden border-[#E0E0E0]">
         <div className="relative aspect-[4/3] overflow-hidden bg-[#F8F8F8]">
           <Image

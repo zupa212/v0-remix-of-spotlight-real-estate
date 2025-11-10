@@ -10,18 +10,29 @@ import { useState } from "react"
 
 interface PropertyFiltersProps {
   onFilterChange?: (filters: any) => void
+  initialFilters?: {
+    search?: string
+    propertyType?: string
+    listingType?: string
+    minPrice?: string
+    maxPrice?: string
+    bedrooms?: string
+    bathrooms?: string
+    region?: string
+  }
 }
 
-export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
+export function PropertyFilters({ onFilterChange, initialFilters }: PropertyFiltersProps) {
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState({
-    search: "",
-    propertyType: "",
-    listingType: "",
-    minPrice: "",
-    maxPrice: "",
-    bedrooms: "",
-    region: "",
+    search: initialFilters?.search || "",
+    propertyType: initialFilters?.propertyType || "all",
+    listingType: initialFilters?.listingType || "all",
+    minPrice: initialFilters?.minPrice || "",
+    maxPrice: initialFilters?.maxPrice || "",
+    bedrooms: initialFilters?.bedrooms || "any",
+    bathrooms: initialFilters?.bathrooms || "any",
+    region: initialFilters?.region || "all",
   })
 
   const handleFilterChange = (key: string, value: string) => {
@@ -33,12 +44,13 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
   const clearFilters = () => {
     const emptyFilters = {
       search: "",
-      propertyType: "",
-      listingType: "",
+      propertyType: "all",
+      listingType: "all",
       minPrice: "",
       maxPrice: "",
-      bedrooms: "",
-      region: "",
+      bedrooms: "any",
+      bathrooms: "any",
+      region: "all",
     }
     setFilters(emptyFilters)
     onFilterChange?.(emptyFilters)
@@ -126,6 +138,23 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
               <div className="space-y-2">
                 <Label>Bedrooms</Label>
                 <Select value={filters.bedrooms} onValueChange={(value) => handleFilterChange("bedrooms", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="1">1+</SelectItem>
+                    <SelectItem value="2">2+</SelectItem>
+                    <SelectItem value="3">3+</SelectItem>
+                    <SelectItem value="4">4+</SelectItem>
+                    <SelectItem value="5">5+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Bathrooms</Label>
+                <Select value={filters.bathrooms} onValueChange={(value) => handleFilterChange("bathrooms", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
