@@ -22,7 +22,9 @@
     "db:write": "node scripts/write-to-supabase.js",
     "db:write:insert": "node scripts/write-to-supabase.js insert",
     "db:write:update": "node scripts/write-to-supabase.js update",
-    "db:write:delete": "node scripts/write-to-supabase.js delete"
+    "db:write:delete": "node scripts/write-to-supabase.js delete",
+    "db:create:all": "node scripts/auto-create-tables.js create",
+    "db:verify": "node scripts/auto-create-tables.js verify"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
