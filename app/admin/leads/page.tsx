@@ -23,8 +23,8 @@ type Lead = {
   property_id: string | null
   agent_id: string | null
   created_at: string
-  properties: { title: string; property_code: string } | null
-  agents: { name: string } | null
+  properties: { title_en: string; property_code: string } | null
+  agents: { name_en: string } | null
 }
 
 const statusColors = {
@@ -265,7 +265,7 @@ export default function AdminLeadsPage() {
                   <TableCell>
                     {lead.properties ? (
                       <div className="text-sm">
-                        <div className="font-medium">{lead.properties.title}</div>
+                        <div className="font-medium">{lead.properties.title_en}</div>
                         <div className="text-muted-foreground">{lead.properties.property_code}</div>
                       </div>
                     ) : (
@@ -287,7 +287,7 @@ export default function AdminLeadsPage() {
                   <TableCell className="capitalize">{lead.source}</TableCell>
                   <TableCell>
                     {lead.agents ? (
-                      <span className="text-sm">{lead.agents.name}</span>
+                      <span className="text-sm">{lead.agents.name_en}</span>
                     ) : (
                       <span className="text-muted-foreground">Unassigned</span>
                     )}

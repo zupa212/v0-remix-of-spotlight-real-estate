@@ -23,8 +23,8 @@ type Lead = {
   property_id: string | null
   agent_id: string | null
   created_at: string
-  properties: { title: string; property_code: string; city: string } | null
-  agents: { id: string; name: string; email: string; phone: string } | null
+  properties: { title_en: string; property_code: string; city_en: string } | null
+  agents: { id: string; name_en: string; email: string; phone: string } | null
 }
 
 type Viewing = {
@@ -68,8 +68,8 @@ export default function LeadDetailPage() {
       .from("leads")
       .select(`
         *,
-        properties(title, property_code, city),
-        agents(id, name, email, phone)
+        properties(title_en, property_code, city_en),
+        agents(id, name_en, email, phone)
       `)
       .eq("id", params.id)
       .single()
@@ -257,9 +257,9 @@ export default function LeadDetailPage() {
                   <span>Interested Property</span>
                 </div>
                 <div className="rounded-lg border p-4">
-                  <p className="font-medium">{lead.properties.title}</p>
+                  <p className="font-medium">{lead.properties.title_en}</p>
                   <p className="text-sm text-muted-foreground">
-                    {lead.properties.property_code} • {lead.properties.city}
+                    {lead.properties.property_code} • {lead.properties.city_en}
                   </p>
                 </div>
               </div>
@@ -320,11 +320,11 @@ export default function LeadDetailPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{lead.agents.name}</span>
+                    <span className="font-medium">{lead.agents.name || lead.agents.name_en || "Unknown Agent"}</span>
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <p>{lead.agents.email}</p>
-                    <p>{lead.agents.phone}</p>
+                    {lead.agents.email && <p>{lead.agents.email}</p>}
+                    {lead.agents.phone && <p>{lead.agents.phone}</p>}
                   </div>
                 </div>
               ) : (

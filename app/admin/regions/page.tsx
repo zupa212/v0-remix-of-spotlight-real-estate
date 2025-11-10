@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { ArrowLeft, Plus, Edit, Trash2, Star, MapPin, Image as ImageIcon } from 'lucide-react'
+import { ArrowLeft, Plus, Edit, Trash2, Star, MapPin, Image as ImageIcon, ArrowUp, ArrowDown } from 'lucide-react'
+import Link from 'next/link'
 
 interface Region {
   id: string
@@ -69,19 +70,41 @@ export default function AdminRegionsPage() {
     }
   }
 
-  async function deleteRegion(regionId: string) {
-    if (!confirm('Are you sure you want to delete this region? This may affect properties.')) return
+  const [deleteDialog, setDeleteDialog] = useState<{ id: string; name: string } | null>(null)
 
-    const { error } = await supabase
-      .from('regions')
-      .delete()
-      .eq('id', regionId)
+  async function deleteRegion(regionId: string, regionName: string) {
+    setDeleteDialog({ id: regionId, name: regionName })
+  }
+
+  async function confirmDelete(regionId: string) {
+    const { error } = await supabase.from('regions').delete().eq('id', regionId)
 
     if (error) {
       alert(`Error: ${error.message}`)
     } else {
       fetchRegions()
+      setDeleteDialog(null)
     }
+  }
+
+  async function reorderRegion(regionId: string, direction: 'up' | 'down') {
+    const region = regions.find((r) => r.id === regionId)
+    if (!region) return
+
+    const currentOrder = region.display_order
+    const newOrder = direction === 'up' ? currentOrder - 1 : currentOrder + 1
+
+    // Find the region that should swap positions
+    const swapRegion = regions.find((r) => r.display_order === newOrder)
+    if (!swapRegion) return
+
+    // Swap display orders
+    await Promise.all([
+      supabase.from('regions').update({ display_order: newOrder }).eq('id', regionId),
+      supabase.from('regions').update({ display_order: currentOrder }).eq('id', swapRegion.id),
+    ])
+
+    fetchRegions()
   }
 
   const filteredRegions = regions.filter(region =>
@@ -113,9 +136,11 @@ export default function AdminRegionsPage() {
           <h1 className="text-3xl font-bold">Regions Management</h1>
           <p className="text-muted-foreground">Manage property regions and locations</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Region
+        <Button asChild>
+          <Link href="/admin/regions/new">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Region
+          </Link>
         </Button>
       </div>
 
@@ -168,17 +193,41 @@ export default function AdminRegionsPage() {
       <Card>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Region</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
+              <TableRow>
+                <TableHead>Order</TableHead>
+                <TableHead>Region</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredRegions.map((region) => (
+            {filteredRegions.map((region, index) => (
               <TableRow key={region.id}>
+                <TableCell>
+                  <div className="flex flex-col gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => reorderRegion(region.id, 'up')}
+                      disabled={index === 0}
+                    >
+                      <ArrowUp className="h-3 w-3" />
+                    </Button>
+                    <span className="text-xs text-center">{region.display_order}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => reorderRegion(region.id, 'down')}
+                      disabled={index === filteredRegions.length - 1}
+                    >
+                      <ArrowDown className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     {region.image_url ? (
@@ -218,13 +267,15 @@ export default function AdminRegionsPage() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm">
-                      <Edit className="h-4 w-4" />
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={`/admin/regions/${region.id}/edit`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => deleteRegion(region.id)}
+                      onClick={() => deleteRegion(region.id, region.name_en)}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
@@ -239,13 +290,35 @@ export default function AdminRegionsPage() {
           <div className="text-center py-12 text-muted-foreground">
             <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No regions found</p>
-            <Button className="mt-4">
-              <Plus className="h-4 w-4 mr-2" />
-              Add First Region
+            <Button className="mt-4" asChild>
+              <Link href="/admin/regions/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Region
+              </Link>
             </Button>
           </div>
         )}
       </Card>
+
+      {/* Delete Dialog */}
+      {deleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-2">Delete Region</h3>
+            <p className="text-slate-600 mb-4">
+              Are you sure you want to delete "{deleteDialog.name}"? This may affect properties associated with this region.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setDeleteDialog(null)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={() => confirmDelete(deleteDialog.id)}>
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
