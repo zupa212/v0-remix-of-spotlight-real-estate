@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch"
 import { createClient } from "@/lib/supabase/client"
 import { Save, X, Upload } from "lucide-react"
 import Image from "next/image"
+import { ImageUpload } from "@/components/image-upload"
 
 interface AgentFormProps {
   initialData?: any
@@ -214,31 +215,25 @@ export function AgentForm({ initialData, isEdit = false }: AgentFormProps) {
           <CardTitle>Profile Picture</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {formData.avatarUrl && (
-            <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-slate-200">
-              <Image src={formData.avatarUrl} alt="Agent avatar" fill className="object-cover" />
+          <ImageUpload
+            value={formData.avatarUrl}
+            onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
+            bucket="agent-avatars"
+            entityId={isEdit && initialData?.id ? initialData.id : "temp"}
+            label="Agent Avatar"
+            aspectRatio="square"
+          />
+          {!formData.avatarUrl && (
+            <div className="space-y-2">
+              <Label htmlFor="avatarUrl">Or enter image URL</Label>
+              <Input
+                id="avatarUrl"
+                value={formData.avatarUrl}
+                onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
+                placeholder="https://example.com/avatar.jpg"
+              />
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="avatarUpload">Upload Avatar</Label>
-            <Input
-              id="avatarUpload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={uploading}
-            />
-            {uploading && <p className="text-sm text-slate-600">Uploading...</p>}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="avatarUrl">Or enter image URL</Label>
-            <Input
-              id="avatarUrl"
-              value={formData.avatarUrl}
-              onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
-              placeholder="https://example.com/avatar.jpg"
-            />
-          </div>
         </CardContent>
       </Card>
 

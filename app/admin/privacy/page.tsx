@@ -2,6 +2,9 @@
 
 import { useState } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
+import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -143,11 +146,17 @@ export default function AdminPrivacyPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-3xl font-bold">Privacy & GDPR</h1>
-        <p className="text-muted-foreground">Manage data privacy and compliance tools</p>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Privacy & GDPR" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Privacy & GDPR</h1>
+            <p className="text-slate-600">Manage data privacy and compliance tools</p>
+          </div>
 
       <Tabs defaultValue="export" className="space-y-6">
         <TabsList>
@@ -268,6 +277,8 @@ export default function AdminPrivacyPage() {
           </Card>
         </TabsContent>
       </Tabs>
+        </div>
+      </div>
     </div>
   )
 }

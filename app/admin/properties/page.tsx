@@ -2,6 +2,8 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -119,6 +121,8 @@ export default async function AdminPropertiesPage() {
 
       <div className="lg:pl-64">
         <div className="p-8">
+          <AdminBreadcrumbs items={[{ label: "Properties" }]} />
+          
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>

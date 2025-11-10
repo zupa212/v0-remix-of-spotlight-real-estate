@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TrendingUp, MousePointer, Eye, Users, Building2, Calendar } from "lucide-react"
-import { AdminSidebar } from "@/components/admin-sidebar"
 
 export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true)
@@ -130,6 +132,9 @@ export default function AdminAnalyticsPage() {
       <AdminSidebar />
       <div className="flex-1 lg:ml-64">
         <div className="p-8">
+          <AdminBreadcrumbs items={[{ label: "Analytics" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Analytics Dashboard</h1>
             <p className="text-slate-600">Track your property performance and user engagement</p>

@@ -3,12 +3,11 @@ import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminBackButton } from "@/components/admin-back-button"
 import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
-import { PropertyForm } from "@/components/property-form"
+import { ViewingForm } from "@/components/viewing-form"
 
-// Force dynamic rendering to avoid build-time errors
 export const dynamic = "force-dynamic"
 
-export default async function NewPropertyPage() {
+export default async function NewViewingPage() {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
@@ -23,19 +22,20 @@ export default async function NewPropertyPage() {
       <div className="lg:pl-64">
         <div className="p-8">
           <AdminBreadcrumbs items={[
-            { label: "Properties", href: "/admin/properties" },
-            { label: "New Property" }
+            { label: "Viewings", href: "/admin/viewings" },
+            { label: "Schedule Viewing" }
           ]} />
-          <AdminBackButton href="/admin/properties" label="Back to Properties" />
+          <AdminBackButton href="/admin/viewings" label="Back to Viewings" />
           
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Add New Property</h1>
-            <p className="text-slate-600">Create a new property listing</p>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Schedule New Viewing</h1>
+            <p className="text-slate-600">Create a new property viewing appointment</p>
           </div>
 
-          <PropertyForm />
+          <ViewingForm />
         </div>
       </div>
     </div>
   )
 }
+

@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
+import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -135,6 +138,8 @@ export default function AdminAuditPage() {
           )}
         </CardContent>
       </Card>
+        </div>
+      </div>
     </div>
   )
 }

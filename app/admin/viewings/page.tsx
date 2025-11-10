@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Calendar, MapPin, User, Eye } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Calendar, MapPin, User, Eye, Plus, Edit, Filter } from "lucide-react"
 import Link from "next/link"
 
 type Viewing = {
@@ -123,6 +128,8 @@ export default function AdminViewingsPage() {
 
       <div className="lg:pl-64">
         <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Viewings" }]} />
+          
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-slate-900 mb-2">Viewings</h1>
@@ -266,9 +273,31 @@ export default function AdminViewingsPage() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Badge className={statusColors[viewing.status as keyof typeof statusColors]}>
-                      {viewing.status}
-                    </Badge>
+                    <Select
+                      value={viewing.status}
+                      onValueChange={async (newStatus) => {
+                        const { error } = await supabase
+                          .from("viewings")
+                          .update({ status: newStatus })
+                          .eq("id", viewing.id)
+                        if (error) {
+                          alert("Failed to update status: " + error.message)
+                        } else {
+                          fetchViewings()
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="scheduled">Scheduled</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                        <SelectItem value="no_show">No Show</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
                     {viewing.notes || "—"}

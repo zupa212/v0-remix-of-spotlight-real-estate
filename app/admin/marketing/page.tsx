@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
+import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -52,11 +55,17 @@ export default function AdminMarketingPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-3xl font-bold">Marketing & Growth</h1>
-        <p className="text-muted-foreground">Manage feeds, experiments, and referral programs</p>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Marketing" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Marketing & Growth</h1>
+            <p className="text-slate-600">Manage feeds, experiments, and referral programs</p>
+          </div>
 
       <Tabs defaultValue="feeds" className="space-y-6">
         <TabsList>
@@ -150,6 +159,8 @@ export default function AdminMarketingPage() {
           </Card>
         </TabsContent>
       </Tabs>
+        </div>
+      </div>
     </div>
   )
 }

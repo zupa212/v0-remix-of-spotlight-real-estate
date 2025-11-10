@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { createClient } from "@/lib/supabase/client"
 import { Save, X } from "lucide-react"
+import { ImageUpload } from "@/components/image-upload"
 
 interface PropertyFormProps {
   initialData?: any
@@ -502,15 +503,25 @@ export function PropertyForm({ initialData, isEdit = false }: PropertyFormProps)
           <CardTitle>Media</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="mainImageUrl">Main Image URL</Label>
-            <Input
-              id="mainImageUrl"
-              value={formData.mainImageUrl}
-              onChange={(e) => setFormData({ ...formData, mainImageUrl: e.target.value })}
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
+          <ImageUpload
+            value={formData.mainImageUrl}
+            onChange={(url) => setFormData({ ...formData, mainImageUrl: url })}
+            bucket="property-images"
+            entityId={isEdit && initialData?.id ? initialData.id : "temp"}
+            label="Main Image"
+            aspectRatio="wide"
+          />
+          {!formData.mainImageUrl && (
+            <div className="space-y-2">
+              <Label htmlFor="mainImageUrl">Or enter image URL</Label>
+              <Input
+                id="mainImageUrl"
+                value={formData.mainImageUrl}
+                onChange={(e) => setFormData({ ...formData, mainImageUrl: e.target.value })}
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="tour3dUrl">3D Tour URL</Label>
             <Input

@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBackButton } from "@/components/admin-back-button"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -15,11 +18,17 @@ export default function AdminSettingsPage() {
   const [regionWeight, setRegionWeight] = useState([20])
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Configure system settings and integrations</p>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Settings" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Settings</h1>
+            <p className="text-slate-600">Configure system settings and integrations</p>
+          </div>
 
       <Tabs defaultValue="scoring" className="space-y-6">
         <TabsList>
@@ -139,6 +148,8 @@ export default function AdminSettingsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+        </div>
+      </div>
     </div>
   )
 }

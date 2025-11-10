@@ -3,18 +3,17 @@ import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminBackButton } from "@/components/admin-back-button"
 import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
-import { PropertyForm } from "@/components/property-form"
+import { ViewingForm } from "@/components/viewing-form"
 
-// Force dynamic rendering
 export const dynamic = "force-dynamic"
 
-type PropertyEditParams = {
+type ViewingEditParams = {
   params: Promise<{
     id: string
   }>
 }
 
-export default async function EditPropertyPage({ params }: PropertyEditParams) {
+export default async function EditViewingPage({ params }: ViewingEditParams) {
   const { id } = await params
   const supabase = await createClient()
 
@@ -33,14 +32,14 @@ export default async function EditPropertyPage({ params }: PropertyEditParams) {
     notFound()
   }
 
-  // Fetch property data
-  const { data: property, error } = await supabase
-    .from("properties")
+  // Fetch viewing data
+  const { data: viewing, error } = await supabase
+    .from("viewings")
     .select("*")
     .eq("id", id)
     .single()
 
-  if (error || !property) {
+  if (error || !viewing) {
     notFound()
   }
 
@@ -51,18 +50,18 @@ export default async function EditPropertyPage({ params }: PropertyEditParams) {
       <div className="lg:pl-64">
         <div className="p-8">
           <AdminBreadcrumbs items={[
-            { label: "Properties", href: "/admin/properties" },
-            { label: property.title_en || "Property", href: `/properties/${property.id}` },
+            { label: "Viewings", href: "/admin/viewings" },
+            { label: viewing.id.substring(0, 8), href: `/admin/viewings/${viewing.id}` },
             { label: "Edit" }
           ]} />
-          <AdminBackButton href="/admin/properties" label="Back to Properties" />
+          <AdminBackButton href={`/admin/viewings/${viewing.id}`} label="Back to Viewing" />
           
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Edit Property</h1>
-            <p className="text-slate-600">Update property details</p>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Edit Viewing</h1>
+            <p className="text-slate-600">Update viewing details</p>
           </div>
 
-          <PropertyForm initialData={property} isEdit={true} />
+          <ViewingForm initialData={viewing} isEdit={true} />
         </div>
       </div>
     </div>
