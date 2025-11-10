@@ -94,7 +94,7 @@ export default function RegionDetailPage({ params }: { params: { slug: string } 
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent" />
 
         <div className="relative z-10 w-full pb-16">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="w-full px-6 lg:px-8">
             <Badge className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30">
               Region Guide
             </Badge>

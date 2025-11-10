@@ -61,7 +61,7 @@ export function AnimatedServices() {
 
   return (
     <section ref={ref} className="py-24 bg-[#FFFFFF] overflow-hidden">
-      <div className="container mx-auto px-6">
+      <div className="w-full px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}

@@ -51,7 +51,9 @@ export function AgentForm({ initialData, isEdit = false }: AgentFormProps) {
       const fileName = `agent-${Date.now()}.${fileExt}`
       const filePath = `agents/${fileName}`
 
-      const { error: uploadError } = await supabase.storage.from("avatars").upload(filePath, file, {
+      // Note: This old upload code is kept for backward compatibility
+      // The ImageUpload component should be used instead
+      const { error: uploadError } = await supabase.storage.from("agent-avatars").upload(filePath, file, {
         upsert: false,
       })
 
@@ -59,7 +61,7 @@ export function AgentForm({ initialData, isEdit = false }: AgentFormProps) {
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(filePath)
+      } = supabase.storage.from("agent-avatars").getPublicUrl(filePath)
 
       setFormData({ ...formData, avatarUrl: publicUrl })
     } catch (err) {

@@ -292,9 +292,9 @@ export default function PropertiesPageClient() {
     <div className="min-h-screen bg-slate-50">
       <SiteHeader />
 
-      {/* Page Header */}
+      {/* Page Header - Edge to Edge */}
       <section className="pt-32 pb-12 bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-sky-100 text-sky-700 hover:bg-sky-200 border-0">Property Listings</Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Find Your Perfect Property</h1>
@@ -305,9 +305,9 @@ export default function PropertiesPageClient() {
         </div>
       </section>
 
-      {/* Filters and Results */}
+      {/* Filters and Results - Edge to Edge */}
       <section className="py-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <PropertyFilters
             onFilterChange={handleFilterChange}
             initialFilters={{

@@ -19,7 +19,7 @@ export function SiteHeader() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E0E0E0]">
-      <nav className="mx-auto max-w-7xl px-6 lg:px-8">
+      <nav className="w-full px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo - Left Side */}
           <Link href="/" className="flex items-center gap-3 group">

@@ -332,7 +332,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
       <SiteHeader />
 
       <div className="pt-24 pb-16">
-        <div className="mx-auto max-w-7xl container-spacing">
+        <div className="w-full container-spacing">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-start justify-between gap-4 mb-4">

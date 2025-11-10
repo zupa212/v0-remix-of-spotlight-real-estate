@@ -90,9 +90,9 @@ export function VistahavenHero() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
       </div>
 
-      {/* Content Container */}
+      {/* Content Container - Edge to Edge */}
       <div className="relative z-10 w-full">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+        <div className="w-full px-4 sm:px-6 lg:px-8 pt-32 pb-20">
           {/* White Container with Padding and Border - Rounded on Mobile */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl md:rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">

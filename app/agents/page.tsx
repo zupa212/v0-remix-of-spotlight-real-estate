@@ -89,7 +89,7 @@ export default function AgentsPage() {
 
       {/* Page Header */}
       <section className="pt-32 pb-12 bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <div className="max-w-3xl">
             <Badge className="mb-4 bg-sky-100 text-sky-700 hover:bg-sky-200 border-0">Our Team</Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Meet Our Expert Agents</h1>
@@ -103,7 +103,7 @@ export default function AgentsPage() {
 
       {/* Featured Agents */}
       <section className="py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-8">Featured Agents</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {agents
@@ -177,7 +177,7 @@ export default function AgentsPage() {
 
       {/* All Agents */}
       <section className="py-16 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-8">All Agents</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {agents

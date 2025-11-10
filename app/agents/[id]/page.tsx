@@ -72,7 +72,7 @@ export default function AgentProfilePage({ params }: { params: { id: string } })
       <SiteHeader />
 
       <div className="pt-24 pb-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           {/* Agent Header */}
           <div className="mb-12">
             <div className="flex flex-col md:flex-row gap-8 items-start">
