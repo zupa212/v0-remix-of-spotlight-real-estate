@@ -1,7 +1,9 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from "react"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminBackButton } from "@/components/admin-back-button"
 import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
@@ -23,7 +25,7 @@ export default function AdminMarketingPage() {
   const [mappings, setMappings] = useState<SyndicationMapping[]>([])
   const [loading, setLoading] = useState(true)
 
-  const supabase = createBrowserClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchMappings()

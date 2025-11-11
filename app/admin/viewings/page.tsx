@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { AdminSidebar } from "@/components/admin-sidebar"
@@ -305,8 +307,8 @@ export default function AdminViewingsPage() {
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       {viewing.properties && (
-                        <Link href={`/properties/${viewing.properties.property_code}`}>
-                          <Button variant="ghost" size="sm">
+                        <Link href={`/admin/properties/${viewing.properties.id}`}>
+                          <Button variant="ghost" size="sm" title="View Property">
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>

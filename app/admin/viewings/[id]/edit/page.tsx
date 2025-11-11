@@ -11,10 +11,14 @@ type ViewingEditParams = {
   params: Promise<{
     id: string
   }>
+  searchParams: Promise<{
+    status?: string
+  }>
 }
 
-export default async function EditViewingPage({ params }: ViewingEditParams) {
+export default async function EditViewingPage({ params, searchParams }: ViewingEditParams) {
   const { id } = await params
+  const { status } = await searchParams
   const supabase = await createClient()
 
   const {
@@ -41,6 +45,29 @@ export default async function EditViewingPage({ params }: ViewingEditParams) {
 
   if (error || !viewing) {
     notFound()
+  }
+
+  // If status query param is provided, update the viewing status
+  if (status && status !== viewing.status) {
+    const validStatuses = ["scheduled", "confirmed", "completed", "cancelled", "no_show"]
+    if (validStatuses.includes(status)) {
+      await supabase
+        .from("viewings")
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq("id", id)
+      
+      // Refresh viewing data
+      const { data: updatedViewing } = await supabase
+        .from("viewings")
+        .select("*")
+        .eq("id", id)
+        .single()
+      
+      if (updatedViewing) {
+        // Redirect to detail page to show updated status
+        redirect(`/admin/viewings/${id}`)
+      }
+    }
   }
 
   return (

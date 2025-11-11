@@ -1,7 +1,12 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminBreadcrumbs } from '@/components/admin-breadcrumbs'
+import { AdminBackButton } from '@/components/admin-back-button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -130,21 +135,32 @@ export default function SavedSearchesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-slate-50">
+        <AdminSidebar />
+        <div className="lg:pl-64">
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Saved Searches & Alerts</h1>
-          <p className="text-muted-foreground">Monitor user search preferences and notifications</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Saved Searches" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Saved Searches & Alerts</h1>
+              <p className="text-slate-600">Monitor user search preferences and notifications</p>
+            </div>
+          </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
@@ -273,8 +289,12 @@ export default function SavedSearchesPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Button size="sm" variant="outline">View Matches</Button>
-                  <Button size="sm" variant="ghost">Edit</Button>
+                  <Button size="sm" variant="outline" asChild>
+                    <Link href={`/admin/saved-searches/${search.id}/matches`}>View Matches</Link>
+                  </Button>
+                  <Button size="sm" variant="ghost" asChild>
+                    <Link href={`/admin/saved-searches/${search.id}/edit`}>Edit</Link>
+                  </Button>
                 </div>
               </div>
             )
@@ -288,6 +308,8 @@ export default function SavedSearchesPage() {
           )}
         </div>
       </Card>
+        </div>
+      </div>
     </div>
   )
 }

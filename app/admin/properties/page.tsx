@@ -137,14 +137,6 @@ export default async function AdminPropertiesPage() {
             </Button>
           </div>
 
-          {/* Search and Filters */}
-          <div className="mb-6 flex gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-              <Input placeholder="Search properties..." className="pl-10" />
-            </div>
-          </div>
-
           {propertiesError && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               Unable to load the latest property data. Showing cached results if available.

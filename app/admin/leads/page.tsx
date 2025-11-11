@@ -1,8 +1,10 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -48,7 +50,7 @@ export default function AdminLeadsPage() {
   const [agents, setAgents] = useState<Array<{ id: string; name_en: string }>>([])
   const router = useRouter()
 
-  const supabase = createBrowserClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchAgents()

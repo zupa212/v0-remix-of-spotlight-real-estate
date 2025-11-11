@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import React from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { PropertyDeleteDialog } from "@/components/property-delete-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Trash2, Eye, Edit, MoreVertical } from "lucide-react"
+import { Trash2, Eye, Edit, MoreVertical, Search } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,9 +41,27 @@ interface PropertiesTableClientProps {
 
 export function PropertiesTableClient({ properties: initialProperties }: PropertiesTableClientProps) {
   const [properties, setProperties] = useState(initialProperties)
+  const [filteredProperties, setFilteredProperties] = useState(initialProperties)
+  const [searchTerm, setSearchTerm] = useState("")
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [deleteDialog, setDeleteDialog] = useState<{ id: string; title: string } | null>(null)
   const [updating, setUpdating] = useState<Set<string>>(new Set())
+
+  // Filter properties based on search term
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredProperties(properties)
+      return
+    }
+
+    const filtered = properties.filter(
+      (property) =>
+        property.titleEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.propertyCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.location.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    setFilteredProperties(filtered)
+  }, [searchTerm, properties])
 
   const handleTogglePublished = async (propertyId: string, currentPublished: boolean) => {
     setUpdating((prev) => new Set(prev).add(propertyId))
@@ -133,6 +153,19 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
 
   return (
     <>
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+          <Input
+            placeholder="Search properties..."
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* Bulk Actions */}
       {selectedIds.size > 0 && (
         <div className="mb-4 flex items-center gap-4 p-4 bg-slate-100 rounded-lg">
@@ -179,8 +212,8 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {properties.map((property) => (
+        <TableBody>
+          {filteredProperties.map((property) => (
                 <TableRow key={property.id}>
                   <TableCell>
                     <Checkbox checked={selectedIds.has(property.id)} onCheckedChange={() => toggleSelect(property.id)} />
@@ -224,9 +257,15 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/properties/${property.id}`}>
+                          <Link href={`/admin/properties/${property.id}`}>
                             <Eye className="mr-2 h-4 w-4" />
-                            View
+                            View Details
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/properties/${property.id}`} target="_blank">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Public
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>

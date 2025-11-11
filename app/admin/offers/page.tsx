@@ -1,14 +1,20 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminBreadcrumbs } from '@/components/admin-breadcrumbs'
+import { AdminBackButton } from '@/components/admin-back-button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FileText, DollarSign, TrendingUp, TrendingDown, Clock, CheckCircle2 } from 'lucide-react'
+import { FileText, DollarSign, TrendingUp, TrendingDown, Clock, CheckCircle2, Plus } from 'lucide-react'
 import { format } from 'date-fns'
+import Link from 'next/link'
 
 interface Offer {
   id: string
@@ -109,22 +115,38 @@ export default function OffersPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-slate-50">
+        <AdminSidebar />
+        <div className="lg:pl-64">
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Offers Management</h1>
-          <p className="text-muted-foreground">Track and manage property offers</p>
-        </div>
-        <Button>+ New Offer</Button>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Offers" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Offers Management</h1>
+              <p className="text-slate-600">Track and manage property offers</p>
+            </div>
+            <Button asChild>
+              <Link href="/admin/offers/new">
+                <Plus className="h-4 w-4 mr-2" />
+                New Offer
+              </Link>
+            </Button>
+          </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
@@ -289,8 +311,19 @@ export default function OffersPage() {
                         </Button>
                       </>
                     )}
-                    <Button size="sm" variant="ghost">View History</Button>
-                    <Button size="sm" variant="ghost">Documents</Button>
+                    <Button size="sm" variant="ghost" asChild>
+                      <Link href={`/admin/offers/${offer.id}`}>View Details</Link>
+                    </Button>
+                    {offer.property && (
+                      <Button size="sm" variant="ghost" asChild>
+                        <Link href={`/admin/properties/${offer.property.id}`}>View Property</Link>
+                      </Button>
+                    )}
+                    {offer.lead && (
+                      <Button size="sm" variant="ghost" asChild>
+                        <Link href={`/admin/leads/${offer.lead.id}`}>View Lead</Link>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -303,10 +336,17 @@ export default function OffersPage() {
             <div className="text-center text-muted-foreground">
               <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No offers found</p>
-              <Button className="mt-4">Create First Offer</Button>
+              <Button className="mt-4" asChild>
+                <Link href="/admin/offers/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create First Offer
+                </Link>
+              </Button>
             </div>
           </Card>
         )}
+      </div>
+        </div>
       </div>
     </div>
   )

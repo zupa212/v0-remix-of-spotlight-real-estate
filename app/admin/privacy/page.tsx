@@ -1,7 +1,9 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from "react"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminBackButton } from "@/components/admin-back-button"
 import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
@@ -17,7 +19,7 @@ export default function AdminPrivacyPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
 
-  const supabase = createBrowserClient()
+  const supabase = createClient()
 
   async function handleExportData() {
     if (!leadId) {
@@ -271,7 +273,9 @@ export default function AdminPrivacyPage() {
                 <li>Associated lead information</li>
               </ul>
               <div className="mt-4">
-                <Button variant="outline">View Consent Records</Button>
+                <Button variant="outline" asChild>
+                  <Link href="/admin/privacy/consents">View Consent Records</Link>
+                </Button>
               </div>
             </CardContent>
           </Card>

@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -34,9 +36,25 @@ export default function AdminAgentsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
+    // Only create client on client-side
+    if (typeof window === 'undefined') return
+
+    const supabase = createClient()
+    
+    async function fetchAgents() {
+      const { data, error } = await supabase
+        .from('agents')
+        .select('*')
+        .order('display_order', { ascending: true })
+
+      if (!error && data) {
+        setAgents(data)
+      }
+      setLoading(false)
+    }
+
     fetchAgents()
 
     // Realtime subscription
@@ -52,26 +70,25 @@ export default function AdminAgentsPage() {
     }
   }, [])
 
-  async function fetchAgents() {
-    const { data, error } = await supabase
-      .from('agents')
-      .select('*')
-      .order('display_order', { ascending: true })
-
-    if (!error && data) {
-      setAgents(data)
-    }
-    setLoading(false)
-  }
-
   async function toggleFeatured(agentId: string, currentFeatured: boolean) {
+    if (typeof window === 'undefined') return
+    
+    const supabase = createClient()
     const { error } = await supabase
       .from('agents')
       .update({ featured: !currentFeatured })
       .eq('id', agentId)
 
     if (!error) {
-      fetchAgents()
+      // Refetch agents
+      const { data, error: fetchError } = await supabase
+        .from('agents')
+        .select('*')
+        .order('display_order', { ascending: true })
+
+      if (!fetchError && data) {
+        setAgents(data)
+      }
     }
   }
 
@@ -82,10 +99,21 @@ export default function AdminAgentsPage() {
   }
 
   async function confirmDelete(agentId: string) {
+    if (typeof window === 'undefined') return
+    
+    const supabase = createClient()
     const { error } = await supabase.from('agents').delete().eq('id', agentId)
 
     if (!error) {
-      fetchAgents()
+      // Refetch agents
+      const { data, error: fetchError } = await supabase
+        .from('agents')
+        .select('*')
+        .order('display_order', { ascending: true })
+
+      if (!fetchError && data) {
+        setAgents(data)
+      }
       setDeleteDialog(null)
     } else {
       alert('Failed to delete agent. Please try again.')

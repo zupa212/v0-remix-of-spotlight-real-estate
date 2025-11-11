@@ -1,8 +1,10 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -54,7 +56,7 @@ export default function LeadDetailPage() {
   const [note, setNote] = useState("")
   const [updatingStatus, setUpdatingStatus] = useState(false)
 
-  const supabase = createBrowserClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchLeadDetails()
