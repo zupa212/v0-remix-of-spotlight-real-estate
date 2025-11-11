@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { AdminSidebar } from '@/components/admin-sidebar'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -98,16 +99,27 @@ export default function AdminAgentsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-slate-50">
+        <AdminSidebar />
+        <div className="lg:pl-64">
+          <div className="p-8">
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 space-y-6">
-      {/* Header with Back Button */}
-      <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          {/* Header with Back Button */}
+          <div className="flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
@@ -309,6 +321,8 @@ export default function AdminAgentsPage() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   )
 }

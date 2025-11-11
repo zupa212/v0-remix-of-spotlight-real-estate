@@ -97,7 +97,7 @@ export default async function AdminDashboardPage() {
           email,
           status,
           created_at,
-          property:property_id ( title_en, property_code )
+          property:properties!property_id ( title_en, property_code )
         `,
       )
       .order("created_at", { ascending: false })
@@ -119,9 +119,9 @@ export default async function AdminDashboardPage() {
           scheduled_date,
           status,
           client_name,
-          properties:property_id ( title_en, property_code ),
-          leads:lead_id ( full_name, email ),
-          agents:agent_id ( name_en, name_gr )
+          property:properties!property_id ( title_en, property_code ),
+          lead:leads!lead_id ( full_name, email ),
+          agent:agents!agent_id ( name_en, name_gr )
         `,
       )
       .gte("scheduled_date", nowIso)
@@ -219,10 +219,10 @@ export default async function AdminDashboardPage() {
     const scheduledDate = viewing.scheduled_date ? new Date(viewing.scheduled_date) : null
     return {
       id: viewing.id,
-      property: viewing.properties?.title_en ?? "Property",
-      client: viewing.leads?.full_name ?? viewing.client_name ?? "Prospective client",
+      property: viewing.property?.title_en ?? "Property",
+      client: viewing.lead?.full_name ?? viewing.client_name ?? "Prospective client",
       date: scheduledDate ? format(scheduledDate, "PPpp") : "To be confirmed",
-      agent: viewing.agents?.name_en ?? "Unassigned",
+      agent: viewing.agent?.name_en ?? "Unassigned",
       status: viewing.status ?? "scheduled",
     }
   })
