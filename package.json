@@ -26,7 +26,11 @@
     "db:create:all": "node scripts/auto-create-tables.js create",
     "db:verify": "node scripts/auto-create-tables.js verify",
     "db:sample": "node scripts/create-sample-data.js",
-    "db:analyze": "node scripts/analyze-database.js"
+    "db:analyze": "node scripts/analyze-database.js",
+    "test:crud": "node scripts/test-crud-operations.js",
+    "test:storage": "node scripts/test-storage-operations.js",
+    "test:rls": "node scripts/verify-rls-status.js",
+    "test:all": "npm run test:crud && npm run test:storage && npm run test:rls"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
