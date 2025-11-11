@@ -1,6 +1,8 @@
 import { redirect, notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin-sidebar"
+import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
+import { AdminBackButton } from "@/components/admin-back-button"
 import { AgentForm } from "@/components/agent-form"
 
 export const dynamic = "force-dynamic"
@@ -43,6 +45,13 @@ export default async function EditAgentPage({ params }: AgentEditParams) {
 
       <div className="lg:pl-64">
         <div className="p-8">
+          <AdminBreadcrumbs items={[
+            { label: "Agents", href: "/admin/agents" },
+            { label: agent.name_en || "Agent", href: `/admin/agents/${agent.id}` },
+            { label: "Edit" }
+          ]} />
+          <AdminBackButton href="/admin/agents" label="Back to Agents" />
+          
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Edit Agent</h1>
             <p className="text-slate-600">Update agent details</p>
