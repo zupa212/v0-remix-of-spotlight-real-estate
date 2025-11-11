@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminBackButton } from "@/components/admin-back-button"
 import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
@@ -38,7 +38,7 @@ export default function AdminAuditPage() {
     if (typeof window === "undefined") return
 
     try {
-      const supabase = createBrowserClient()
+      const supabase = createClient()
       fetchAuditLogs(supabase)
     } catch (error) {
       console.error("Failed to initialize Supabase client:", error)
@@ -46,7 +46,7 @@ export default function AdminAuditPage() {
     }
   }, [])
 
-  async function fetchAuditLogs(supabase: ReturnType<typeof createBrowserClient>) {
+  async function fetchAuditLogs(supabase: ReturnType<typeof createClient>) {
     const { data, error } = await supabase
       .from("audit_logs")
       .select(`
@@ -65,79 +65,86 @@ export default function AdminAuditPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-3xl font-bold">Audit Logs</h1>
-        <p className="text-muted-foreground">Track all system changes and user actions</p>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      
+      <div className="lg:pl-64">
+        <div className="p-8 space-y-6">
+          <AdminBreadcrumbs items={[{ label: "Audit Logs" }]} />
+          <AdminBackButton href="/admin" label="Back to Dashboard" />
+          
+          <div>
+            <h1 className="font-heading text-3xl font-bold">Audit Logs</h1>
+            <p className="text-muted-foreground">Track all system changes and user actions</p>
+          </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Recent Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <p className="text-sm text-muted-foreground">Loading audit logs...</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Timestamp</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Entity Type</TableHead>
-                  <TableHead>Entity ID</TableHead>
-                  <TableHead>Details</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {logs.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
-                      No audit logs found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  logs.map((log) => (
-                    <TableRow key={log.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          {new Date(log.created_at).toLocaleString()}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {log.profiles ? (
-                          <div className="flex items-center gap-2 text-sm">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <div>
-                              <div className="font-medium">{log.profiles.name}</div>
-                              <div className="text-muted-foreground">{log.profiles.email}</div>
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">System</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={actionColors[log.action as keyof typeof actionColors]}>{log.action}</Badge>
-                      </TableCell>
-                      <TableCell className="capitalize">{log.entity_type}</TableCell>
-                      <TableCell className="font-mono text-xs">{log.entity_id.slice(0, 8)}...</TableCell>
-                      <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
-                        {log.diff_json?.reason || "Standard operation"}
-                      </TableCell>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <p className="text-sm text-muted-foreground">Loading audit logs...</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Timestamp</TableHead>
+                      <TableHead>User</TableHead>
+                      <TableHead>Action</TableHead>
+                      <TableHead>Entity Type</TableHead>
+                      <TableHead>Entity ID</TableHead>
+                      <TableHead>Details</TableHead>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {logs.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8">
+                          No audit logs found
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      logs.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-2 text-sm">
+                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              {new Date(log.created_at).toLocaleString()}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {log.profiles ? (
+                              <div className="flex items-center gap-2 text-sm">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                                <div>
+                                  <div className="font-medium">{log.profiles.name}</div>
+                                  <div className="text-muted-foreground">{log.profiles.email}</div>
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground">System</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={actionColors[log.action as keyof typeof actionColors]}>{log.action}</Badge>
+                          </TableCell>
+                          <TableCell className="capitalize">{log.entity_type}</TableCell>
+                          <TableCell className="font-mono text-xs">{log.entity_id.slice(0, 8)}...</TableCell>
+                          <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
+                            {log.diff_json?.reason || "Standard operation"}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
