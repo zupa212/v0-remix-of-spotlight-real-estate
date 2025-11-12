@@ -56,7 +56,7 @@ export function SiteHeader() {
           <div className="hidden lg:flex lg:items-center">
             <Button
               asChild
-              className="bg-[#333333] hover:bg-[#1A1A1A] text-white rounded-lg px-6 py-2.5 text-sm font-medium h-auto flex items-center gap-2"
+              className="bg-[#1a1a1a] hover:bg-[#000000] text-white rounded-full px-6 py-2.5 text-sm font-medium h-auto flex items-center gap-2 transition-colors"
             >
               <Link href="/contact">
                 <span className="relative flex items-center gap-2">
@@ -97,7 +97,7 @@ export function SiteHeader() {
               ))}
               <Button
                 asChild
-                className="bg-[#333333] hover:bg-[#1A1A1A] text-white rounded-lg px-6 py-2.5 text-sm font-medium h-auto flex items-center gap-2 w-full justify-center"
+                className="bg-[#1a1a1a] hover:bg-[#000000] text-white rounded-full px-6 py-2.5 text-sm font-medium h-auto flex items-center gap-2 w-full justify-center transition-colors"
               >
                 <Link href="/contact">
                   <span className="relative flex items-center gap-2">
