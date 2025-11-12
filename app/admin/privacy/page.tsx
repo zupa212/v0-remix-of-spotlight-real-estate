@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useState } from "react"
+import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminBackButton } from "@/components/admin-back-button"
