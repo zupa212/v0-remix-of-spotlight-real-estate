@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ArrowUpRight } from "lucide-react"
 import { useState } from "react"
-import Image from "next/image"
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -21,17 +20,19 @@ export function SiteHeader() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E0E0E0]">
       <nav className="w-full px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          {/* Logo - Left Side */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-10 w-32">
-              <Image
-                src="/IMG_5457.jpg"
-                alt="spot-less logo"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
+          {/* Logo - Left Side - Text Logo */}
+          <Link href="/" className="flex items-center group transition-opacity hover:opacity-80">
+            <span 
+              className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] tracking-tight"
+              style={{ 
+                fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                fontWeight: 700,
+                letterSpacing: '-0.03em',
+                lineHeight: '1.1',
+              }}
+            >
+              spott<span className="text-[#666666] font-normal">.</span>less
+            </span>
           </Link>
 
           {/* Desktop Navigation - Center */}
@@ -40,8 +41,11 @@ export function SiteHeader() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-[#666666] hover:text-[#333333] transition-colors"
-                style={{ fontFamily: "var(--font-sans)" }}
+                className="text-sm font-medium text-[#666666] hover:text-[#1a1a1a] transition-colors relative"
+                style={{ 
+                  fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif",
+                  fontWeight: 500,
+                }}
               >
                 {item.name}
               </Link>
@@ -81,7 +85,11 @@ export function SiteHeader() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-base font-medium text-[#333333] hover:text-[#E50000]"
+                  className="text-base font-medium text-[#666666] hover:text-[#1a1a1a] transition-colors"
+                  style={{ 
+                    fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif",
+                    fontWeight: 500,
+                  }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.name}
