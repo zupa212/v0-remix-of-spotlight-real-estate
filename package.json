@@ -32,6 +32,8 @@
     "test:rls": "node scripts/verify-rls-status.js",
     "test:all": "npm run test:crud && npm run test:storage && npm run test:rls",
     "storage:create": "node scripts/create-storage-buckets.js",
+    "storage:fix-rls": "node scripts/apply-storage-rls-fix.js",
+    "storage:fix-rls:show": "node scripts/apply-storage-rls-fix-simple.js",
     "admin:create": "node scripts/create-admin-user.js"
   },
   "dependencies": {
