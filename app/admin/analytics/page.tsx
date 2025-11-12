@@ -66,7 +66,7 @@ export default function AdminAnalyticsPage() {
       // Fetch top properties by clicks
       const { data: topPropertiesData } = await supabase
         .from("analytics_clicks")
-        .select("property_id, properties(title_en)")
+        .select("property_id, properties:properties!property_id(title_en)")
         .gte("created_at", startDate)
         .not("property_id", "is", null)
 
@@ -90,7 +90,7 @@ export default function AdminAnalyticsPage() {
       // Fetch top agents by leads
       const { data: agentsData } = await supabase
         .from("leads")
-        .select("agent_id, agents(name_en)")
+        .select("agent_id, agents:agents!agent_id(name_en)")
         .gte("created_at", startDate)
         .not("agent_id", "is", null)
 

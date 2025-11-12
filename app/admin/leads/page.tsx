@@ -73,8 +73,8 @@ export default function AdminLeadsPage() {
       .from("leads")
       .select(`
         *,
-        properties(title, property_code),
-        agents(name)
+        properties:properties!property_id(title_en, property_code),
+        agents:agents!agent_id(name_en)
       `)
       .order("created_at", { ascending: false })
 
