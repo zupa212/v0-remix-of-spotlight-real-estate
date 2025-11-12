@@ -31,7 +31,8 @@
     "test:storage": "node scripts/test-storage-operations.js",
     "test:rls": "node scripts/verify-rls-status.js",
     "test:all": "npm run test:crud && npm run test:storage && npm run test:rls",
-    "storage:create": "node scripts/create-storage-buckets.js"
+    "storage:create": "node scripts/create-storage-buckets.js",
+    "admin:create": "node scripts/create-admin-user.js"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
