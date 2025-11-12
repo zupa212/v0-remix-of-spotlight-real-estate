@@ -24,6 +24,7 @@ export function VistahavenHero() {
   useEffect(() => {
     // Fetch featured agents
     const fetchAgents = async () => {
+      if (typeof window === 'undefined') return
       const supabase = createClient()
       const { data } = await supabase
         .from("agents")
@@ -40,6 +41,7 @@ export function VistahavenHero() {
 
     // Fetch stats from properties
     const fetchStats = async () => {
+      if (typeof window === 'undefined') return
       const supabase = createClient()
       const [propertiesResult, leadsResult] = await Promise.all([
         supabase.from("properties").select("id", { count: "exact", head: true }),
@@ -69,155 +71,229 @@ export function VistahavenHero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <motion.div
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className="absolute inset-0"
-        >
-          <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
-            alt="Luxury modern home at dusk"
-            fill
-            className="object-cover"
-            priority
-          />
-        </motion.div>
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
-      </div>
+    <section className="relative w-full overflow-hidden bg-white">
+      {/* White Background - Clean and Simple */}
+      <div className="absolute inset-0 w-full bg-white" />
 
-      {/* Content Container - Edge to Edge */}
+      {/* Content Container - Edge to Edge with Rectangular Layout */}
       <div className="relative z-10 w-full">
-        <div className="w-full px-4 sm:px-6 lg:px-8 pt-32 pb-20">
-          {/* White Container with Padding and Border - Rounded on Mobile */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-3xl md:rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 border border-white/30 shadow-xl relative">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              {/* Left Side - Main Content */}
-              <div className="space-y-8">
-                {/* Main Headline - Each word on new line */}
-                <motion.h1
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20">
+          
+          {/* Main Content Card - Rectangular with Image Background */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            className="relative rounded-2xl sm:rounded-3xl md:rounded-[2rem] p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14 border border-gray-100 shadow-2xl overflow-hidden aspect-[16/9] sm:aspect-[16/8] md:aspect-[16/7] lg:aspect-[16/6.5]"
+            style={{
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+            }}
+          >
+            {/* Background Image - Full Slide */}
+            <motion.div
+              initial={{ scale: 1.15, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 2, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+              className="absolute inset-0"
+            >
+              <Image
+                src="/home walppaper.png"
+                alt="Luxury modern home with mountain backdrop at dusk"
+                fill
+                className="object-cover object-center"
+                priority
+                quality={95}
+                sizes="100vw"
+              />
+            </motion.div>
+            
+            
+            {/* Content - Left Side with Professional Typography - Stretched Layout */}
+            <div className="relative z-10 h-full flex flex-col justify-center max-w-2xl lg:max-w-2xl xl:max-w-3xl">
+              <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7">
+                
+                {/* Main Headline - Professional Typography - Compact */}
+                <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#333333] leading-[1.1] mb-6"
-                  style={{ fontFamily: "var(--font-sans)", letterSpacing: "-0.02em" }}
+                  transition={{ duration: 0.9, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="space-y-0"
                 >
-                  FIND YOUR
-                  <br />
-                  PERFECT HOME
-                  <br />
-                  TODAY
-                </motion.h1>
+                  <h1 
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-bold text-white leading-[1.1] tracking-[-0.02em]"
+                    style={{ 
+                      fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                      fontWeight: 700,
+                      letterSpacing: '-0.02em',
+                      lineHeight: '1.1',
+                    }}
+                  >
+                    <span className="block">FIND YOUR</span>
+                    <span className="block mt-0 sm:mt-0.5">PERFECT HOME</span>
+                    <span className="block mt-0 sm:mt-0.5">TODAY</span>
+                  </h1>
+                </motion.div>
 
-                {/* Descriptive Text */}
+                {/* Descriptive Text - Professional Typography - Compact */}
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-lg md:text-xl text-[#666666] max-w-xl leading-relaxed"
-                  style={{ fontFamily: "var(--font-sans)" }}
+                  transition={{ delay: 0.7, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="text-base sm:text-lg md:text-xl lg:text-[1.25rem] text-white max-w-xl leading-[1.5] font-normal"
+                  style={{ 
+                    fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                    letterSpacing: '-0.005em',
+                    lineHeight: '1.5',
+                  }}
                 >
-                  We provide tailored real estate solutions, guiding you through every step with personalized experiences
-                  that meet your unique needs and aspirations.
+                  We provide tailored real estate solutions, guiding you through every step with personalized experiences that meet your unique needs and aspirations.
                 </motion.p>
 
-                {/* Explore Properties Button */}
+                {/* CTA Button - Professional White Button - Compact */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.8 }}
-                  className="pt-2"
+                  transition={{ delay: 0.9, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="pt-0.5"
                 >
-                  <Button
-                    asChild
-                    className="bg-white text-[#333333] hover:bg-white/95 border border-[#333333] rounded-lg px-6 py-3 text-base font-medium h-auto shadow-sm"
-                  >
-                    <a href="/properties" className="flex items-center gap-2">
-                      Explore Properties
-                      <ArrowUpRight className="h-5 w-5" />
-                    </a>
-                  </Button>
+                  <div className="relative group inline-block">
+                    <Button
+                      asChild
+                      className="relative bg-white hover:bg-white/95 text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-full px-7 sm:px-9 md:px-11 lg:px-12 py-3.5 sm:py-4 md:py-4.5 lg:py-5 text-base sm:text-lg md:text-xl font-semibold h-auto shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden z-10"
+                      style={{
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        letterSpacing: '-0.01em',
+                        fontWeight: 600,
+                      }}
+                    >
+                      <a href="/properties" className="flex items-center gap-2.5 sm:gap-3 relative z-10">
+                        <span>Explore Properties</span>
+                        <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-[#1a1a1a] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </a>
+                    </Button>
+                  </div>
                 </motion.div>
 
-                {/* Statistics */}
+                {/* Statistics - Professional Layout - Horizontal Compact */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.8 }}
-                  className="flex flex-wrap gap-8 md:gap-12 pt-6"
+                  transition={{ delay: 1.1, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="flex flex-wrap gap-8 sm:gap-10 md:gap-12 lg:gap-14 xl:gap-16 pt-3 sm:pt-4 md:pt-5"
                 >
-                  <div>
-                    <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                  {/* Stat 1 */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.3, duration: 0.6 }}
+                    className="space-y-0.5"
+                  >
+                    <div 
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1]"
+                      style={{ 
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        fontWeight: 700,
+                        letterSpacing: '-0.03em',
+                      }}
+                    >
                       {stats.projects}+
                     </div>
-                    <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                    <div 
+                      className="text-xs sm:text-sm md:text-base text-white font-medium leading-[1.2]"
+                      style={{ 
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        letterSpacing: '0em',
+                        fontWeight: 500,
+                      }}
+                    >
                       Projects Complete
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                  </motion.div>
+
+                  {/* Stat 2 */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.4, duration: 0.6 }}
+                    className="space-y-0.5"
+                  >
+                    <div 
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1]"
+                      style={{ 
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        fontWeight: 700,
+                        letterSpacing: '-0.03em',
+                      }}
+                    >
                       {stats.clients}+
                     </div>
-                    <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                    <div 
+                      className="text-xs sm:text-sm md:text-base text-white font-medium leading-[1.2]"
+                      style={{ 
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        letterSpacing: '0em',
+                        fontWeight: 500,
+                      }}
+                    >
                       Happy Clients
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-4xl md:text-5xl font-bold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+                  </motion.div>
+
+                  {/* Stat 3 */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.5, duration: 0.6 }}
+                    className="space-y-0.5"
+                  >
+                    <div 
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1]"
+                      style={{ 
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        fontWeight: 700,
+                        letterSpacing: '-0.03em',
+                      }}
+                    >
                       ${stats.value}M+
                     </div>
-                    <div className="text-sm md:text-base text-[#666666] font-medium" style={{ fontFamily: "var(--font-sans)" }}>
+                    <div 
+                      className="text-xs sm:text-sm md:text-base text-white font-medium leading-[1.2]"
+                      style={{ 
+                        fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+                        letterSpacing: '0em',
+                        fontWeight: 500,
+                      }}
+                    >
                       Project Value
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
               </div>
-
-              {/* Right Side - Image INSIDE the border with Zoom Out Animation */}
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="hidden lg:block relative aspect-[4/3] rounded-xl overflow-hidden"
-              >
-                <motion.div
-                  initial={{ scale: 1.3 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.8 }}
-                  className="absolute inset-0"
-                >
-                  <Image
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sshdNDePUXAdfJDHoAjd5d7RqCbUxQ.png"
-                    alt="Luxury modern home at dusk"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </motion.div>
-              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Featured Agents Card - OUTSIDE the border, Bottom Right */}
+        {/* Featured Agents Card - Bottom Right, Refined Design */}
         <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="absolute bottom-8 right-4 lg:bottom-12 lg:right-12 bg-white/95 backdrop-blur-sm rounded-xl p-4 md:p-5 shadow-xl border border-white/20 z-20"
+          initial={{ opacity: 0, x: 50, y: 20 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+          className="absolute bottom-[8%] sm:bottom-[7.5%] md:bottom-[7%] lg:bottom-[6.5%] right-4 sm:right-6 md:right-8 lg:right-12 xl:right-16 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-7 shadow-xl border border-gray-100 z-20 max-w-[280px] sm:max-w-[320px]"
+          style={{
+            boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+          }}
         >
-          <div className="flex items-center gap-3 md:gap-4">
-            {/* Agent Profile Pictures */}
-            <div className="flex -space-x-2 md:-space-x-3">
+          <div className="flex items-center gap-4 sm:gap-5">
+            {/* Agent Profile Pictures - Refined Stack */}
+            <div className="flex -space-x-3 sm:-space-x-4 flex-shrink-0">
               {agents.length > 0 ? (
                 agents.slice(0, 4).map((agent, index) => (
-                  <div
+                  <motion.div
                     key={agent.id}
-                    className="relative w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white overflow-hidden bg-[#F0F0F0]"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.4 + index * 0.1, duration: 0.5 }}
+                    className="relative w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
                     style={{ zIndex: 4 - index }}
                   >
                     {agent.avatar_url ? (
@@ -226,43 +302,72 @@ export function VistahavenHero() {
                         alt={agent.name_en}
                         fill
                         className="object-cover"
+                        sizes="(max-width: 640px) 44px, 56px"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#E0E0E0] text-[#666666] text-xs font-medium">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] text-[#666666] text-sm sm:text-base font-semibold">
                         {agent.name_en.charAt(0).toUpperCase()}
                       </div>
                     )}
-                  </div>
+                  </motion.div>
                 ))
               ) : (
                 // Fallback placeholder avatars
                 Array.from({ length: 4 }).map((_, index) => (
-                  <div
+                  <motion.div
                     key={index}
-                    className="relative w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white overflow-hidden bg-[#F0F0F0]"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.4 + index * 0.1, duration: 0.5 }}
+                    className="relative w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
                     style={{ zIndex: 4 - index }}
                   >
-                    <div className="w-full h-full flex items-center justify-center bg-[#E0E0E0] text-[#666666] text-xs font-medium">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] text-[#666666] text-sm sm:text-base font-semibold">
                       A
                     </div>
-                  </div>
+                  </motion.div>
                 ))
               )}
             </div>
 
-            {/* Text Content */}
-            <div>
-              <div className="text-xs md:text-sm font-semibold text-[#333333] mb-1" style={{ fontFamily: "var(--font-sans)" }}>
+            {/* Text Content - Perfect Typography */}
+            <div className="flex-1 min-w-0">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6, duration: 0.6 }}
+                className="text-sm sm:text-base md:text-lg font-bold text-[#1a1a1a] mb-2 leading-tight"
+                style={{ 
+                  fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+                  fontWeight: 700,
+                  letterSpacing: '-0.01em',
+                }}
+              >
                 {agents.length > 0 ? `${agents.length}+` : "10+"} Featured Agents
-              </div>
-              <div className="flex items-center gap-0.5">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.7, duration: 0.6 }}
+                className="flex items-center gap-1"
+              >
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-3 w-3 md:h-4 md:w-4 fill-[#FFD700] text-[#FFD700]" />
+                  <Star 
+                    key={i} 
+                    className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-[#FFD700] text-[#FFD700] drop-shadow-sm" 
+                  />
                 ))}
-                <span className="text-xs md:text-sm font-medium text-[#333333] ml-1" style={{ fontFamily: "var(--font-sans)" }}>
+                <span 
+                  className="text-xs sm:text-sm md:text-base font-semibold text-[#1a1a1a] ml-1.5"
+                  style={{ 
+                    fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+                    fontWeight: 600,
+                    letterSpacing: '0.01em',
+                  }}
+                >
                   5/5
                 </span>
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
@@ -270,4 +375,3 @@ export function VistahavenHero() {
     </section>
   )
 }
-

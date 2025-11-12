@@ -17,9 +17,9 @@ export default function HomePage() {
         <SiteHeader />
         <VistahavenHero />
         <AnimatedServices />
+        <AnimatedFeaturedProperties />
         <AnimatedAbout />
         <AnimatedTestimonials />
-        <AnimatedFeaturedProperties />
         <AnimatedTeam />
         <SiteFooter />
       </div>
