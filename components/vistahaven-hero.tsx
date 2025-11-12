@@ -77,14 +77,14 @@ export function VistahavenHero() {
 
       {/* Content Container - Edge to Edge with Rectangular Layout */}
       <div className="relative z-10 w-full">
-        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20">
+        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16 lg:pb-20">
           
           {/* Main Content Card - Rectangular with Image Background */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative rounded-2xl sm:rounded-3xl md:rounded-[2rem] p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14 border border-gray-100 shadow-2xl overflow-hidden aspect-[16/9] sm:aspect-[16/8] md:aspect-[16/7] lg:aspect-[16/6.5]"
+            className="relative rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 border border-gray-100 shadow-2xl overflow-hidden min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:aspect-[16/7] xl:aspect-[16/6.5]"
             style={{
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
             }}
@@ -109,8 +109,8 @@ export function VistahavenHero() {
             
             
             {/* Content - Left Side with Professional Typography - Stretched Layout */}
-            <div className="relative z-10 h-full flex flex-col justify-center max-w-2xl lg:max-w-2xl xl:max-w-3xl">
-              <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7">
+            <div className="relative z-10 h-full flex flex-col justify-center max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
+              <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7">
                 
                 {/* Main Headline - Professional Typography - Compact */}
                 <motion.div
@@ -120,7 +120,7 @@ export function VistahavenHero() {
                   className="space-y-0"
                 >
                   <h1 
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-bold text-white leading-[1.1] tracking-[-0.02em]"
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-[5.5rem] font-bold text-white leading-[1.1] tracking-[-0.02em] drop-shadow-lg"
                     style={{ 
                       fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                       fontWeight: 700,
@@ -129,8 +129,8 @@ export function VistahavenHero() {
                     }}
                   >
                     <span className="block">FIND YOUR</span>
-                    <span className="block mt-0 sm:mt-0.5">PERFECT HOME</span>
-                    <span className="block mt-0 sm:mt-0.5">TODAY</span>
+                    <span className="block mt-0.5 sm:mt-1">PERFECT HOME</span>
+                    <span className="block mt-0.5 sm:mt-1">TODAY</span>
                   </h1>
                 </motion.div>
 
@@ -139,7 +139,7 @@ export function VistahavenHero() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="text-base sm:text-lg md:text-xl lg:text-[1.25rem] text-white max-w-xl leading-[1.5] font-normal"
+                  className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-[1.25rem] text-white max-w-full sm:max-w-lg md:max-w-xl leading-[1.5] font-normal drop-shadow-md"
                   style={{ 
                     fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                     letterSpacing: '-0.005em',
@@ -154,21 +154,21 @@ export function VistahavenHero() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="pt-0.5"
+                  className="pt-1 sm:pt-2"
                 >
-                  <div className="relative group inline-block">
+                  <div className="relative group inline-block w-full sm:w-auto">
                     <Button
                       asChild
-                      className="relative bg-white hover:bg-white/95 text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-full px-7 sm:px-9 md:px-11 lg:px-12 py-3.5 sm:py-4 md:py-4.5 lg:py-5 text-base sm:text-lg md:text-xl font-semibold h-auto shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden z-10"
+                      className="relative bg-white hover:bg-white/95 text-[#1a1a1a] border-2 border-[#1a1a1a] rounded-full px-5 sm:px-7 md:px-9 lg:px-11 xl:px-12 py-2.5 sm:py-3 md:py-3.5 lg:py-4 xl:py-5 text-sm sm:text-base md:text-lg lg:text-xl font-semibold h-auto shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden z-10 w-full sm:w-auto justify-center"
                       style={{
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         letterSpacing: '-0.01em',
                         fontWeight: 600,
                       }}
                     >
-                      <a href="/properties" className="flex items-center gap-2.5 sm:gap-3 relative z-10">
+                      <a href="/properties" className="flex items-center gap-2 sm:gap-2.5 md:gap-3 relative z-10 justify-center">
                         <span>Explore Properties</span>
-                        <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-[#1a1a1a] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-[#1a1a1a] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </a>
                     </Button>
                   </div>
@@ -179,7 +179,7 @@ export function VistahavenHero() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.1, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="flex flex-wrap gap-8 sm:gap-10 md:gap-12 lg:gap-14 xl:gap-16 pt-3 sm:pt-4 md:pt-5"
+                  className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 pt-2 sm:pt-3 md:pt-4"
                 >
                   {/* Stat 1 */}
                   <motion.div
@@ -189,7 +189,7 @@ export function VistahavenHero() {
                     className="space-y-0.5"
                   >
                     <div 
-                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1]"
+                      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1] drop-shadow-md"
                       style={{ 
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         fontWeight: 700,
@@ -199,7 +199,7 @@ export function VistahavenHero() {
                       {stats.projects}+
                     </div>
                     <div 
-                      className="text-xs sm:text-sm md:text-base text-white font-medium leading-[1.2]"
+                      className="text-[10px] sm:text-xs md:text-sm lg:text-base text-white font-medium leading-[1.2] drop-shadow-sm"
                       style={{ 
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         letterSpacing: '0em',
@@ -218,7 +218,7 @@ export function VistahavenHero() {
                     className="space-y-0.5"
                   >
                     <div 
-                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1]"
+                      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1] drop-shadow-md"
                       style={{ 
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         fontWeight: 700,
@@ -228,7 +228,7 @@ export function VistahavenHero() {
                       {stats.clients}+
                     </div>
                     <div 
-                      className="text-xs sm:text-sm md:text-base text-white font-medium leading-[1.2]"
+                      className="text-[10px] sm:text-xs md:text-sm lg:text-base text-white font-medium leading-[1.2] drop-shadow-sm"
                       style={{ 
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         letterSpacing: '0em',
@@ -247,7 +247,7 @@ export function VistahavenHero() {
                     className="space-y-0.5"
                   >
                     <div 
-                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1]"
+                      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1] drop-shadow-md"
                       style={{ 
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         fontWeight: 700,
@@ -257,7 +257,7 @@ export function VistahavenHero() {
                       ${stats.value}M+
                     </div>
                     <div 
-                      className="text-xs sm:text-sm md:text-base text-white font-medium leading-[1.2]"
+                      className="text-[10px] sm:text-xs md:text-sm lg:text-base text-white font-medium leading-[1.2] drop-shadow-sm"
                       style={{ 
                         fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
                         letterSpacing: '0em',
@@ -273,19 +273,19 @@ export function VistahavenHero() {
           </motion.div>
         </div>
 
-        {/* Featured Agents Card - Bottom Right, Refined Design */}
+        {/* Featured Agents Card - Bottom Right, Refined Design - Mobile Responsive */}
         <motion.div
           initial={{ opacity: 0, x: 50, y: 20 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ delay: 1.2, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-          className="absolute bottom-[8%] sm:bottom-[7.5%] md:bottom-[7%] lg:bottom-[6.5%] right-4 sm:right-6 md:right-8 lg:right-12 xl:right-16 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-7 shadow-xl border border-gray-100 z-20 max-w-[280px] sm:max-w-[320px]"
+          className="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-[7%] xl:bottom-[6.5%] right-3 sm:right-4 md:right-6 lg:right-8 xl:right-12 2xl:right-16 bg-white rounded-xl sm:rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 shadow-xl border border-gray-100 z-20 w-[calc(100%-1.5rem)] sm:w-auto sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px]"
           style={{
             boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05)',
           }}
         >
-          <div className="flex items-center gap-4 sm:gap-5">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
             {/* Agent Profile Pictures - Refined Stack */}
-            <div className="flex -space-x-3 sm:-space-x-4 flex-shrink-0">
+            <div className="flex -space-x-2 sm:-space-x-3 md:-space-x-4 flex-shrink-0">
               {agents.length > 0 ? (
                 agents.slice(0, 4).map((agent, index) => (
                   <motion.div
@@ -293,7 +293,7 @@ export function VistahavenHero() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 1.4 + index * 0.1, duration: 0.5 }}
-                    className="relative w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
+                    className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full border-2 sm:border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
                     style={{ zIndex: 4 - index }}
                   >
                     {agent.avatar_url ? (
@@ -336,7 +336,7 @@ export function VistahavenHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.6, duration: 0.6 }}
-                className="text-sm sm:text-base md:text-lg font-bold text-[#1a1a1a] mb-2 leading-tight"
+                className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-[#1a1a1a] mb-1 sm:mb-1.5 md:mb-2 leading-tight"
                 style={{ 
                   fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                   fontWeight: 700,
@@ -349,16 +349,16 @@ export function VistahavenHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.7, duration: 0.6 }}
-                className="flex items-center gap-1"
+                className="flex items-center gap-0.5 sm:gap-1"
               >
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star 
                     key={i} 
-                    className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-[#FFD700] text-[#FFD700] drop-shadow-sm" 
+                    className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 lg:h-4 lg:w-4 fill-[#FFD700] text-[#FFD700] drop-shadow-sm" 
                   />
                 ))}
                 <span 
-                  className="text-xs sm:text-sm md:text-base font-semibold text-[#1a1a1a] ml-1.5"
+                  className="text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-[#1a1a1a] ml-1 sm:ml-1.5"
                   style={{ 
                     fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                     fontWeight: 600,

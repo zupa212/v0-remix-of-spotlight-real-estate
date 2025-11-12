@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ArrowUpRight } from "lucide-react"
 import { useState } from "react"
@@ -18,21 +19,18 @@ export function SiteHeader() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E0E0E0]">
-      <nav className="w-full px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
-          {/* Logo - Left Side - Text Logo */}
+      <nav className="w-full px-4 sm:px-5 md:px-6 lg:px-8">
+        <div className="flex h-16 sm:h-18 md:h-20 items-center justify-between">
+          {/* Logo - Left Side - Image Logo */}
           <Link href="/" className="flex items-center group transition-opacity hover:opacity-80">
-            <span 
-              className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] tracking-tight"
-              style={{ 
-                fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
-                fontWeight: 700,
-                letterSpacing: '-0.03em',
-                lineHeight: '1.1',
-              }}
-            >
-              spott<span className="text-[#666666] font-normal">.</span>less
-            </span>
+            <Image
+              src="/dJThP8wqUxol9ACI3BIfmtSAqE.png"
+              alt="spot-less logo"
+              width={120}
+              height={40}
+              className="h-6 sm:h-7 md:h-8 lg:h-9 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation - Center */}
@@ -71,21 +69,22 @@ export function SiteHeader() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-[#333333]"
+            className="lg:hidden p-2 -mr-2 text-[#333333] active:opacity-70 transition-opacity"
+            aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-[#E0E0E0]">
-            <div className="flex flex-col gap-4">
+          <div className="lg:hidden py-4 border-t border-[#E0E0E0] animate-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col gap-3 sm:gap-4">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-base font-medium text-[#666666] hover:text-[#1a1a1a] transition-colors"
+                  className="text-sm sm:text-base font-medium text-[#666666] hover:text-[#1a1a1a] transition-colors py-1.5 sm:py-2 active:text-[#1a1a1a]"
                   style={{ 
                     fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif",
                     fontWeight: 500,
@@ -97,13 +96,13 @@ export function SiteHeader() {
               ))}
               <Button
                 asChild
-                className="bg-[#1a1a1a] hover:bg-[#000000] text-white rounded-full px-6 py-2.5 text-sm font-medium h-auto flex items-center gap-2 w-full justify-center transition-colors"
+                className="bg-[#1a1a1a] hover:bg-[#000000] text-white rounded-full px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium h-auto flex items-center gap-2 w-full justify-center transition-colors mt-1 sm:mt-2"
               >
-                <Link href="/contact">
+                <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
                   <span className="relative flex items-center gap-2">
-                    <span className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-[#00FF00]" />
+                    <span className="absolute -left-1 -top-1 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-[#00FF00]" />
                     Contact Us Now
-                    <ArrowUpRight className="h-4 w-4" />
+                    <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </span>
                 </Link>
               </Button>
