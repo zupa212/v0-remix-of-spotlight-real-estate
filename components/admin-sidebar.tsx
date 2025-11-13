@@ -56,7 +56,7 @@ export function AdminSidebar() {
       {/* Mobile Menu Button */}
       <motion.button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white/80 backdrop-blur-md rounded-xl shadow-lg border border-white/20"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-background border border-border rounded-md shadow-lg"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
@@ -69,7 +69,7 @@ export function AdminSidebar() {
               exit={{ rotate: 90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <X className="h-6 w-6 text-slate-900" />
+              <X className="h-5 w-5 text-foreground" />
             </motion.div>
           ) : (
             <motion.div
@@ -79,7 +79,7 @@ export function AdminSidebar() {
               exit={{ rotate: -90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <Menu className="h-6 w-6 text-slate-900" />
+              <Menu className="h-5 w-5 text-foreground" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -92,9 +92,7 @@ export function AdminSidebar() {
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className={cn(
           "fixed inset-y-0 left-0 z-40 w-64",
-          "bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95",
-          "backdrop-blur-xl border-r border-white/10",
-          "shadow-2xl shadow-black/20",
+          "bg-background border-r border-border",
           "transform transition-transform duration-200 ease-in-out",
           "lg:translate-x-0",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
@@ -106,20 +104,16 @@ export function AdminSidebar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="flex items-center gap-3 px-6 py-6 border-b border-white/10"
+            className="flex items-center gap-3 px-6 py-6 border-b border-border"
           >
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
-              className="p-2 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-white/10"
-            >
-              <Building2 className="h-6 w-6 text-white" />
-            </motion.div>
+            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-primary-foreground" />
+            </div>
             <div>
-              <div className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+              <div className="text-base font-semibold text-foreground">
                 Spotlight
               </div>
-              <div className="text-xs text-slate-400 font-medium">Admin Panel</div>
+              <div className="text-xs text-muted-foreground">Admin Panel</div>
             </div>
           </motion.div>
 
@@ -138,31 +132,18 @@ export function AdminSidebar() {
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      "relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300",
-                      "group",
+                      "relative flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                      "group text-sm font-medium",
                       isActive
-                        ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white shadow-lg shadow-blue-500/10 border border-white/20"
-                        : "text-slate-300 hover:text-white hover:bg-white/5 border border-transparent",
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                     )}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/20"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={cn(
-                        "relative z-10",
-                        isActive ? "text-blue-400" : "text-slate-400 group-hover:text-blue-400",
-                      )}
-                    >
-                      <item.icon className="h-5 w-5" />
-                    </motion.div>
-                    <span className="relative z-10 font-medium">{item.name}</span>
+                    <item.icon className={cn(
+                      "h-4 w-4",
+                      isActive ? "text-accent-foreground" : "text-muted-foreground group-hover:text-foreground"
+                    )} />
+                    <span>{item.name}</span>
                   </Link>
                 </motion.div>
               )
@@ -174,30 +155,25 @@ export function AdminSidebar() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="p-4 border-t border-white/10"
+            className="p-4 border-t border-border"
           >
-            <div className="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 backdrop-blur-sm border border-white/20 flex items-center justify-center"
-              >
-                <UserCircle className="h-6 w-6 text-white" />
-              </motion.div>
+            <div className="flex items-center gap-3 px-3 py-2 mb-2 rounded-md">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                <UserCircle className="h-4 w-4 text-muted-foreground" />
+              </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium truncate text-white">Admin User</div>
-                <div className="text-xs text-slate-400 truncate">admin@spotlight.gr</div>
+                <div className="text-sm font-medium truncate text-foreground">Admin User</div>
+                <div className="text-xs text-muted-foreground truncate">admin@spotlight.gr</div>
               </div>
             </div>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl border border-transparent hover:border-white/10 transition-all"
-                onClick={handleSignOut}
-              >
-                <LogOut className="h-5 w-5" />
-                Sign Out
-              </Button>
-            </motion.div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground hover:bg-accent/50"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
           </motion.div>
         </div>
       </motion.aside>

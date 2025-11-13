@@ -74,14 +74,14 @@ export function VistahavenHero() {
     <section className="relative w-full overflow-hidden bg-gray-50">
       {/* Content Container - Edge to Edge with Card Layout for Desktop */}
       <div className="relative z-10 w-full">
-        <div className="w-full px-6 md:px-8 lg:px-10 xl:px-12 pt-24 md:pt-28 lg:pt-32 pb-12 md:pb-16 lg:pb-20">
+        <div className="w-full px-6 md:px-8 lg:px-10 xl:px-12 pt-24 md:pt-28 lg:pt-32 xl:pt-36 2xl:pt-40 pb-12 md:pb-16 lg:pb-20 xl:pb-24 2xl:pb-28">
           
           {/* Main Content Card - Rectangular with Image Background */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-8 md:p-10 lg:p-12 xl:p-14 shadow-2xl overflow-hidden min-h-[500px] md:min-h-[550px] lg:aspect-[16/7] xl:aspect-[16/6.5] bg-white"
+            className="relative rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-8 md:p-10 lg:p-12 xl:p-16 2xl:p-20 shadow-2xl overflow-hidden min-h-[500px] md:min-h-[550px] lg:min-h-[700px] xl:min-h-[850px] 2xl:min-h-[950px] bg-white"
             style={{
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
             }}

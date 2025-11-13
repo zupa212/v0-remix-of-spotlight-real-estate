@@ -23,11 +23,11 @@ export function AdminPageWrapper({ children, title, description, headerActions }
         >
           <div>
             {title && (
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent mb-2">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
                 {title}
               </h1>
             )}
-            {description && <p className="text-slate-600 text-lg">{description}</p>}
+            {description && <p className="text-muted-foreground text-lg">{description}</p>}
           </div>
           {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
         </motion.div>

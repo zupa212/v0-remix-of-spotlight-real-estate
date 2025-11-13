@@ -22,16 +22,16 @@ export function AdminGlassCard({ children, title, headerActions, className, inde
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
     >
       <Card className={cn(
-        "bg-white/40 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300",
+        "bg-card border-border shadow-sm hover:shadow-md transition-all duration-300",
         className
       )}>
         {(title || headerActions) && (
           <CardHeader className={cn(
-            "flex flex-row items-center justify-between border-b border-white/10",
+            "flex flex-row items-center justify-between border-b border-border",
             title && "pb-4"
           )}>
             {title && (
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+              <CardTitle className="text-xl font-semibold text-card-foreground">
                 {title}
               </CardTitle>
             )}

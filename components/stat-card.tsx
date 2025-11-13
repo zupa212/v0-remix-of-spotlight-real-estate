@@ -21,17 +21,16 @@ export function StatCard({ title, value, change, changeType = "neutral", icon: I
       transition={{ delay: index * 0.1, duration: 0.5 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
     >
-      <Card className="relative overflow-hidden bg-white/40 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
-        <CardContent className="p-6 relative z-10">
+      <Card className="relative overflow-hidden bg-card border-border shadow-sm hover:shadow-md transition-all duration-300">
+        <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-600 mb-2">{title}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-2">{title}</p>
               <motion.p
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
-                className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent"
+                className="text-3xl font-bold text-card-foreground"
               >
                 {value}
               </motion.p>
@@ -42,10 +41,10 @@ export function StatCard({ title, value, change, changeType = "neutral", icon: I
                   transition={{ delay: index * 0.1 + 0.3 }}
                   className={`text-sm mt-2 font-medium ${
                     changeType === "positive"
-                      ? "text-emerald-600"
+                      ? "text-emerald-500"
                       : changeType === "negative"
-                        ? "text-red-600"
-                        : "text-slate-500"
+                        ? "text-red-500"
+                        : "text-muted-foreground"
                   }`}
                 >
                   {change}
@@ -55,9 +54,9 @@ export function StatCard({ title, value, change, changeType = "neutral", icon: I
             <motion.div
               whileHover={{ rotate: 360, scale: 1.1 }}
               transition={{ duration: 0.5 }}
-              className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg"
+              className="h-14 w-14 rounded-lg bg-muted flex items-center justify-center"
             >
-              <Icon className="h-7 w-7 text-blue-600" />
+              <Icon className="h-7 w-7 text-muted-foreground" />
             </motion.div>
           </div>
         </CardContent>
