@@ -71,22 +71,19 @@ export function VistahavenHero() {
   }, [])
 
   return (
-    <section className="relative w-full overflow-hidden bg-white">
-      {/* White Background - Clean and Simple */}
-      <div className="absolute inset-0 w-full bg-white" />
-
-      {/* Content Container - Edge to Edge with Rectangular Layout */}
+    <section className="relative w-full overflow-hidden bg-gray-50">
+      {/* Content Container - Edge to Edge with Card Layout for Desktop */}
       <div className="relative z-10 w-full">
-        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16 lg:pb-20">
+        <div className="w-full px-6 md:px-8 lg:px-10 xl:px-12 pt-24 md:pt-28 lg:pt-32 pb-12 md:pb-16 lg:pb-20">
           
           {/* Main Content Card - Rectangular with Image Background */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 border border-gray-100 shadow-2xl overflow-hidden min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:aspect-[16/7] xl:aspect-[16/6.5]"
+            className="relative rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-8 md:p-10 lg:p-12 xl:p-14 shadow-2xl overflow-hidden min-h-[500px] md:min-h-[550px] lg:aspect-[16/7] xl:aspect-[16/6.5] bg-white"
             style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
             }}
           >
             {/* Background Image - Full Slide */}
@@ -107,12 +104,11 @@ export function VistahavenHero() {
               />
             </motion.div>
             
-            
-            {/* Content - Left Side with Professional Typography - Stretched Layout */}
-            <div className="relative z-10 h-full flex flex-col justify-center max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
-              <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7">
+            {/* Content - Left Side with Professional Typography */}
+            <div className="relative z-10 h-full flex flex-col justify-center max-w-2xl lg:max-w-2xl xl:max-w-3xl pl-0 md:pl-4 lg:pl-6 xl:pl-8">
+              <div className="space-y-5 md:space-y-6 lg:space-y-7 xl:space-y-8">
                 
-                {/* Main Headline - Professional Typography - Compact */}
+                {/* Main Headline */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -134,7 +130,7 @@ export function VistahavenHero() {
                   </h1>
                 </motion.div>
 
-                {/* Descriptive Text - Professional Typography - Compact */}
+                {/* Descriptive Text */}
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -149,7 +145,7 @@ export function VistahavenHero() {
                   We provide tailored real estate solutions, guiding you through every step with personalized experiences that meet your unique needs and aspirations.
                 </motion.p>
 
-                {/* CTA Button - Professional White Button - Compact */}
+                {/* CTA Button */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -174,7 +170,7 @@ export function VistahavenHero() {
                   </div>
                 </motion.div>
 
-                {/* Statistics - Professional Layout - Horizontal Compact */}
+                {/* Statistics */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -273,19 +269,19 @@ export function VistahavenHero() {
           </motion.div>
         </div>
 
-        {/* Featured Agents Card - Bottom Right, Refined Design - Mobile Responsive */}
+        {/* Featured Agents Card - Bottom Right */}
         <motion.div
           initial={{ opacity: 0, x: 50, y: 20 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ delay: 1.2, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-          className="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-[7%] xl:bottom-[6.5%] right-3 sm:right-4 md:right-6 lg:right-8 xl:right-12 2xl:right-16 bg-white rounded-xl sm:rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 shadow-xl border border-gray-100 z-20 w-[calc(100%-1.5rem)] sm:w-auto sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px]"
+          className="absolute bottom-8 md:bottom-10 lg:bottom-12 xl:bottom-14 right-6 md:right-8 lg:right-10 xl:right-12 2xl:right-16 bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 lg:p-7 xl:p-8 shadow-xl z-20 max-w-[280px] md:max-w-[320px] lg:max-w-[340px]"
           style={{
-            boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+            boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
-            {/* Agent Profile Pictures - Refined Stack */}
-            <div className="flex -space-x-2 sm:-space-x-3 md:-space-x-4 flex-shrink-0">
+          <div className="flex items-center gap-4 md:gap-5">
+            {/* Agent Profile Pictures */}
+            <div className="flex -space-x-3 md:-space-x-4 flex-shrink-0">
               {agents.length > 0 ? (
                 agents.slice(0, 4).map((agent, index) => (
                   <motion.div
@@ -293,7 +289,7 @@ export function VistahavenHero() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 1.4 + index * 0.1, duration: 0.5 }}
-                    className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full border-2 sm:border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
+                    className="relative w-12 h-12 md:w-14 md:h-14 rounded-full border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
                     style={{ zIndex: 4 - index }}
                   >
                     {agent.avatar_url ? (
@@ -302,27 +298,26 @@ export function VistahavenHero() {
                         alt={agent.name_en}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 640px) 44px, 56px"
+                        sizes="56px"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] text-[#666666] text-sm sm:text-base font-semibold">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] text-[#666666] text-sm font-semibold">
                         {agent.name_en.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </motion.div>
                 ))
               ) : (
-                // Fallback placeholder avatars
                 Array.from({ length: 4 }).map((_, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 1.4 + index * 0.1, duration: 0.5 }}
-                    className="relative w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
+                    className="relative w-12 h-12 md:w-14 md:h-14 rounded-full border-[3px] border-white overflow-hidden bg-[#f0f0f0] shadow-md"
                     style={{ zIndex: 4 - index }}
                   >
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] text-[#666666] text-sm sm:text-base font-semibold">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e0e0e0] to-[#d0d0d0] text-[#666666] text-sm font-semibold">
                       A
                     </div>
                   </motion.div>
@@ -330,13 +325,13 @@ export function VistahavenHero() {
               )}
             </div>
 
-            {/* Text Content - Perfect Typography */}
+            {/* Text Content */}
             <div className="flex-1 min-w-0">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.6, duration: 0.6 }}
-                className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-[#1a1a1a] mb-1 sm:mb-1.5 md:mb-2 leading-tight"
+                className="text-base md:text-lg font-bold text-[#1a1a1a] mb-2 leading-tight"
                 style={{ 
                   fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                   fontWeight: 700,
@@ -349,16 +344,16 @@ export function VistahavenHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.7, duration: 0.6 }}
-                className="flex items-center gap-0.5 sm:gap-1"
+                className="flex items-center gap-1"
               >
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star 
                     key={i} 
-                    className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 lg:h-4 lg:w-4 fill-[#FFD700] text-[#FFD700] drop-shadow-sm" 
+                    className="h-3.5 w-3.5 md:h-4 md:w-4 fill-[#FFD700] text-[#FFD700] drop-shadow-sm" 
                   />
                 ))}
                 <span 
-                  className="text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-[#1a1a1a] ml-1 sm:ml-1.5"
+                  className="text-sm md:text-base font-semibold text-[#1a1a1a] ml-1.5"
                   style={{ 
                     fontFamily: 'var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                     fontWeight: 600,

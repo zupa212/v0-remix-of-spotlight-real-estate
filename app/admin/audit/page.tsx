@@ -4,13 +4,12 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { AdminSidebar } from "@/components/admin-sidebar"
-import { AdminBackButton } from "@/components/admin-back-button"
-import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { FileText, User, Calendar } from "lucide-react"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { AdminGlassCard } from "@/components/admin-glass-card"
+import { motion } from "framer-motion"
 
 type AuditLog = {
   id: string
@@ -67,88 +66,76 @@ export default function AdminAuditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <AdminSidebar />
-      
-      <div className="lg:pl-64">
-        <div className="p-8 space-y-6">
-          <AdminBreadcrumbs items={[{ label: "Audit Logs" }]} />
-          <AdminBackButton href="/admin" label="Back to Dashboard" />
-          
-          <div>
-            <h1 className="font-heading text-3xl font-bold">Audit Logs</h1>
-            <p className="text-muted-foreground">Track all system changes and user actions</p>
+    <AdminPageWrapper
+      title="Audit Logs"
+      description="Track all system changes and user actions"
+    >
+      <AdminGlassCard index={0} title="Recent Activity" headerActions={<FileText className="h-5 w-5 text-blue-600" />} className="overflow-hidden">
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-sm text-slate-600">Loading audit logs...</p>
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Recent Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <p className="text-sm text-muted-foreground">Loading audit logs...</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Timestamp</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>Entity Type</TableHead>
-                      <TableHead>Entity ID</TableHead>
-                      <TableHead>Details</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {logs.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8">
-                          No audit logs found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      logs.map((log) => (
-                        <TableRow key={log.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-2 text-sm">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
-                              {new Date(log.created_at).toLocaleString()}
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Timestamp</TableHead>
+                  <TableHead>User</TableHead>
+                  <TableHead>Action</TableHead>
+                  <TableHead>Entity Type</TableHead>
+                  <TableHead>Entity ID</TableHead>
+                  <TableHead>Details</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {logs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-slate-600">
+                      No audit logs found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  logs.map((log, index) => (
+                    <TableRow key={log.id} className="border-b border-white/10 hover:bg-white/30 transition-all duration-300">
+                      <TableCell>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Calendar className="h-4 w-4 text-blue-600" />
+                          <span className="text-slate-700">{new Date(log.created_at).toLocaleString()}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {log.profiles ? (
+                          <div className="flex items-center gap-2 text-sm">
+                            <User className="h-4 w-4 text-blue-600" />
+                            <div>
+                              <div className="font-medium text-slate-900">{log.profiles.name}</div>
+                              <div className="text-slate-500">{log.profiles.email}</div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            {log.profiles ? (
-                              <div className="flex items-center gap-2 text-sm">
-                                <User className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <div className="font-medium">{log.profiles.name}</div>
-                                  <div className="text-muted-foreground">{log.profiles.email}</div>
-                                </div>
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground">System</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={actionColors[log.action as keyof typeof actionColors]}>{log.action}</Badge>
-                          </TableCell>
-                          <TableCell className="capitalize">{log.entity_type}</TableCell>
-                          <TableCell className="font-mono text-xs">{log.entity_id.slice(0, 8)}...</TableCell>
-                          <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
-                            {log.diff_json?.reason || "Standard operation"}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+                          </div>
+                        ) : (
+                          <span className="text-slate-500">System</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`border border-white/30 backdrop-blur-sm ${actionColors[log.action as keyof typeof actionColors]}`}>
+                          {log.action}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="capitalize text-slate-700">{log.entity_type}</TableCell>
+                      <TableCell className="font-mono text-xs text-slate-600">{log.entity_id.slice(0, 8)}...</TableCell>
+                      <TableCell className="max-w-[200px] truncate text-sm text-slate-500">
+                        {log.diff_json?.reason || "Standard operation"}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </AdminGlassCard>
+    </AdminPageWrapper>
   )
 }

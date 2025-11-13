@@ -4,9 +4,6 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { AdminSidebar } from "@/components/admin-sidebar"
-import { AdminBackButton } from "@/components/admin-back-button"
-import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -14,6 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Calendar, MapPin, User, Eye, Plus, Edit, Filter } from "lucide-react"
 import Link from "next/link"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { AdminGlassCard } from "@/components/admin-glass-card"
+import { motion } from "framer-motion"
+import { showToast } from "@/lib/toast"
 
 type Viewing = {
   id: string
@@ -64,9 +65,8 @@ export default function AdminViewingsPage() {
       .from("viewings")
       .select(`
         *,
-        leads(id, full_name, email),
-        properties(title_en, property_code, city_en),
-        agents(id, name_en, name_gr)
+        property:properties!property_id ( title_en, property_code, city_en ),
+        agent:agents!agent_id ( id, name_en, name_gr )
       `)
       .order("scheduled_date", { ascending: true })
 
@@ -90,19 +90,43 @@ export default function AdminViewingsPage() {
 
     if (error) {
       console.error("Error fetching viewings:", error)
+      showToast.error("Failed to load viewings", error.message)
     } else {
+      // Fetch leads separately for viewings that have lead_id
+      const leadIds = (data || [])
+        .map((v: any) => v.lead_id)
+        .filter((id: string | null) => id !== null) as string[]
+      
+      let leadsMap: Record<string, { id: string; name: string; email: string }> = {}
+      if (leadIds.length > 0) {
+        const { data: leadsData } = await supabase
+          .from("leads")
+          .select("id, name, email")
+          .in("id", leadIds)
+        
+        if (leadsData) {
+          leadsData.forEach((lead: any) => {
+            leadsMap[lead.id] = {
+              id: lead.id,
+              name: lead.name ?? "Unknown",
+              email: lead.email ?? "",
+            }
+          })
+        }
+      }
+
       // Transform data to match expected format
       const transformed = (data || []).map((v: any) => ({
         ...v,
         scheduled_at: v.scheduled_date,
-        leads: v.leads ? { id: v.leads.id, name: v.leads.full_name, email: v.leads.email } : null,
-        properties: v.properties ? { 
-          title: v.properties.title_en || "", 
-          property_code: v.properties.property_code || "", 
-          city: v.properties.city_en || "" 
+        leads: v.lead_id && leadsMap[v.lead_id] ? leadsMap[v.lead_id] : null,
+        properties: v.property ? { 
+          title: v.property.title_en || "", 
+          property_code: v.property.property_code || "", 
+          city: v.property.city_en || "" 
         } : null,
-        agents: v.agents ? { 
-          name: v.agents.name_en || v.agents.name_gr 
+        agents: v.agent ? { 
+          name: v.agent.name_en || v.agent.name_gr 
         } : null,
       }))
       setViewings(transformed)
@@ -125,55 +149,61 @@ export default function AdminViewingsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <AdminSidebar />
-
-      <div className="lg:pl-64">
-        <div className="p-8 space-y-6">
-          <AdminBreadcrumbs items={[{ label: "Viewings" }]} />
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Viewings</h1>
-              <p className="text-slate-600">Manage property viewing appointments</p>
-            </div>
-            <Button asChild>
-              <Link href="/admin/viewings/new">
-                <Plus className="mr-2 h-5 w-5" />
-                Schedule Viewing
-              </Link>
-            </Button>
-          </div>
-
-          {/* Filters */}
+    <AdminPageWrapper
+      title="Viewings"
+      description="Manage property viewing appointments"
+      headerActions={
+        <Button asChild className="bg-white/40 backdrop-blur-xl border-white/20">
+          <Link href="/admin/viewings/new">
+            <Plus className="mr-2 h-5 w-5" />
+            Schedule Viewing
+          </Link>
+        </Button>
+      }
+    >
+      <div className="space-y-6">
+        {/* Filters */}
+        <AdminGlassCard index={0}>
           <div className="flex flex-wrap gap-4 items-center">
             <div className="relative flex-1 min-w-[200px]">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
               <Input
                 placeholder="Search viewings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/60 backdrop-blur-sm border-white/30"
               />
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             </div>
 
             <div className="flex gap-2">
-              <Button variant={filter === "upcoming" ? "default" : "outline"} onClick={() => setFilter("upcoming")}>
+              <Button 
+                variant={filter === "upcoming" ? "default" : "outline"} 
+                onClick={() => setFilter("upcoming")}
+                className={filter === "upcoming" ? "bg-white/40 backdrop-blur-xl border-white/20" : "bg-white/60 backdrop-blur-sm border-white/30"}
+              >
                 Upcoming
               </Button>
-              <Button variant={filter === "past" ? "default" : "outline"} onClick={() => setFilter("past")}>
+              <Button 
+                variant={filter === "past" ? "default" : "outline"} 
+                onClick={() => setFilter("past")}
+                className={filter === "past" ? "bg-white/40 backdrop-blur-xl border-white/20" : "bg-white/60 backdrop-blur-sm border-white/30"}
+              >
                 Past
               </Button>
-              <Button variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>
+              <Button 
+                variant={filter === "all" ? "default" : "outline"} 
+                onClick={() => setFilter("all")}
+                className={filter === "all" ? "bg-white/40 backdrop-blur-xl border-white/20" : "bg-white/60 backdrop-blur-sm border-white/30"}
+              >
                 All
               </Button>
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[150px] bg-white/60 backdrop-blur-sm border-white/30">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="scheduled">Scheduled</SelectItem>
                 <SelectItem value="confirmed">Confirmed</SelectItem>
@@ -184,10 +214,10 @@ export default function AdminViewingsPage() {
             </Select>
 
             <Select value={agentFilter} onValueChange={setAgentFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] bg-white/60 backdrop-blur-sm border-white/30">
                 <SelectValue placeholder="Agent" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
                 <SelectItem value="all">All Agents</SelectItem>
                 {agents.map((agent) => (
                   <SelectItem key={agent.id} value={agent.id}>
@@ -197,9 +227,12 @@ export default function AdminViewingsPage() {
               </SelectContent>
             </Select>
           </div>
+        </AdminGlassCard>
 
-      <div className="rounded-lg border bg-card">
-        <Table>
+        {/* Table */}
+        <AdminGlassCard index={1} className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Date & Time</TableHead>
@@ -226,13 +259,16 @@ export default function AdminViewingsPage() {
               </TableRow>
             ) : (
               filteredViewings.map((viewing) => (
-                <TableRow key={viewing.id}>
+                <TableRow 
+                  key={viewing.id}
+                  className="border-b border-white/10 hover:bg-white/30 transition-all duration-300"
+                >
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <Calendar className="h-4 w-4 text-blue-600" />
                       <div className="text-sm">
-                        <div className="font-medium">{new Date(viewing.scheduled_at).toLocaleDateString()}</div>
-                        <div className="text-muted-foreground">
+                        <div className="font-medium text-slate-900">{new Date(viewing.scheduled_at).toLocaleDateString()}</div>
+                        <div className="text-slate-600">
                           {new Date(viewing.scheduled_at).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -244,34 +280,34 @@ export default function AdminViewingsPage() {
                   <TableCell>
                     {viewing.properties ? (
                       <div className="text-sm">
-                        <div className="font-medium">{viewing.properties.title}</div>
-                        <div className="flex items-center gap-1 text-muted-foreground">
+                        <div className="font-medium text-slate-900">{viewing.properties.title}</div>
+                        <div className="flex items-center gap-1 text-slate-500">
                           <MapPin className="h-3 w-3" />
                           {viewing.properties.city}
                         </div>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">—</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </TableCell>
                   <TableCell>
                     {viewing.leads ? (
                       <div className="text-sm">
-                        <div className="font-medium">{viewing.leads.name}</div>
-                        <div className="text-muted-foreground">{viewing.leads.email}</div>
+                        <div className="font-medium text-slate-900">{viewing.leads.name}</div>
+                        <div className="text-slate-600">{viewing.leads.email}</div>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">—</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </TableCell>
                   <TableCell>
                     {viewing.agents ? (
                       <div className="flex items-center gap-2 text-sm">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        {viewing.agents.name}
+                        <User className="h-4 w-4 text-blue-600" />
+                        <span className="text-slate-700">{viewing.agents.name}</span>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">Unassigned</span>
+                      <span className="text-slate-400">Unassigned</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -289,10 +325,10 @@ export default function AdminViewingsPage() {
                         }
                       }}
                     >
-                      <SelectTrigger className="w-[140px]">
+                      <SelectTrigger className="w-[140px] bg-white/60 backdrop-blur-sm border-white/30">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
                         <SelectItem value="scheduled">Scheduled</SelectItem>
                         <SelectItem value="confirmed">Confirmed</SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
@@ -301,29 +337,35 @@ export default function AdminViewingsPage() {
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
+                  <TableCell className="max-w-[200px] truncate text-sm text-slate-600">
                     {viewing.notes || "—"}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       {viewing.properties && (
                         <Link href={`/admin/properties/${viewing.properties.id}`}>
-                          <Button variant="ghost" size="sm" title="View Property">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <Button variant="ghost" size="sm" className="bg-white/40 backdrop-blur-sm border border-white/30" title="View Property">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </motion.div>
                         </Link>
                       )}
                       {viewing.leads && (
                         <Link href={`/admin/leads/${viewing.leads.id}`}>
-                          <Button variant="ghost" size="sm">
-                            <User className="h-4 w-4" />
-                          </Button>
+                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <Button variant="ghost" size="sm" className="bg-white/40 backdrop-blur-sm border border-white/30">
+                              <User className="h-4 w-4" />
+                            </Button>
+                          </motion.div>
                         </Link>
                       )}
                       <Link href={`/admin/viewings/${viewing.id}/edit`}>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
+                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                          <Button variant="ghost" size="sm" className="bg-white/40 backdrop-blur-sm border border-white/30">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </motion.div>
                       </Link>
                     </div>
                   </TableCell>
@@ -332,9 +374,9 @@ export default function AdminViewingsPage() {
             )}
           </TableBody>
         </Table>
+          </div>
+        </AdminGlassCard>
       </div>
-        </div>
-      </div>
-    </div>
+    </AdminPageWrapper>
   )
 }

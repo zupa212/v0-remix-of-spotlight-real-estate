@@ -7,6 +7,7 @@ import { AnimatedTestimonials } from "@/components/animated-testimonials"
 import { AnimatedServices } from "@/components/animated-services"
 import { AnimatedFeaturedProperties } from "@/components/animated-featured-properties"
 import { AnimatedTeam } from "@/components/animated-team"
+import { ContactFormSection } from "@/components/contact-form-section"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 
@@ -21,6 +22,7 @@ export default function HomePage() {
         <AnimatedAbout />
         <AnimatedTestimonials />
         <AnimatedTeam />
+        <ContactFormSection />
         <SiteFooter />
       </div>
     </SmoothScrollProvider>

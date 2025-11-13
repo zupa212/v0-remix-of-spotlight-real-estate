@@ -12,6 +12,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Eye, Mail, Phone, ArrowLeft, LayoutGrid } from "lucide-react"
 import Link from "next/link"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { AdminGlassCard } from "@/components/admin-glass-card"
+import { motion } from "framer-motion"
 
 type Lead = {
   id: string
@@ -124,102 +127,97 @@ export default function AdminLeadsPage() {
   )
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => router.push('/admin')}
-        >
-          <ArrowLeft className="h-5 w-5" />
+    <AdminPageWrapper
+      title="Leads"
+      description="Manage and track all property inquiries"
+      headerActions={
+        <Button asChild variant="outline" className="bg-white/40 backdrop-blur-xl border-white/20">
+          <Link href="/admin/leads/pipeline">
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Pipeline View
+          </Link>
         </Button>
-        <div className="flex-1 flex items-center justify-between">
-          <div>
-            <h1 className="font-heading text-3xl font-bold">Leads</h1>
-            <p className="text-muted-foreground">Manage and track all property inquiries</p>
+      }
+    >
+      <div className="space-y-6">
+        {/* Filters */}
+        <AdminGlassCard index={0}>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <Input
+                placeholder="Search by name, email, or phone..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 bg-white/60 backdrop-blur-sm border-white/30"
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[150px] bg-white/60 backdrop-blur-sm border-white/30">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="contacted">Contacted</SelectItem>
+                  <SelectItem value="qualified">Qualified</SelectItem>
+                  <SelectItem value="viewing">Viewing</SelectItem>
+                  <SelectItem value="offer">Offer</SelectItem>
+                  <SelectItem value="won">Won</SelectItem>
+                  <SelectItem value="lost">Lost</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                <SelectTrigger className="w-[150px] bg-white/60 backdrop-blur-sm border-white/30">
+                  <SelectValue placeholder="Source" />
+                </SelectTrigger>
+                <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
+                  <SelectItem value="all">All Sources</SelectItem>
+                  <SelectItem value="website">Website</SelectItem>
+                  <SelectItem value="phone">Phone</SelectItem>
+                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="referral">Referral</SelectItem>
+                  <SelectItem value="walk-in">Walk-in</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={agentFilter} onValueChange={setAgentFilter}>
+                <SelectTrigger className="w-[150px] bg-white/60 backdrop-blur-sm border-white/30">
+                  <SelectValue placeholder="Agent" />
+                </SelectTrigger>
+                <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
+                  <SelectItem value="all">All Agents</SelectItem>
+                  {agents.map((agent) => (
+                    <SelectItem key={agent.id} value={agent.id}>
+                      {agent.name_en}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={dateRangeFilter} onValueChange={setDateRangeFilter}>
+                <SelectTrigger className="w-[150px] bg-white/60 backdrop-blur-sm border-white/30">
+                  <SelectValue placeholder="Date Range" />
+                </SelectTrigger>
+                <SelectContent className="bg-white/95 backdrop-blur-xl border-white/20">
+                  <SelectItem value="all">All Time</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">Last 7 Days</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                  <SelectItem value="lastMonth">Last Month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <Button asChild variant="outline">
-            <Link href="/admin/leads/pipeline">
-              <LayoutGrid className="h-4 w-4 mr-2" />
-              Pipeline View
-            </Link>
-          </Button>
-        </div>
-      </div>
+        </AdminGlassCard>
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by name, email, or phone..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="new">New</SelectItem>
-              <SelectItem value="contacted">Contacted</SelectItem>
-              <SelectItem value="qualified">Qualified</SelectItem>
-              <SelectItem value="viewing">Viewing</SelectItem>
-              <SelectItem value="offer">Offer</SelectItem>
-              <SelectItem value="won">Won</SelectItem>
-              <SelectItem value="lost">Lost</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Source" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Sources</SelectItem>
-              <SelectItem value="website">Website</SelectItem>
-              <SelectItem value="phone">Phone</SelectItem>
-              <SelectItem value="email">Email</SelectItem>
-              <SelectItem value="referral">Referral</SelectItem>
-              <SelectItem value="walk-in">Walk-in</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={agentFilter} onValueChange={setAgentFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Agent" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Agents</SelectItem>
-              {agents.map((agent) => (
-                <SelectItem key={agent.id} value={agent.id}>
-                  {agent.name_en}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={dateRangeFilter} onValueChange={setDateRangeFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Date Range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Time</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="week">Last 7 Days</SelectItem>
-              <SelectItem value="month">This Month</SelectItem>
-              <SelectItem value="lastMonth">Last Month</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="rounded-lg border bg-card">
-        <Table>
+        {/* Table */}
+        <AdminGlassCard index={1} className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -233,83 +231,92 @@ export default function AdminLeadsPage() {
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-8">
-                  Loading leads...
-                </TableCell>
-              </TableRow>
-            ) : filteredLeads.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-8">
-                  No leads found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredLeads.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.name}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Mail className="h-3 w-3" />
-                        <span className="text-muted-foreground">{lead.email}</span>
-                      </div>
-                      {lead.phone && (
-                        <div className="flex items-center gap-1">
-                          <Phone className="h-3 w-3" />
-                          <span className="text-muted-foreground">{lead.phone}</span>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {lead.properties ? (
-                      <div className="text-sm">
-                        <div className="font-medium">{lead.properties.title_en}</div>
-                        <div className="text-muted-foreground">{lead.properties.property_code}</div>
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {lead.budget_min && lead.budget_max ? (
-                      <span className="text-sm">
-                        €{lead.budget_min.toLocaleString()} - €{lead.budget_max.toLocaleString()}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={statusColors[lead.status as keyof typeof statusColors]}>{lead.status}</Badge>
-                  </TableCell>
-                  <TableCell className="capitalize">{lead.source}</TableCell>
-                  <TableCell>
-                    {lead.agents ? (
-                      <span className="text-sm">{lead.agents.name_en}</span>
-                    ) : (
-                      <span className="text-muted-foreground">Unassigned</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(lead.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link href={`/admin/leads/${lead.id}`}>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-8 text-slate-600">
+                      Loading leads...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredLeads.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-8 text-slate-600">
+                      No leads found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredLeads.map((lead, index) => (
+                    <TableRow
+                      key={lead.id}
+                      className="border-b border-white/10 hover:bg-white/30 transition-all duration-300"
+                    >
+                      <TableCell className="font-medium text-slate-900">{lead.name}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1 text-sm">
+                            <div className="flex items-center gap-1">
+                              <Mail className="h-3 w-3 text-slate-500" />
+                              <span className="text-slate-600">{lead.email}</span>
+                            </div>
+                            {lead.phone && (
+                              <div className="flex items-center gap-1">
+                                <Phone className="h-3 w-3 text-slate-500" />
+                                <span className="text-slate-600">{lead.phone}</span>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {lead.properties ? (
+                            <div className="text-sm">
+                              <div className="font-medium text-slate-900">{lead.properties.title_en}</div>
+                              <div className="text-slate-500">{lead.properties.property_code}</div>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {lead.budget_min && lead.budget_max ? (
+                            <span className="text-sm text-slate-700">
+                              €{lead.budget_min.toLocaleString()} - €{lead.budget_max.toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={`${statusColors[lead.status as keyof typeof statusColors]} border border-white/30 backdrop-blur-sm`}>
+                            {lead.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="capitalize text-slate-700">{lead.source}</TableCell>
+                        <TableCell>
+                          {lead.agents ? (
+                            <span className="text-sm text-slate-700">{lead.agents.name_en}</span>
+                          ) : (
+                            <span className="text-slate-400">Unassigned</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-sm text-slate-600">
+                          {new Date(lead.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Link href={`/admin/leads/${lead.id}`}>
+                            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                              <Button variant="ghost" size="sm" className="bg-white/40 backdrop-blur-sm border border-white/30">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </motion.div>
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </AdminGlassCard>
       </div>
-    </div>
+    </AdminPageWrapper>
   )
 }

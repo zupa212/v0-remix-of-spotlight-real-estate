@@ -47,15 +47,13 @@ export default async function OfferDetailPage({ params }: OfferDetailParams) {
     notFound()
   }
 
-  // Fetch offer with relations
+  // Fetch offer
   const { data: offer, error } = await supabase
     .from("offers")
     .select(
       `
       *,
-      lead:leads!lead_id(id, full_name, email, phone),
-      property:properties!property_id(id, title_en, property_code, price_sale, city_en),
-      created_by_profile:profiles!created_by(full_name, email)
+      property:properties!property_id(id, title_en, property_code, price_sale, city_en)
     `,
     )
     .eq("id", id)
@@ -65,17 +63,60 @@ export default async function OfferDetailPage({ params }: OfferDetailParams) {
     notFound()
   }
 
+  // Fetch lead separately
+  let leadData: any = null
+  if (offer.lead_id) {
+    const { data: lead } = await supabase
+      .from("leads")
+      .select("id, name, email, phone")
+      .eq("id", offer.lead_id)
+      .single()
+    leadData = lead
+  }
+
+  // Fetch created_by profile separately
+  let profileData: any = null
+  if (offer.created_by) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id, name, email")
+      .eq("id", offer.created_by)
+      .single()
+    profileData = profile
+  }
+
   // Fetch offer events (history)
   const { data: events } = await supabase
     .from("offer_events")
-    .select(
-      `
-      *,
-      created_by_profile:profiles!created_by(full_name)
-    `,
-    )
+    .select("*")
     .eq("offer_id", id)
     .order("created_at", { ascending: false })
+
+  // Fetch profiles for events
+  const eventProfileIds = (events || []).map((e: any) => e.created_by).filter((id: string | null) => id !== null) as string[]
+  let eventProfilesMap: Record<string, { name: string }> = {}
+  if (eventProfileIds.length > 0) {
+    const { data: eventProfiles } = await supabase
+      .from("profiles")
+      .select("id, name")
+      .in("id", eventProfileIds)
+    if (eventProfiles) {
+      eventProfiles.forEach((p: any) => {
+        eventProfilesMap[p.id] = { name: p.name }
+      })
+    }
+  }
+
+  const offerWithRelations = {
+    ...offer,
+    lead: leadData,
+    created_by_profile: profileData,
+  }
+
+  const eventsWithProfiles = (events || []).map((event: any) => ({
+    ...event,
+    created_by_profile: event.created_by && eventProfilesMap[event.created_by] ? eventProfilesMap[event.created_by] : null,
+  }))
 
   const statusConfig = STATUS_CONFIG[offer.status as keyof typeof STATUS_CONFIG]
   const StatusIcon = statusConfig?.icon || FileText
@@ -182,7 +223,7 @@ export default async function OfferDetailPage({ params }: OfferDetailParams) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {events.map((event: any) => (
+                      {eventsWithProfiles.map((event: any) => (
                         <div key={event.id} className="flex items-start gap-4 pb-4 border-b last:border-0">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
@@ -193,7 +234,7 @@ export default async function OfferDetailPage({ params }: OfferDetailParams) {
                             </div>
                             {event.created_by_profile && (
                               <p className="text-sm text-muted-foreground">
-                                by {event.created_by_profile.full_name}
+                                by {event.created_by_profile.name}
                               </p>
                             )}
                             {event.payload_json && Object.keys(event.payload_json).length > 0 && (
@@ -220,24 +261,24 @@ export default async function OfferDetailPage({ params }: OfferDetailParams) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {offer.lead ? (
+                  {offerWithRelations.lead ? (
                     <>
                       <div>
                         <p className="text-sm text-muted-foreground">Name</p>
-                        <p className="font-medium">{offer.lead.full_name}</p>
+                        <p className="font-medium">{offerWithRelations.lead.name}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Email</p>
-                        <p className="font-medium">{offer.lead.email}</p>
+                        <p className="font-medium">{offerWithRelations.lead.email}</p>
                       </div>
-                      {offer.lead.phone && (
+                      {offerWithRelations.lead.phone && (
                         <div>
                           <p className="text-sm text-muted-foreground">Phone</p>
-                          <p className="font-medium">{offer.lead.phone}</p>
+                          <p className="font-medium">{offerWithRelations.lead.phone}</p>
                         </div>
                       )}
                       <Button variant="outline" className="w-full" asChild>
-                        <Link href={`/admin/leads/${offer.lead.id}`}>View Lead Details</Link>
+                        <Link href={`/admin/leads/${offerWithRelations.lead.id}`}>View Lead Details</Link>
                       </Button>
                     </>
                   ) : (
@@ -293,10 +334,10 @@ export default async function OfferDetailPage({ params }: OfferDetailParams) {
                     <p className="text-muted-foreground">Last Updated</p>
                     <p>{format(new Date(offer.updated_at), "PPpp")}</p>
                   </div>
-                  {offer.created_by_profile && (
+                  {offerWithRelations.created_by_profile && (
                     <div>
                       <p className="text-muted-foreground">Created By</p>
-                      <p>{offer.created_by_profile.full_name}</p>
+                      <p>{offerWithRelations.created_by_profile.name}</p>
                     </div>
                   )}
                 </CardContent>

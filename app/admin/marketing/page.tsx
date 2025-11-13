@@ -4,15 +4,15 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { AdminSidebar } from "@/components/admin-sidebar"
-import { AdminBackButton } from "@/components/admin-back-button"
-import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Rss, TestTube, Users, Download } from "lucide-react"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { AdminGlassCard } from "@/components/admin-glass-card"
+import { motion } from "framer-motion"
+import { showToast } from "@/lib/toast"
 
 type SyndicationMapping = {
   id: string
@@ -50,119 +50,92 @@ export default function AdminMarketingPage() {
 
     if (error) {
       console.error("Error updating portal:", error)
-      alert("Failed to update portal")
+      showToast.error("Failed to update portal", error.message)
     } else {
       fetchMappings()
+      showToast.success("Portal updated", `Portal ${isActive ? "activated" : "deactivated"} successfully`)
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <AdminSidebar />
-      <div className="lg:pl-64">
-        <div className="p-8 space-y-6">
-          <AdminBreadcrumbs items={[{ label: "Marketing" }]} />
-          <AdminBackButton href="/admin" label="Back to Dashboard" />
-          
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Marketing & Growth</h1>
-            <p className="text-slate-600">Manage feeds, experiments, and referral programs</p>
-          </div>
-
+    <AdminPageWrapper
+      title="Marketing & Growth"
+      description="Manage feeds, experiments, and referral programs"
+    >
       <Tabs defaultValue="feeds" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="feeds">Syndication Feeds</TabsTrigger>
-          <TabsTrigger value="experiments">A/B Experiments</TabsTrigger>
-          <TabsTrigger value="referrals">Referral Program</TabsTrigger>
+        <TabsList className="bg-white/40 backdrop-blur-xl border-white/20">
+          <TabsTrigger value="feeds" className="data-[state=active]:bg-white/60">Syndication Feeds</TabsTrigger>
+          <TabsTrigger value="experiments" className="data-[state=active]:bg-white/60">A/B Experiments</TabsTrigger>
+          <TabsTrigger value="referrals" className="data-[state=active]:bg-white/60">Referral Program</TabsTrigger>
         </TabsList>
 
         <TabsContent value="feeds" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Rss className="h-5 w-5" />
-                Property Syndication Feeds
-              </CardTitle>
-              <CardDescription>Export your properties to major real estate portals</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <p className="text-sm text-muted-foreground">Loading feeds...</p>
-              ) : (
-                <div className="space-y-4">
-                  {mappings.map((mapping) => (
-                    <div key={mapping.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-medium capitalize">{mapping.portal}</h3>
-                          <Badge variant={mapping.is_active ? "default" : "secondary"}>
-                            {mapping.is_active ? "Active" : "Inactive"}
-                          </Badge>
-                        </div>
-                        {mapping.last_generated_at && (
-                          <p className="text-sm text-muted-foreground">
-                            Last generated: {new Date(mapping.last_generated_at).toLocaleString()}
-                          </p>
-                        )}
-                      </div>
+          <AdminGlassCard index={0} title="Property Syndication Feeds" headerActions={<Rss className="h-5 w-5 text-blue-600" />}>
+            <p className="text-sm text-slate-600 mb-4">Export your properties to major real estate portals</p>
+            {loading ? (
+              <p className="text-sm text-slate-600">Loading feeds...</p>
+            ) : (
+              <div className="space-y-4">
+                {mappings.map((mapping, index) => (
+                  <motion.div
+                    key={mapping.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center justify-between p-4 rounded-xl bg-white/60 backdrop-blur-sm border border-white/30 hover:bg-white/80 transition-all"
+                  >
+                    <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        {mapping.is_active && (
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={`/feeds/${mapping.portal}.xml`} target="_blank" rel="noreferrer">
-                              <Download className="h-4 w-4 mr-2" />
-                              Download XML
-                            </a>
-                          </Button>
-                        )}
-                        <Switch
-                          checked={mapping.is_active}
-                          onCheckedChange={(checked) => togglePortal(mapping.id, checked)}
-                        />
+                        <h3 className="font-medium capitalize text-slate-900">{mapping.portal}</h3>
+                        <Badge variant={mapping.is_active ? "default" : "secondary"} className={`border border-white/30 backdrop-blur-sm ${mapping.is_active ? "bg-green-100/80 text-green-700" : "bg-slate-100/80 text-slate-700"}`}>
+                          {mapping.is_active ? "Active" : "Inactive"}
+                        </Badge>
                       </div>
+                      {mapping.last_generated_at && (
+                        <p className="text-sm text-slate-500">
+                          Last generated: {new Date(mapping.last_generated_at).toLocaleString()}
+                        </p>
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    <div className="flex items-center gap-2">
+                      {mapping.is_active && (
+                        <Button variant="outline" size="sm" asChild className="bg-white/40 backdrop-blur-sm border-white/30">
+                          <a href={`/feeds/${mapping.portal}.xml`} target="_blank" rel="noreferrer">
+                            <Download className="h-4 w-4 mr-2" />
+                            Download XML
+                          </a>
+                        </Button>
+                      )}
+                      <Switch
+                        checked={mapping.is_active}
+                        onCheckedChange={(checked) => togglePortal(mapping.id, checked)}
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </AdminGlassCard>
         </TabsContent>
 
         <TabsContent value="experiments" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TestTube className="h-5 w-5" />
-                A/B Testing Experiments
-              </CardTitle>
-              <CardDescription>Test different variations to optimize conversions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                No active experiments. Create your first experiment to start testing.
-              </p>
-            </CardContent>
-          </Card>
+          <AdminGlassCard index={1} title="A/B Testing Experiments" headerActions={<TestTube className="h-5 w-5 text-blue-600" />}>
+            <p className="text-sm text-slate-600 mb-4">Test different variations to optimize conversions</p>
+            <p className="text-sm text-slate-600">
+              No active experiments. Create your first experiment to start testing.
+            </p>
+          </AdminGlassCard>
         </TabsContent>
 
         <TabsContent value="referrals" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Referral & Affiliate Program
-              </CardTitle>
-              <CardDescription>Track partner referrals and manage commissions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Set up referral codes for agents and partners to track lead attribution.
-              </p>
-            </CardContent>
-          </Card>
+          <AdminGlassCard index={2} title="Referral & Affiliate Program" headerActions={<Users className="h-5 w-5 text-blue-600" />}>
+            <p className="text-sm text-slate-600 mb-4">Track partner referrals and manage commissions</p>
+            <p className="text-sm text-slate-600">
+              Set up referral codes for agents and partners to track lead attribution.
+            </p>
+          </AdminGlassCard>
         </TabsContent>
       </Tabs>
-        </div>
-      </div>
-    </div>
+    </AdminPageWrapper>
   )
 }

@@ -25,8 +25,8 @@ interface Task {
   status: string
   created_at: string
   completed_at: string | null
-  lead?: { full_name: string; email: string }
-  assignee?: { full_name: string }
+  lead?: { name: string; email: string }
+  assignee?: { name: string }
 }
 
 export default function TasksPage() {
@@ -56,13 +56,50 @@ export default function TasksPage() {
       .from('tasks')
       .select(`
         *,
-        lead:lead_id(full_name, email),
-        assignee:assignee_id(full_name)
+        lead_id,
+        assignee_id
       `)
       .order('due_at', { ascending: true })
 
-    if (!error && data) {
-      setTasks(data)
+    // Fetch leads and assignees separately
+    const leadIds = (data || []).map((t: any) => t.lead_id).filter((id: string | null) => id !== null) as string[]
+    const assigneeIds = (data || []).map((t: any) => t.assignee_id).filter((id: string | null) => id !== null) as string[]
+    
+    let leadsMap: Record<string, { name: string; email: string }> = {}
+    if (leadIds.length > 0) {
+      const { data: leadsData } = await supabase
+        .from('leads')
+        .select('id, name, email')
+        .in('id', leadIds)
+      if (leadsData) {
+        leadsData.forEach((lead: any) => {
+          leadsMap[lead.id] = { name: lead.name, email: lead.email }
+        })
+      }
+    }
+
+    let assigneesMap: Record<string, { name: string }> = {}
+    if (assigneeIds.length > 0) {
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', assigneeIds)
+      if (profilesData) {
+        profilesData.forEach((profile: any) => {
+          assigneesMap[profile.id] = { name: profile.name }
+        })
+      }
+    }
+
+    // Combine data
+    const tasksWithRelations = (data || []).map((task: any) => ({
+      ...task,
+      lead: task.lead_id && leadsMap[task.lead_id] ? leadsMap[task.lead_id] : null,
+      assignee: task.assignee_id && assigneesMap[task.assignee_id] ? assigneesMap[task.assignee_id] : null,
+    }))
+
+    if (!error && tasksWithRelations) {
+      setTasks(tasksWithRelations)
     }
     setLoading(false)
   }
@@ -253,7 +290,7 @@ export default function TasksPage() {
                     {task.lead && (
                       <div className="flex items-center gap-1">
                         <User className="h-4 w-4" />
-                        <span>{task.lead.full_name}</span>
+                        <span>{task.lead.name}</span>
                       </div>
                     )}
                     <div className="flex items-center gap-1">
@@ -265,7 +302,7 @@ export default function TasksPage() {
                     {task.assignee && (
                       <div className="flex items-center gap-1">
                         <User className="h-4 w-4" />
-                        <span>Assigned to: {task.assignee.full_name}</span>
+                        <span>Assigned to: {task.assignee.name}</span>
                       </div>
                     )}
                   </div>

@@ -1,14 +1,11 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { AdminSidebar } from "@/components/admin-sidebar"
-import { AdminBackButton } from "@/components/admin-back-button"
-import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { PropertiesTableClient } from "./page-client"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { AdminGlassCard } from "@/components/admin-glass-card"
 
 // Force dynamic rendering to avoid build-time errors
 export const dynamic = "force-dynamic"
@@ -116,44 +113,37 @@ export default async function AdminPropertiesPage() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <AdminSidebar />
+    <AdminPageWrapper
+      title="Properties"
+      description="Manage your property listings"
+      headerActions={
+        <Button asChild className="bg-white/40 backdrop-blur-xl border-white/20">
+          <Link href="/admin/properties/new">
+            <Plus className="mr-2 h-5 w-5" />
+            Add Property
+          </Link>
+        </Button>
+      }
+    >
+      {propertiesError && (
+        <AdminGlassCard index={0} className="mb-6 border-red-200/50 bg-red-50/80">
+          <p className="text-sm text-red-700">
+            Unable to load the latest property data. Showing cached results if available.
+          </p>
+        </AdminGlassCard>
+      )}
 
-      <div className="lg:pl-64">
-        <div className="p-8">
-          <AdminBreadcrumbs items={[{ label: "Properties" }]} />
-          
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Properties</h1>
-              <p className="text-slate-600">Manage your property listings</p>
-            </div>
-            <Button asChild>
-              <Link href="/admin/properties/new">
-                <Plus className="mr-2 h-5 w-5" />
-                Add Property
-              </Link>
-            </Button>
-          </div>
+      {/* Properties Table */}
+      <AdminGlassCard index={propertiesError ? 1 : 0} className="overflow-hidden">
+        <PropertiesTableClient properties={properties} />
+      </AdminGlassCard>
 
-          {propertiesError && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              Unable to load the latest property data. Showing cached results if available.
-            </div>
-          )}
-
-          {/* Properties Table */}
-          <PropertiesTableClient properties={properties} />
-
-          {/* Pagination */}
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-slate-600">
-              Showing <span className="font-medium">{properties.length}</span> properties
-            </p>
-          </div>
-        </div>
+      {/* Pagination */}
+      <div className="mt-6 flex items-center justify-between">
+        <p className="text-sm text-slate-600">
+          Showing <span className="font-medium">{properties.length}</span> properties
+        </p>
       </div>
-    </div>
+    </AdminPageWrapper>
   )
 }

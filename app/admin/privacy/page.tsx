@@ -5,15 +5,15 @@ export const dynamic = 'force-dynamic'
 import { useState } from "react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import { AdminSidebar } from "@/components/admin-sidebar"
-import { AdminBackButton } from "@/components/admin-back-button"
-import { AdminBreadcrumbs } from "@/components/admin-breadcrumbs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Download, Trash2, FileText } from "lucide-react"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { AdminGlassCard } from "@/components/admin-glass-card"
+import { motion } from "framer-motion"
+import { showToast } from "@/lib/toast"
 
 export default function AdminPrivacyPage() {
   const [leadId, setLeadId] = useState("")
@@ -24,7 +24,7 @@ export default function AdminPrivacyPage() {
 
   async function handleExportData() {
     if (!leadId) {
-      alert("Please enter a lead ID")
+      showToast.warning("Lead ID required", "Please enter a lead ID to export data")
       return
     }
 
@@ -67,9 +67,11 @@ export default function AdminPrivacyPage() {
       })
 
       setResult("Data exported successfully")
+      showToast.success("Data exported", "Lead data has been downloaded successfully")
     } catch (error) {
       console.error("Export error:", error)
       setResult("Error exporting data")
+      showToast.error("Export failed", error instanceof Error ? error.message : "Failed to export data")
     }
 
     setLoading(false)
@@ -77,7 +79,7 @@ export default function AdminPrivacyPage() {
 
   async function handleAnonymizeData() {
     if (!leadId) {
-      alert("Please enter a lead ID")
+      showToast.warning("Lead ID required", "Please enter a lead ID to anonymize data")
       return
     }
 
@@ -111,9 +113,11 @@ export default function AdminPrivacyPage() {
       })
 
       setResult("Data anonymized successfully")
+      showToast.success("Data anonymized", "All personal data has been anonymized successfully")
     } catch (error) {
       console.error("Anonymization error:", error)
       setResult("Error anonymizing data")
+      showToast.error("Anonymization failed", error instanceof Error ? error.message : "Failed to anonymize data")
     }
 
     setLoading(false)
@@ -121,7 +125,7 @@ export default function AdminPrivacyPage() {
 
   async function handleDeleteData() {
     if (!leadId) {
-      alert("Please enter a lead ID")
+      showToast.warning("Lead ID required", "Please enter a lead ID to delete data")
       return
     }
 
@@ -140,150 +144,131 @@ export default function AdminPrivacyPage() {
 
       setResult("Data deleted successfully")
       setLeadId("")
+      showToast.success("Data deleted", "All data has been permanently deleted")
     } catch (error) {
       console.error("Deletion error:", error)
       setResult("Error deleting data")
+      showToast.error("Deletion failed", error instanceof Error ? error.message : "Failed to delete data")
     }
 
     setLoading(false)
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <AdminSidebar />
-      <div className="lg:pl-64">
-        <div className="p-8 space-y-6">
-          <AdminBreadcrumbs items={[{ label: "Privacy & GDPR" }]} />
-          <AdminBackButton href="/admin" label="Back to Dashboard" />
-          
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Privacy & GDPR</h1>
-            <p className="text-slate-600">Manage data privacy and compliance tools</p>
-          </div>
-
+    <AdminPageWrapper
+      title="Privacy & GDPR"
+      description="Manage data privacy and compliance tools"
+    >
       <Tabs defaultValue="export" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="export">Data Export</TabsTrigger>
-          <TabsTrigger value="delete">Data Deletion</TabsTrigger>
-          <TabsTrigger value="consents">Consent Ledger</TabsTrigger>
+        <TabsList className="bg-white/40 backdrop-blur-xl border-white/20">
+          <TabsTrigger value="export" className="data-[state=active]:bg-white/60">Data Export</TabsTrigger>
+          <TabsTrigger value="delete" className="data-[state=active]:bg-white/60">Data Deletion</TabsTrigger>
+          <TabsTrigger value="consents" className="data-[state=active]:bg-white/60">Consent Ledger</TabsTrigger>
         </TabsList>
 
         <TabsContent value="export" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Download className="h-5 w-5" />
-                Export Lead Data
-              </CardTitle>
-              <CardDescription>Export all data associated with a lead in JSON format (GDPR Article 20)</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <AdminGlassCard index={0} title="Export Lead Data" headerActions={<Download className="h-5 w-5 text-blue-600" />}>
+            <p className="text-sm text-slate-600 mb-6">Export all data associated with a lead in JSON format (GDPR Article 20)</p>
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="export-lead-id">Lead ID</Label>
+                <Label htmlFor="export-lead-id" className="text-slate-700">Lead ID</Label>
                 <Input
                   id="export-lead-id"
                   placeholder="Enter lead UUID"
                   value={leadId}
                   onChange={(e) => setLeadId(e.target.value)}
+                  className="bg-white/60 backdrop-blur-sm border-white/30"
                 />
               </div>
 
-              <Button onClick={handleExportData} disabled={loading}>
+              <Button onClick={handleExportData} disabled={loading} className="bg-white/40 backdrop-blur-xl border-white/20">
                 {loading ? "Exporting..." : "Export Data"}
               </Button>
 
               {result && (
-                <div
-                  className={`p-3 rounded-lg text-sm ${
-                    result.includes("Error") ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-3 rounded-lg text-sm border backdrop-blur-sm ${
+                    result.includes("Error")
+                      ? "bg-red-100/80 text-red-800 border-red-200/50"
+                      : "bg-green-100/80 text-green-800 border-green-200/50"
                   }`}
                 >
                   {result}
-                </div>
+                </motion.div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </AdminGlassCard>
         </TabsContent>
 
         <TabsContent value="delete" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trash2 className="h-5 w-5" />
-                Delete or Anonymize Lead Data
-              </CardTitle>
-              <CardDescription>Permanently delete or anonymize personal data (GDPR Article 17)</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <AdminGlassCard index={1} title="Delete or Anonymize Lead Data" headerActions={<Trash2 className="h-5 w-5 text-blue-600" />}>
+            <p className="text-sm text-slate-600 mb-6">Permanently delete or anonymize personal data (GDPR Article 17)</p>
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="delete-lead-id">Lead ID</Label>
+                <Label htmlFor="delete-lead-id" className="text-slate-700">Lead ID</Label>
                 <Input
                   id="delete-lead-id"
                   placeholder="Enter lead UUID"
                   value={leadId}
                   onChange={(e) => setLeadId(e.target.value)}
+                  className="bg-white/60 backdrop-blur-sm border-white/30"
                 />
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={handleAnonymizeData} disabled={loading} variant="outline">
+                <Button onClick={handleAnonymizeData} disabled={loading} variant="outline" className="bg-white/40 backdrop-blur-sm border-white/30">
                   {loading ? "Processing..." : "Anonymize Data"}
                 </Button>
-                <Button onClick={handleDeleteData} disabled={loading} variant="destructive">
+                <Button onClick={handleDeleteData} disabled={loading} variant="destructive" className="bg-red-500/80 backdrop-blur-sm border-red-300/30">
                   {loading ? "Deleting..." : "Delete Data"}
                 </Button>
               </div>
 
               {result && (
-                <div
-                  className={`p-3 rounded-lg text-sm ${
-                    result.includes("Error") ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-3 rounded-lg text-sm border backdrop-blur-sm ${
+                    result.includes("Error")
+                      ? "bg-red-100/80 text-red-800 border-red-200/50"
+                      : "bg-green-100/80 text-green-800 border-green-200/50"
                   }`}
                 >
                   {result}
-                </div>
+                </motion.div>
               )}
 
-              <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="p-4 bg-amber-50/80 backdrop-blur-sm border border-amber-200/50 rounded-lg">
                 <p className="text-sm text-amber-800">
                   <strong>Warning:</strong> Anonymization replaces personal data with placeholder values. Deletion
                   permanently removes all records. Both actions are irreversible.
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </AdminGlassCard>
         </TabsContent>
 
         <TabsContent value="consents" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Consent Ledger
-              </CardTitle>
-              <CardDescription>View and manage consent records for data processing</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                All consent records are automatically captured when leads submit forms, including:
-              </p>
-              <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
-                <li>Consent text shown to the user</li>
-                <li>Timestamp of acceptance</li>
-                <li>IP address and user agent</li>
-                <li>Associated lead information</li>
-              </ul>
-              <div className="mt-4">
-                <Button variant="outline" asChild>
-                  <Link href="/admin/privacy/consents">View Consent Records</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <AdminGlassCard index={2} title="Consent Ledger" headerActions={<FileText className="h-5 w-5 text-blue-600" />}>
+            <p className="text-sm text-slate-600 mb-4">
+              All consent records are automatically captured when leads submit forms, including:
+            </p>
+            <ul className="text-sm text-slate-600 space-y-2 list-disc list-inside mb-4">
+              <li>Consent text shown to the user</li>
+              <li>Timestamp of acceptance</li>
+              <li>IP address and user agent</li>
+              <li>Associated lead information</li>
+            </ul>
+            <div className="mt-4">
+              <Button variant="outline" asChild className="bg-white/40 backdrop-blur-sm border-white/30">
+                <Link href="/admin/privacy/consents">View Consent Records</Link>
+              </Button>
+            </div>
+          </AdminGlassCard>
         </TabsContent>
       </Tabs>
-        </div>
-      </div>
-    </div>
+    </AdminPageWrapper>
   )
 }

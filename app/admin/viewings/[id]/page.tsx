@@ -51,15 +51,33 @@ export default async function ViewingDetailPage({ params }: ViewingDetailParams)
     .from("viewings")
     .select(`
       *,
-      properties(id, title_en, property_code, city_en, address_en),
-      leads(id, full_name, email, phone),
-      agents(id, name_en, email, phone)
+      property:properties!property_id(id, title_en, property_code, city_en, address_en),
+      agent:agents!agent_id(id, name_en, email, phone)
     `)
     .eq("id", id)
     .single()
 
+  // Fetch lead separately if lead_id exists
+  let leadData: any = null
+  if (viewing?.lead_id) {
+    const { data: lead } = await supabase
+      .from("leads")
+      .select("id, name, email, phone")
+      .eq("id", viewing.lead_id)
+      .single()
+    leadData = lead
+  }
+
   if (error || !viewing) {
     notFound()
+  }
+
+  // Combine viewing with lead data
+  const viewingWithLead = {
+    ...viewing,
+    leads: leadData,
+    properties: viewing.property,
+    agents: viewing.agent,
   }
 
   const scheduledDate = viewing.scheduled_date ? new Date(viewing.scheduled_date) : null
@@ -147,7 +165,7 @@ export default async function ViewingDetailPage({ params }: ViewingDetailParams)
               </Card>
 
               {/* Property Information */}
-              {viewing.properties && (
+              {viewingWithLead.properties && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -157,17 +175,17 @@ export default async function ViewingDetailPage({ params }: ViewingDetailParams)
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <p className="font-medium text-lg mb-1">{viewing.properties.title_en}</p>
-                      <p className="text-sm text-slate-600 mb-2">Code: {viewing.properties.property_code}</p>
-                      {viewing.properties.address_en && (
+                      <p className="font-medium text-lg mb-1">{viewingWithLead.properties.title_en}</p>
+                      <p className="text-sm text-slate-600 mb-2">Code: {viewingWithLead.properties.property_code}</p>
+                      {viewingWithLead.properties.address_en && (
                         <div className="flex items-start gap-2 text-slate-600">
                           <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{viewing.properties.address_en}</span>
+                          <span className="text-sm">{viewingWithLead.properties.address_en}</span>
                         </div>
                       )}
                     </div>
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/properties/${viewing.properties.id}`}>
+                      <Link href={`/properties/${viewingWithLead.properties.id}`}>
                         View Property
                       </Link>
                     </Button>
@@ -184,27 +202,27 @@ export default async function ViewingDetailPage({ params }: ViewingDetailParams)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {viewing.leads ? (
+                  {viewingWithLead.leads ? (
                     <>
                       <div>
-                        <p className="font-medium mb-1">{viewing.leads.full_name}</p>
+                        <p className="font-medium mb-1">{viewingWithLead.leads.name || "Unknown"}</p>
                         <div className="space-y-1 text-sm text-slate-600">
-                          {viewing.leads.email && (
+                          {viewingWithLead.leads.email && (
                             <div className="flex items-center gap-2">
                               <Mail className="h-4 w-4" />
-                              <span>{viewing.leads.email}</span>
+                              <span>{viewingWithLead.leads.email}</span>
                             </div>
                           )}
-                          {viewing.leads.phone && (
+                          {viewingWithLead.leads.phone && (
                             <div className="flex items-center gap-2">
                               <Phone className="h-4 w-4" />
-                              <span>{viewing.leads.phone}</span>
+                              <span>{viewingWithLead.leads.phone}</span>
                             </div>
                           )}
                         </div>
                       </div>
                       <Button asChild variant="outline" size="sm">
-                        <Link href={`/admin/leads/${viewing.leads.id}`}>
+                        <Link href={`/admin/leads/${viewingWithLead.leads.id}`}>
                           View Lead
                         </Link>
                       </Button>
@@ -235,7 +253,7 @@ export default async function ViewingDetailPage({ params }: ViewingDetailParams)
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Assigned Agent */}
-              {viewing.agents ? (
+              {viewingWithLead.agents ? (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -245,18 +263,18 @@ export default async function ViewingDetailPage({ params }: ViewingDetailParams)
                   </CardHeader>
                   <CardContent>
                     <div>
-                      <p className="font-medium mb-1">{viewing.agents.name_en}</p>
+                      <p className="font-medium mb-1">{viewingWithLead.agents.name_en}</p>
                       <div className="space-y-1 text-sm text-slate-600">
-                        {viewing.agents.email && (
+                        {viewingWithLead.agents.email && (
                           <div className="flex items-center gap-2">
                             <Mail className="h-4 w-4" />
-                            <span>{viewing.agents.email}</span>
+                            <span>{viewingWithLead.agents.email}</span>
                           </div>
                         )}
-                        {viewing.agents.phone && (
+                        {viewingWithLead.agents.phone && (
                           <div className="flex items-center gap-2">
                             <Phone className="h-4 w-4" />
-                            <span>{viewing.agents.phone}</span>
+                            <span>{viewingWithLead.agents.phone}</span>
                           </div>
                         )}
                       </div>

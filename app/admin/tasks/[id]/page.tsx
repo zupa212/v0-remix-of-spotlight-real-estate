@@ -48,18 +48,40 @@ export default async function TaskDetailPage({ params }: TaskDetailParams) {
   // Fetch task with relations
   const { data: task, error } = await supabase
     .from("tasks")
-    .select(
-      `
-      *,
-      lead:leads!lead_id(id, full_name, email, phone),
-      assignee:profiles!assignee_id(id, full_name, email)
-    `,
-    )
+    .select("*")
     .eq("id", id)
     .single()
 
   if (error || !task) {
     notFound()
+  }
+
+  // Fetch lead separately
+  let leadData: any = null
+  if (task.lead_id) {
+    const { data: lead } = await supabase
+      .from("leads")
+      .select("id, name, email, phone")
+      .eq("id", task.lead_id)
+      .single()
+    leadData = lead
+  }
+
+  // Fetch assignee separately
+  let assigneeData: any = null
+  if (task.assignee_id) {
+    const { data: assignee } = await supabase
+      .from("profiles")
+      .select("id, name, email")
+      .eq("id", task.assignee_id)
+      .single()
+    assigneeData = assignee
+  }
+
+  const taskWithRelations = {
+    ...task,
+    lead: leadData,
+    assignee: assigneeData,
   }
 
   const statusConfig = STATUS_CONFIG[task.status as keyof typeof STATUS_CONFIG]
@@ -156,7 +178,7 @@ export default async function TaskDetailPage({ params }: TaskDetailParams) {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {task.lead && (
+              {taskWithRelations.lead && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -167,26 +189,26 @@ export default async function TaskDetailPage({ params }: TaskDetailParams) {
                   <CardContent className="space-y-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Name</p>
-                      <p className="font-medium">{task.lead.full_name}</p>
+                      <p className="font-medium">{taskWithRelations.lead.name}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="font-medium">{task.lead.email}</p>
+                      <p className="font-medium">{taskWithRelations.lead.email}</p>
                     </div>
-                    {task.lead.phone && (
+                    {taskWithRelations.lead.phone && (
                       <div>
                         <p className="text-sm text-muted-foreground">Phone</p>
-                        <p className="font-medium">{task.lead.phone}</p>
+                        <p className="font-medium">{taskWithRelations.lead.phone}</p>
                       </div>
                     )}
                     <Button variant="outline" className="w-full" asChild>
-                      <Link href={`/admin/leads/${task.lead.id}`}>View Lead Details</Link>
+                      <Link href={`/admin/leads/${taskWithRelations.lead.id}`}>View Lead Details</Link>
                     </Button>
                   </CardContent>
                 </Card>
               )}
 
-              {task.assignee && (
+              {taskWithRelations.assignee && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -197,11 +219,11 @@ export default async function TaskDetailPage({ params }: TaskDetailParams) {
                   <CardContent className="space-y-2">
                     <div>
                       <p className="text-sm text-muted-foreground">Name</p>
-                      <p className="font-medium">{task.assignee.full_name || task.assignee.email}</p>
+                      <p className="font-medium">{taskWithRelations.assignee.name || taskWithRelations.assignee.email}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="font-medium">{task.assignee.email}</p>
+                      <p className="font-medium">{taskWithRelations.assignee.email}</p>
                     </div>
                   </CardContent>
                 </Card>

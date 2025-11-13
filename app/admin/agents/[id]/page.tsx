@@ -77,7 +77,7 @@ export default async function AgentDetailPage({ params }: AgentDetailParams) {
   // Fetch recent leads
   const { data: recentLeads } = await supabase
     .from("leads")
-    .select("id, full_name, email, status, created_at")
+    .select("id, name, email, status, created_at")
     .eq("agent_id", id)
     .order("created_at", { ascending: false })
     .limit(5)
@@ -304,7 +304,7 @@ export default async function AgentDetailPage({ params }: AgentDetailParams) {
                           className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
                         >
                           <div>
-                            <p className="font-medium">{lead.full_name}</p>
+                            <p className="font-medium">{lead.name}</p>
                             <p className="text-sm text-muted-foreground">{lead.email}</p>
                           </div>
                           <Badge variant="outline">{lead.status}</Badge>

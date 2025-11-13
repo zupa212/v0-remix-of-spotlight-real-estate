@@ -9,6 +9,8 @@ import { Switch } from "@/components/ui/switch"
 import { PropertyDeleteDialog } from "@/components/property-delete-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2, Eye, Edit, MoreVertical, Search } from "lucide-react"
+import { showToast } from "@/lib/toast"
+import { AdminTableSkeleton } from "@/components/admin-loading-skeleton"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -77,9 +79,13 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
       setProperties((prev) =>
         prev.map((p) => (p.id === propertyId ? { ...p, published: !currentPublished } : p))
       )
+      showToast.success(
+        "Property updated",
+        `Property ${!currentPublished ? "published" : "unpublished"} successfully`
+      )
     } catch (error) {
       console.error("Error updating property:", error)
-      alert("Failed to update property. Please try again.")
+      showToast.error("Failed to update property", "Please try again")
     } finally {
       setUpdating((prev) => {
         const next = new Set(prev)
@@ -101,10 +107,11 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
 
       setProperties((prev) => prev.filter((p) => !selectedIds.has(p.id)))
       setSelectedIds(new Set())
+      showToast.success("Properties deleted", `${selectedIds.size} property/properties deleted successfully`)
       window.location.reload()
     } catch (error) {
       console.error("Error deleting properties:", error)
-      alert("Failed to delete properties. Please try again.")
+      showToast.error("Failed to delete properties", "Please try again")
     }
   }
 
@@ -124,10 +131,14 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
         prev.map((p) => (selectedIds.has(p.id) ? { ...p, published: publish } : p))
       )
       setSelectedIds(new Set())
+      showToast.success(
+        "Properties updated",
+        `${selectedIds.size} property/properties ${publish ? "published" : "unpublished"} successfully`
+      )
       window.location.reload()
     } catch (error) {
       console.error("Error updating properties:", error)
-      alert("Failed to update properties. Please try again.")
+      showToast.error("Failed to update properties", "Please try again")
     }
   }
 
@@ -156,10 +167,10 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
       {/* Search */}
       <div className="mb-6">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
           <Input
             placeholder="Search properties..."
-            className="pl-10"
+            className="pl-10 bg-white/60 backdrop-blur-sm border-white/30"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -168,22 +179,22 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
 
       {/* Bulk Actions */}
       {selectedIds.size > 0 && (
-        <div className="mb-4 flex items-center gap-4 p-4 bg-slate-100 rounded-lg">
+        <div className="mb-4 flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl">
           <span className="text-sm font-medium text-slate-700">
             {selectedIds.size} property/properties selected
           </span>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => handleBulkPublish(true)}>
+            <Button size="sm" variant="outline" onClick={() => handleBulkPublish(true)} className="bg-white/40 backdrop-blur-sm border-white/30">
               Publish Selected
             </Button>
-            <Button size="sm" variant="outline" onClick={() => handleBulkPublish(false)}>
+            <Button size="sm" variant="outline" onClick={() => handleBulkPublish(false)} className="bg-white/40 backdrop-blur-sm border-white/30">
               Unpublish Selected
             </Button>
-            <Button size="sm" variant="destructive" onClick={handleBulkDelete}>
+            <Button size="sm" variant="destructive" onClick={handleBulkDelete} className="bg-red-500/80 backdrop-blur-sm border-red-300/30">
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Selected
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>
+            <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())} className="bg-white/40 backdrop-blur-sm border-white/30">
               Clear Selection
             </Button>
           </div>
@@ -191,7 +202,7 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
       )}
 
       {/* Properties Table */}
-      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+      <div className="overflow-x-auto">
         {properties.length > 0 ? (
           <Table>
             <TableHeader>
@@ -214,29 +225,29 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
             </TableHeader>
         <TableBody>
           {filteredProperties.map((property) => (
-                <TableRow key={property.id}>
+                <TableRow key={property.id} className="border-b border-white/10 hover:bg-white/30 transition-all duration-300">
                   <TableCell>
                     <Checkbox checked={selectedIds.has(property.id)} onCheckedChange={() => toggleSelect(property.id)} />
                   </TableCell>
-                  <TableCell className="font-mono text-sm">{property.propertyCode}</TableCell>
-                  <TableCell className="font-medium">{property.titleEn}</TableCell>
+                  <TableCell className="font-mono text-sm text-slate-900">{property.propertyCode}</TableCell>
+                  <TableCell className="font-medium text-slate-900">{property.titleEn}</TableCell>
                   <TableCell className="text-slate-600">{property.location}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary" className="capitalize">
+                    <Badge variant="secondary" className="capitalize border border-white/30 backdrop-blur-sm">
                       {property.propertyType}
                     </Badge>
                   </TableCell>
-                  <TableCell>{property.displayPrice}</TableCell>
+                  <TableCell className="text-slate-700 font-medium">{property.displayPrice}</TableCell>
                   <TableCell>
                     <Badge
                       variant="secondary"
-                      className={
+                      className={`border border-white/30 backdrop-blur-sm ${
                         property.status === "available"
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-100/80 text-green-700"
                           : property.status === "pending"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-slate-100 text-slate-700"
-                      }
+                            ? "bg-amber-100/80 text-amber-700"
+                            : "bg-slate-100/80 text-slate-700"
+                      }`}
                     >
                       {property.status}
                     </Badge>
@@ -251,11 +262,11 @@ export function PropertiesTableClient({ properties: initialProperties }: Propert
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="bg-white/40 backdrop-blur-sm border border-white/30">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-xl border-white/20">
                         <DropdownMenuItem asChild>
                           <Link href={`/admin/properties/${property.id}`}>
                             <Eye className="mr-2 h-4 w-4" />

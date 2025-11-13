@@ -11,7 +11,7 @@ import { Phone, Mail, MessageSquare, User, Calendar, DollarSign, MapPin } from '
 
 interface Lead {
   id: string
-  full_name: string
+  name: string
   email: string
   phone: string
   status: string
@@ -86,7 +86,7 @@ export default function LeadsPipelinePage() {
 
   // Filter leads
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = lead.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesPriority = priorityFilter === 'all' || lead.priority === priorityFilter
     return matchesSearch && matchesPriority
@@ -166,7 +166,7 @@ export default function LeadsPipelinePage() {
                   <div className="space-y-2">
                     {/* Name & Score */}
                     <div className="flex items-start justify-between">
-                      <p className="font-medium text-sm">{lead.full_name}</p>
+                      <p className="font-medium text-sm">{lead.name}</p>
                       {lead.score && (
                         <Badge variant="secondary" className="text-xs">
                           {lead.score}

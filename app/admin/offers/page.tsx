@@ -24,9 +24,9 @@ interface Offer {
   notes: string
   created_at: string
   updated_at: string
-  lead?: { full_name: string; email: string }
+  lead?: { name: string; email: string }
   property?: { title_en: string; property_code: string; price_sale: number }
-  created_by_profile?: { full_name: string }
+  created_by_profile?: { name: string }
 }
 
 const STATUS_CONFIG = {
@@ -66,14 +66,52 @@ export default function OffersPage() {
       .from('offers')
       .select(`
         *,
-        lead:lead_id(full_name, email),
-        property:property_id(title_en, property_code, price_sale),
-        created_by_profile:created_by(full_name)
+        lead_id,
+        property_id,
+        created_by,
+        property:properties!property_id(title_en, property_code, price_sale)
       `)
       .order('created_at', { ascending: false })
 
-    if (!error && data) {
-      setOffers(data)
+    // Fetch leads and profiles separately
+    const leadIds = (data || []).map((o: any) => o.lead_id).filter((id: string | null) => id !== null) as string[]
+    const profileIds = (data || []).map((o: any) => o.created_by).filter((id: string | null) => id !== null) as string[]
+    
+    let leadsMap: Record<string, { name: string; email: string }> = {}
+    if (leadIds.length > 0) {
+      const { data: leadsData } = await supabase
+        .from('leads')
+        .select('id, name, email')
+        .in('id', leadIds)
+      if (leadsData) {
+        leadsData.forEach((lead: any) => {
+          leadsMap[lead.id] = { name: lead.name, email: lead.email }
+        })
+      }
+    }
+
+    let profilesMap: Record<string, { name: string }> = {}
+    if (profileIds.length > 0) {
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', profileIds)
+      if (profilesData) {
+        profilesData.forEach((profile: any) => {
+          profilesMap[profile.id] = { name: profile.name }
+        })
+      }
+    }
+
+    // Combine data
+    const offersWithRelations = (data || []).map((offer: any) => ({
+      ...offer,
+      lead: offer.lead_id && leadsMap[offer.lead_id] ? leadsMap[offer.lead_id] : null,
+      created_by_profile: offer.created_by && profilesMap[offer.created_by] ? profilesMap[offer.created_by] : null,
+    }))
+
+    if (!error && offersWithRelations) {
+      setOffers(offersWithRelations)
     }
     setLoading(false)
   }
@@ -98,7 +136,7 @@ export default function OffersPage() {
   const filteredOffers = offers.filter(offer => {
     const matchesStatus = statusFilter === 'all' || offer.status === statusFilter
     const matchesSearch = 
-      offer.lead?.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      offer.lead?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       offer.property?.title_en.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesStatus && matchesSearch
   })
@@ -260,7 +298,7 @@ export default function OffersPage() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Buyer</p>
-                      <p className="font-medium">{offer.lead?.full_name}</p>
+                      <p className="font-medium">{offer.lead?.name}</p>
                       <p className="text-xs text-muted-foreground">{offer.lead?.email}</p>
                     </div>
                     <div>
