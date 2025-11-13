@@ -1,13 +1,13 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard,
-  Building2,
   Users,
   MessageSquare,
   Calendar,
@@ -106,15 +106,14 @@ export function AdminSidebar() {
             transition={{ delay: 0.1 }}
             className="flex items-center gap-3 px-6 py-6 border-b border-border"
           >
-            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <div className="text-base font-semibold text-foreground">
-                Spotlight
-              </div>
-              <div className="text-xs text-muted-foreground">Admin Panel</div>
-            </div>
+            <Image
+              src="/dJThP8wqUxol9ACI3BIfmtSAqE.png"
+              alt="spot-less logo"
+              width={120}
+              height={40}
+              className="h-8 w-auto object-contain"
+              priority
+            />
           </motion.div>
 
           {/* Navigation */}

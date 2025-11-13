@@ -17,11 +17,11 @@ export function SiteFooter() {
             <div className="mb-8 sm:mb-10 md:mb-12">
               <Link href="/" className="inline-block">
                 <Image
-                  src="/dJThP8wqUxol9ACI3BIfmtSAqE.png"
+                  src="/black spottles.png"
                   alt="spot-less logo"
                   width={180}
                   height={60}
-                  className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain brightness-0 invert"
+                  className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain"
                   priority
                 />
               </Link>

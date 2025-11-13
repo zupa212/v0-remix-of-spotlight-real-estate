@@ -24,7 +24,7 @@ export function SiteHeader() {
           {/* Logo - Left Side - Image Logo */}
           <Link href="/" className="flex items-center group transition-opacity hover:opacity-80">
             <Image
-              src="/dJThP8wqUxol9ACI3BIfmtSAqE.png"
+              src="/black spottles.png"
               alt="spot-less logo"
               width={120}
               height={40}
