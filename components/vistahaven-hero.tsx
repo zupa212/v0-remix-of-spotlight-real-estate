@@ -81,7 +81,7 @@ export function VistahavenHero() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-8 md:p-10 lg:p-12 xl:p-16 2xl:p-20 shadow-2xl overflow-hidden min-h-[500px] md:min-h-[550px] lg:min-h-[700px] xl:min-h-[850px] 2xl:min-h-[950px] bg-white"
+            className="relative rounded-2xl md:rounded-3xl lg:rounded-[2rem] p-8 md:p-10 lg:p-12 xl:p-16 2xl:p-20 shadow-2xl overflow-hidden min-h-[1000px] md:min-h-[550px] lg:min-h-[700px] xl:min-h-[850px] 2xl:min-h-[950px] bg-white"
             style={{
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
             }}
