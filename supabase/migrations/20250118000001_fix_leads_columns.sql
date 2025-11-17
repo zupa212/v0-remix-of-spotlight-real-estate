@@ -171,9 +171,34 @@ BEGIN
     ALTER TABLE public.leads 
     ADD COLUMN phone TEXT;
   END IF;
+  
+  -- ============================================================================
+  -- 6. ENSURE PROPERTY_ID AND AGENT_ID COLUMNS EXIST
+  -- ============================================================================
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'leads' 
+    AND column_name = 'property_id'
+  ) THEN
+    ALTER TABLE public.leads 
+    ADD COLUMN property_id UUID REFERENCES public.properties(id) ON DELETE SET NULL;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'leads' 
+    AND column_name = 'agent_id'
+  ) THEN
+    ALTER TABLE public.leads 
+    ADD COLUMN agent_id UUID REFERENCES public.agents(id) ON DELETE SET NULL;
+  END IF;
 END $$;
 
 -- Create indexes if they don't exist
 CREATE INDEX IF NOT EXISTS idx_leads_full_name ON public.leads(full_name);
 CREATE INDEX IF NOT EXISTS idx_leads_lead_source ON public.leads(lead_source);
+CREATE INDEX IF NOT EXISTS idx_leads_property ON public.leads(property_id);
+CREATE INDEX IF NOT EXISTS idx_leads_agent ON public.leads(agent_id);
 
