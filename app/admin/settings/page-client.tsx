@@ -13,6 +13,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Upload, X, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { updateLogoUrl } from "@/lib/actions/settings"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,7 +38,16 @@ export function AdminSettingsPageClient() {
 
   async function loadLogo() {
     try {
-      // Try to load from localStorage first (for demo)
+      // Load from database first
+      const result = await getSettings()
+      if (result.success && result.data?.logo_url) {
+        setLogoUrl(result.data.logo_url)
+        setLogoPreview(result.data.logo_url)
+        localStorage.setItem("admin-logo-url", result.data.logo_url)
+        return
+      }
+      
+      // Fallback to localStorage
       const savedLogo = localStorage.getItem("admin-logo-url")
       if (savedLogo) {
         setLogoUrl(savedLogo)
@@ -45,6 +55,12 @@ export function AdminSettingsPageClient() {
       }
     } catch (error) {
       console.error("Error loading logo:", error)
+      // Fallback to localStorage on error
+      const savedLogo = localStorage.getItem("admin-logo-url")
+      if (savedLogo) {
+        setLogoUrl(savedLogo)
+        setLogoPreview(savedLogo)
+      }
     }
   }
 
@@ -135,12 +151,33 @@ export function AdminSettingsPageClient() {
     if (!logoUrl) return
 
     try {
-      // Save to localStorage (for now - can be moved to database later)
-      localStorage.setItem("admin-logo-url", logoUrl)
-      toast.success("Logo saved successfully!")
+      const result = await updateLogoUrl(logoUrl)
+      if (result.success) {
+        localStorage.setItem("admin-logo-url", logoUrl) // Also save to localStorage for quick access
+        toast.success("Logo saved successfully!")
+      } else {
+        toast.error(result.error || "Failed to save logo.")
+      }
     } catch (error) {
       console.error("Error saving logo:", error)
       toast.error("Failed to save logo.")
+    }
+  }
+
+  async function handleDeleteLogo() {
+    try {
+      const result = await updateLogoUrl(null)
+      if (result.success) {
+        setLogoUrl(null)
+        setLogoPreview(null)
+        localStorage.removeItem("admin-logo-url")
+        toast.success("Logo deleted successfully!")
+      } else {
+        toast.error(result.error || "Failed to delete logo.")
+      }
+    } catch (error) {
+      console.error("Error deleting logo:", error)
+      toast.error("Failed to delete logo.")
     }
   }
 

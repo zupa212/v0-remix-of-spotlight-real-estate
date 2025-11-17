@@ -17,6 +17,9 @@ import { AdminThemeToggle } from "@/components/admin-theme-toggle"
 import { AdminCommandDialog } from "@/components/admin-command-dialog"
 import { getAdminDict, type Locale } from "@/lib/i18n"
 import { useRouter } from "next/navigation"
+import { useSettings } from "@/lib/hooks/use-settings"
+import Image from "next/image"
+import Link from "next/link"
 
 interface AdminHeaderBarProps {
   locale?: Locale
@@ -29,6 +32,16 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
   const [searchQuery, setSearchQuery] = React.useState("")
   const [commandOpen, setCommandOpen] = React.useState(false)
   const [mounted, setMounted] = React.useState(false)
+  const { settings } = useSettings()
+  
+  // Get logo URL from settings or localStorage fallback
+  const logoUrl = React.useMemo(() => {
+    if (settings?.logo_url) return settings.logo_url
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("admin-logo-url")
+    }
+    return null
+  }, [settings?.logo_url])
 
   // Prevent hydration mismatch by only rendering dropdowns after mount
   React.useEffect(() => {
@@ -56,6 +69,24 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center gap-4 px-6">
+        {/* Logo */}
+        {logoUrl && (
+          <Link href="/admin" className="flex items-center gap-2 mr-4">
+            <div className="relative h-10 w-10 flex-shrink-0">
+              <Image
+                src={logoUrl}
+                alt={settings?.company_name || "Logo"}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            {settings?.company_name && (
+              <span className="font-semibold text-lg hidden md:block">{settings.company_name}</span>
+            )}
+          </Link>
+        )}
+        
         {/* Search */}
         <div className="flex-1 max-w-md">
           <div className="relative">
