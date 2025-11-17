@@ -59,7 +59,7 @@ export async function createViewing(
       property_id: validated.property_id,
       lead_id: validated.lead_id || null,
       agent_id: validated.agent_id || null,
-      scheduled_at: validated.scheduled_at,
+      scheduled_date: validated.scheduled_at, // Database column is scheduled_date
       duration_minutes: validated.duration_minutes,
       status: validated.status,
       client_name: validated.lead_id ? null : validated.client_name || null,
@@ -80,11 +80,11 @@ export async function createViewing(
       return { success: false, error: error.message }
     }
 
-    // If lead_id is provided, update lead stage to "viewing_scheduled"
+    // If lead_id is provided, update lead status to "viewing_scheduled"
     if (validated.lead_id) {
       await supabase
         .from("leads")
-        .update({ stage: "viewing_scheduled", updated_at: new Date().toISOString() })
+        .update({ status: "viewing_scheduled", updated_at: new Date().toISOString() })
         .eq("id", validated.lead_id)
 
       // Create lead activity entry
@@ -131,11 +131,18 @@ export async function updateViewing(
     // Validate input
     const validated = viewingUpdateSchema.parse(input)
 
+    // Map scheduled_at to scheduled_date for database
+    const updateData: any = { ...validated }
+    if (validated.scheduled_at) {
+      updateData.scheduled_date = validated.scheduled_at
+      delete updateData.scheduled_at
+    }
+
     // Update viewing
     const { data, error } = await supabase
       .from("viewings")
       .update({
-        ...validated,
+        ...updateData,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)

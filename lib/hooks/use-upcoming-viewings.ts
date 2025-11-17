@@ -5,12 +5,10 @@ import { createClient } from "@/lib/supabase/client"
 
 export interface UpcomingViewing {
   id: string
-  scheduled_at: string
+  scheduled_date: string
   property_id: string | null
   lead_id: string | null
   agent_id: string | null
-  type: string
-  meeting_link: string | null
   property_code: string | null
   lead_name: string | null
   agent_name: string | null
@@ -27,10 +25,10 @@ export function useUpcomingViewings(rangeDays: number = 7) {
 
       const { data: viewings, error: viewingsError } = await supabase
         .from("viewings")
-        .select("id, scheduled_at, property_id, lead_id, agent_id, type, meeting_link")
-        .gte("scheduled_at", now.toISOString())
-        .lte("scheduled_at", endDate.toISOString())
-        .order("scheduled_at", { ascending: true })
+        .select("id, scheduled_date, property_id, lead_id, agent_id")
+        .gte("scheduled_date", now.toISOString())
+        .lte("scheduled_date", endDate.toISOString())
+        .order("scheduled_date", { ascending: true })
 
       if (viewingsError) throw viewingsError
 
@@ -41,14 +39,14 @@ export function useUpcomingViewings(rangeDays: number = 7) {
             viewing.property_id
               ? supabase
                   .from("properties")
-                  .select("code")
+                  .select("property_code")
                   .eq("id", viewing.property_id)
                   .single()
               : { data: null },
             viewing.lead_id
               ? supabase
                   .from("leads")
-                  .select("name")
+                  .select("full_name")
                   .eq("id", viewing.lead_id)
                   .single()
               : { data: null },
@@ -63,8 +61,9 @@ export function useUpcomingViewings(rangeDays: number = 7) {
 
           return {
             ...viewing,
-            property_code: property.data?.code || null,
-            lead_name: lead.data?.name || null,
+            scheduled_at: viewing.scheduled_date, // Alias for compatibility
+            property_code: property.data?.property_code || null,
+            lead_name: lead.data?.full_name || null,
             agent_name: agent.data?.name_en || null,
           }
         })

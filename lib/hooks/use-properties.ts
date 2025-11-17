@@ -6,20 +6,22 @@ import { useEffect } from "react"
 
 export interface Property {
   id: string
-  code: string | null
+  property_code: string | null
   title_en: string | null
   title_gr: string | null
-  city: string | null
+  city_en: string | null
+  city_gr: string | null
   region_id: string | null
   property_type: string | null
   status: string | null
   price_sale: number | null
-  beds: number | null
-  baths: number | null
-  area: number | null
-  published: boolean
+  bedrooms: number | null
+  bathrooms: number | null
+  area_sqm: number | null
+  published: boolean | null
   updated_at: string
-  cover_image_url: string | null
+  main_image_url: string | null
+  agent_id: string | null
 }
 
 interface UsePropertiesOptions {
@@ -42,7 +44,7 @@ export function useProperties(options: UsePropertiesOptions = {}) {
     queryFn: async (): Promise<Property[]> => {
       let query = supabase
         .from("properties")
-        .select("id, code, title_en, title_gr, city, region_id, property_type, status, price_sale, beds, baths, area, published, updated_at, cover_image_url, agent_id")
+        .select("id, property_code, title_en, title_gr, city_en, city_gr, region_id, property_type, status, price_sale, bedrooms, bathrooms, area_sqm, published, updated_at, main_image_url, agent_id")
 
       if (options.status && options.status !== "all") {
         query = query.eq("status", options.status)

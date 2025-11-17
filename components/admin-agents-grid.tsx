@@ -78,10 +78,13 @@ export function AdminAgentsGrid({ onEditAgent }: AdminAgentsGridProps) {
             )}
           </CardHeader>
           <CardContent className="space-y-3">
-            {agent.rating && (
-              <div className="flex items-center justify-center gap-1">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">{agent.rating.toFixed(1)}</span>
+            {agent.specialties && agent.specialties.length > 0 && (
+              <div className="flex flex-wrap gap-1 justify-center">
+                {agent.specialties.map((specialty, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-xs">
+                    {specialty}
+                  </Badge>
+                ))}
               </div>
             )}
             {agent.languages && agent.languages.length > 0 && (

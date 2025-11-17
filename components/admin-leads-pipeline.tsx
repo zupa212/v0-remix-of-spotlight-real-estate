@@ -34,11 +34,39 @@ const STAGES = [
   { id: "new", label: "New", color: "bg-blue-500" },
   { id: "contacted", label: "Contacted", color: "bg-yellow-500" },
   { id: "qualified", label: "Qualified", color: "bg-purple-500" },
-  { id: "viewing", label: "Viewing", color: "bg-indigo-500" },
-  { id: "offer", label: "Offer", color: "bg-orange-500" },
-  { id: "won", label: "Won", color: "bg-green-500" },
-  { id: "lost", label: "Lost", color: "bg-red-500" },
+  { id: "viewing_scheduled", label: "Viewing", color: "bg-indigo-500" },
+  { id: "negotiating", label: "Negotiating", color: "bg-orange-500" },
+  { id: "closed_won", label: "Won", color: "bg-green-500" },
+  { id: "closed_lost", label: "Lost", color: "bg-red-500" },
 ]
+
+// Map database status values to pipeline stage IDs
+function mapStatusToStage(status: string): string {
+  const statusMap: Record<string, string> = {
+    new: "new",
+    contacted: "contacted",
+    qualified: "qualified",
+    viewing_scheduled: "viewing_scheduled",
+    negotiating: "negotiating",
+    closed_won: "closed_won",
+    closed_lost: "closed_lost",
+  }
+  return statusMap[status] || "new"
+}
+
+// Map pipeline stage IDs to database status values
+function mapStageToStatus(stage: string): string {
+  const stageMap: Record<string, string> = {
+    new: "new",
+    contacted: "contacted",
+    qualified: "qualified",
+    viewing_scheduled: "viewing_scheduled",
+    negotiating: "negotiating",
+    closed_won: "closed_won",
+    closed_lost: "closed_lost",
+  }
+  return stageMap[stage] || "new"
+}
 
 interface LeadCardProps {
   lead: Lead
@@ -56,10 +84,12 @@ function LeadCard({ lead, onOpenDrawer }: LeadCardProps) {
     opacity: isDragging ? 0.5 : 1,
   }
 
+  // Calculate score based on available data
+  const hasProperty = !!lead.property_id
   const scoring = scoreLead({
-    budget_fit: lead.score ? lead.score / 100 : null,
-    readiness: lead.score ? lead.score / 100 : null,
-    property_code: lead.property_code,
+    budget_fit: null, // Not available in current schema
+    readiness: null, // Not available in current schema
+    property_code: hasProperty ? "PROP" : null, // Simplified - property_id exists
   })
 
   return (
@@ -81,7 +111,7 @@ function LeadCard({ lead, onOpenDrawer }: LeadCardProps) {
             className="flex-1 min-w-0 cursor-pointer"
             onClick={() => onOpenDrawer(lead)}
           >
-            <div className="font-medium text-sm mb-1">{lead.name || "Unnamed Lead"}</div>
+            <div className="font-medium text-sm mb-1">{lead.name || lead.full_name || "Unnamed Lead"}</div>
             {lead.email && (
               <div className="text-xs text-muted-foreground mb-1">{lead.email}</div>
             )}
@@ -92,9 +122,9 @@ function LeadCard({ lead, onOpenDrawer }: LeadCardProps) {
               <Badge variant={scoring.variant} className="text-xs">
                 {scoring.label} ({scoring.score})
               </Badge>
-              {lead.property_code && (
+              {lead.property_id && (
                 <Badge variant="outline" className="text-xs">
-                  {lead.property_code}
+                  Has Property
                 </Badge>
               )}
             </div>
@@ -165,9 +195,11 @@ export function AdminLeadsPipeline() {
       grouped[stage.id] = []
     })
     allLeads.forEach((lead) => {
-      const stage = lead.stage || "new"
-      if (!grouped[stage]) grouped[stage] = []
-      grouped[stage].push(lead)
+      const stage = lead.stage || lead.status || "new"
+      // Map database status to pipeline stages
+      const mappedStage = mapStatusToStage(stage)
+      if (!grouped[mappedStage]) grouped[mappedStage] = []
+      grouped[mappedStage].push(lead)
     })
     return grouped
   }, [allLeads])
@@ -184,17 +216,20 @@ export function AdminLeadsPipeline() {
     const lead = allLeads?.find((l) => l.id === leadId)
     if (!lead) return
 
+    const currentStatus = lead.status || lead.stage || "new"
+    const newStatus = mapStageToStatus(newStage)
+
     // Optimistic update
     queryClient.setQueryData(["leads"], (old: Lead[] | undefined) => {
       if (!old) return old
-      return old.map((l) => (l.id === leadId ? { ...l, stage: newStage } : l))
+      return old.map((l) => (l.id === leadId ? { ...l, status: newStatus, stage: newStatus } : l))
     })
 
     try {
       // Update in database
       const { error: updateError } = await supabase
         .from("leads")
-        .update({ stage: newStage })
+        .update({ status: newStatus })
         .eq("id", leadId)
 
       if (updateError) throw updateError
@@ -202,8 +237,8 @@ export function AdminLeadsPipeline() {
       // Create activity log
       await supabase.from("lead_activity").insert({
         lead_id: leadId,
-        activity_type: "stage_change",
-        description: `Moved from ${lead.stage} to ${newStage}`,
+        activity_type: "status_change",
+        description: `Moved from ${currentStatus} to ${newStatus}`,
       })
 
       toast.success("Lead stage updated")

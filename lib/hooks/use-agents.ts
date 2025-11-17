@@ -9,9 +9,13 @@ export interface Agent {
   name_gr: string | null
   avatar_url: string | null
   languages: string[] | null
-  rating: number | null
   email: string | null
   phone: string | null
+  bio_en: string | null
+  bio_gr: string | null
+  specialties: string[] | null
+  featured: boolean
+  display_order: number | null
   listings_count?: number
 }
 
@@ -23,7 +27,8 @@ export function useAgents() {
     queryFn: async (): Promise<Agent[]> => {
       const { data: agents, error: agentsError } = await supabase
         .from("agents")
-        .select("id, name_en, name_gr, avatar_url, languages, rating, email, phone")
+        .select("id, name_en, name_gr, avatar_url, languages, email, phone, bio_en, bio_gr, specialties, featured, display_order")
+        .order("display_order", { ascending: true, nullsFirst: false })
         .order("name_en", { ascending: true })
 
       if (agentsError) throw agentsError

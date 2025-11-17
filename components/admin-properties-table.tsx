@@ -165,16 +165,16 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
       "Updated",
     ]
     const rows = selectedProperties.map((p) => [
-      p.code || "",
+      p.property_code || "",
       p.title_en || "",
       p.title_gr || "",
-      p.city || "",
+      p.city_en || p.city_gr || "",
       p.property_type || "",
       p.status || "",
       p.price_sale?.toString() || "",
-      p.beds?.toString() || "",
-      p.baths?.toString() || "",
-      p.area?.toString() || "",
+      p.bedrooms?.toString() || "",
+      p.bathrooms?.toString() || "",
+      p.area_sqm?.toString() || "",
       p.published ? "Yes" : "No",
       p.updated_at ? format(new Date(p.updated_at), "yyyy-MM-dd") : "",
     ])
@@ -197,7 +197,7 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
     setDeleteDialog({
       open: true,
       propertyId: property.id,
-      propertyTitle: property.title_en || property.title_gr || property.code || "this property",
+      propertyTitle: property.title_en || property.title_gr || property.property_code || "this property",
     })
   }
 
@@ -353,25 +353,25 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
                 <Checkbox
                   checked={selectedIds.has(property.id)}
                   onCheckedChange={(checked) => handleSelectOne(property.id, checked as boolean)}
-                  aria-label={`Select property ${property.code || property.id}`}
+                  aria-label={`Select property ${property.property_code || property.id}`}
                 />
               </TableCell>
               <TableCell>
               <Avatar className="h-10 w-10">
-                <AvatarImage src={property.cover_image_url || undefined} alt={property.code || ""} />
+                <AvatarImage src={property.main_image_url || undefined} alt={property.property_code || ""} />
                 <AvatarFallback>
-                  {property.code?.charAt(0) || "P"}
+                  {property.property_code?.charAt(0) || "P"}
                 </AvatarFallback>
               </Avatar>
             </TableCell>
             <TableCell className="font-medium">
-              {property.code || "—"}
+              {property.property_code || "—"}
             </TableCell>
             <TableCell>
               {property.title_en || property.title_gr || "Untitled"}
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
-              {property.city || "—"}
+              {property.city_en || property.city_gr || "—"}
             </TableCell>
             <TableCell>
               <Badge variant="outline">{property.property_type || "—"}</Badge>
@@ -383,7 +383,7 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
               {property.price_sale ? formatCurrency(property.price_sale) : "—"}
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
-              {property.beds || 0}/{property.baths || 0}/{property.area ? `${property.area}m²` : "—"}
+              {property.bedrooms || 0}/{property.bathrooms || 0}/{property.area_sqm ? `${property.area_sqm}m²` : "—"}
             </TableCell>
             <TableCell>
               {property.published ? (

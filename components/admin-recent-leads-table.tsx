@@ -87,9 +87,7 @@ export function AdminRecentLeadsTable() {
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Property Code</TableHead>
           <TableHead>Stage</TableHead>
-          <TableHead>Score</TableHead>
           <TableHead>Source</TableHead>
           <TableHead>Created</TableHead>
           <TableHead className="w-[70px]"></TableHead>
@@ -98,24 +96,12 @@ export function AdminRecentLeadsTable() {
       <TableBody>
         {leads.map((lead) => (
           <TableRow key={lead.id}>
-            <TableCell className="font-medium">{lead.name || "Unnamed"}</TableCell>
+            <TableCell className="font-medium">{lead.name || lead.full_name || "Unnamed"}</TableCell>
             <TableCell>
-              {lead.property_code ? (
-                <Badge variant="outline">{lead.property_code}</Badge>
-              ) : (
-                <span className="text-muted-foreground">—</span>
-              )}
-            </TableCell>
-            <TableCell>
-              <Badge variant="secondary">{lead.stage || "new"}</Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant={getScoreBadgeVariant(lead.score)}>
-                {getScoreLabel(lead.score)} {lead.score ? `(${lead.score})` : ""}
-              </Badge>
+              <Badge variant="secondary">{lead.stage || lead.status || "new"}</Badge>
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
-              {lead.source || "—"}
+              {lead.source || lead.lead_source || "—"}
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
               {lead.created_at

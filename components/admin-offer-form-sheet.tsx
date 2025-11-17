@@ -166,7 +166,7 @@ export function AdminOfferFormSheet({ open, onOpenChange, initialData, leadId, p
               <SelectContent>
                 {properties?.map((property) => (
                   <SelectItem key={property.id} value={property.id}>
-                    {property.title_en || property.code || property.id}
+                    {property.title_en || property.property_code || property.id}
                   </SelectItem>
                 ))}
               </SelectContent>

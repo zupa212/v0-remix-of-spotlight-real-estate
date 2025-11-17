@@ -1,4 +1,7 @@
+"use client"
+
 import type React from "react"
+import { usePathname } from "next/navigation"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { AdminHeaderBar } from "@/components/admin-header-bar"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -10,6 +13,9 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname()
+  const isLoginPage = pathname === "/admin/login"
+
   return (
     <QueryProvider>
       <ThemeProvider
@@ -18,16 +24,23 @@ export default function AdminLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <div className="min-h-screen bg-background">
-          <AdminSidebar />
-          <div className="lg:pl-64">
-            <AdminHeaderBar />
-            <main className="min-h-screen bg-background">
-              {children}
-            </main>
+        {isLoginPage ? (
+          <div className="min-h-screen bg-background">
+            {children}
+            <Toaster />
           </div>
-          <Toaster />
-        </div>
+        ) : (
+          <div className="min-h-screen bg-background">
+            <AdminSidebar />
+            <div className="lg:pl-64">
+              <AdminHeaderBar />
+              <main className="min-h-screen bg-background">
+                {children}
+              </main>
+            </div>
+            <Toaster />
+          </div>
+        )}
       </ThemeProvider>
     </QueryProvider>
   )

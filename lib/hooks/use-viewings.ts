@@ -5,13 +5,11 @@ import { createClient } from "@/lib/supabase/client"
 
 export interface Viewing {
   id: string
-  scheduled_at: string
+  scheduled_date: string
   property_id: string | null
   lead_id: string | null
   agent_id: string | null
-  type: string
   status: string
-  meeting_link: string | null
   property_code: string | null
   lead_name: string | null
   agent_name: string | null
@@ -35,7 +33,7 @@ export function useViewings(options: UseViewingsOptions = {}) {
       const now = new Date()
       let query = supabase
         .from("viewings")
-        .select("id, scheduled_at, property_id, lead_id, agent_id, type, status, meeting_link, notes")
+        .select("id, scheduled_date, property_id, lead_id, agent_id, status, notes")
 
       if (options.agent) {
         query = query.eq("agent_id", options.agent)
@@ -44,20 +42,20 @@ export function useViewings(options: UseViewingsOptions = {}) {
         query = query.eq("property_id", options.property)
       }
       if (options.dateFrom) {
-        query = query.gte("scheduled_at", options.dateFrom)
+        query = query.gte("scheduled_date", options.dateFrom)
       }
       if (options.dateTo) {
-        query = query.lte("scheduled_at", options.dateTo)
+        query = query.lte("scheduled_date", options.dateTo)
       }
       if (options.upcoming !== undefined) {
         if (options.upcoming) {
-          query = query.gte("scheduled_at", now.toISOString())
+          query = query.gte("scheduled_date", now.toISOString())
         } else {
-          query = query.lt("scheduled_at", now.toISOString())
+          query = query.lt("scheduled_date", now.toISOString())
         }
       }
 
-      query = query.order("scheduled_at", { ascending: options.upcoming !== false })
+      query = query.order("scheduled_date", { ascending: options.upcoming !== false })
 
       const { data: viewings, error: viewingsError } = await query
 
@@ -70,14 +68,14 @@ export function useViewings(options: UseViewingsOptions = {}) {
             viewing.property_id
               ? supabase
                   .from("properties")
-                  .select("code")
+                  .select("property_code")
                   .eq("id", viewing.property_id)
                   .single()
               : { data: null },
             viewing.lead_id
               ? supabase
                   .from("leads")
-                  .select("name")
+                  .select("full_name")
                   .eq("id", viewing.lead_id)
                   .single()
               : { data: null },
@@ -92,8 +90,9 @@ export function useViewings(options: UseViewingsOptions = {}) {
 
           return {
             ...viewing,
-            property_code: property.data?.code || null,
-            lead_name: lead.data?.name || null,
+            scheduled_at: viewing.scheduled_date, // Alias for compatibility
+            property_code: property.data?.property_code || null,
+            lead_name: lead.data?.full_name || null,
             agent_name: agent.data?.name_en || null,
           }
         })

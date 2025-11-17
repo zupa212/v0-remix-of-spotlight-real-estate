@@ -33,7 +33,7 @@ export async function replyWhatsApp(
     // Get lead details
     const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id, name, phone, email")
+      .select("id, full_name, phone, email")
       .eq("id", leadId)
       .single()
 
@@ -64,8 +64,8 @@ export async function replyWhatsApp(
       lead_id: leadId,
       activity_type: "whatsapp_contact",
       description: message
-        ? `WhatsApp message sent to ${lead.name}: ${message}`
-        : `WhatsApp conversation opened with ${lead.name}`,
+        ? `WhatsApp message sent to ${lead.full_name}: ${message}`
+        : `WhatsApp conversation opened with ${lead.full_name}`,
       metadata: {
         phone: lead.phone,
         url: whatsappUrl,
@@ -120,7 +120,7 @@ export async function replyTelegram(
     // Get lead details
     const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id, name, phone, email")
+      .select("id, full_name, phone, email")
       .eq("id", leadId)
       .single()
 
@@ -155,8 +155,8 @@ export async function replyTelegram(
       lead_id: leadId,
       activity_type: "telegram_contact",
       description: message
-        ? `Telegram message sent to ${lead.name}: ${message}`
-        : `Telegram conversation opened with ${lead.name}`,
+        ? `Telegram message sent to ${lead.full_name}: ${message}`
+        : `Telegram conversation opened with ${lead.full_name}`,
       metadata: {
         phone: lead.phone,
         url: telegramUrl,

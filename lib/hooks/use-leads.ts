@@ -6,15 +6,13 @@ import { useEffect } from "react"
 
 export interface Lead {
   id: string
-  name: string
+  full_name: string
   email: string | null
   phone: string | null
-  stage: string
-  score: number | null
-  property_code: string | null
+  status: string
   property_id: string | null
   agent_id: string | null
-  source: string | null
+  lead_source: string | null
   created_at: string
   updated_at: string
   last_activity: string | null
@@ -36,10 +34,10 @@ export function useLeads(options: UseLeadsOptions = {}) {
     queryFn: async (): Promise<Lead[]> => {
       let query = supabase
         .from("leads")
-        .select("id, name, email, phone, stage, score, property_code, property_id, agent_id, source, created_at, updated_at")
+        .select("id, full_name, email, phone, status, property_id, agent_id, lead_source, created_at, updated_at")
 
       if (options.stage) {
-        query = query.eq("stage", options.stage)
+        query = query.eq("status", options.stage)
       }
       if (options.agent) {
         query = query.eq("agent_id", options.agent)
@@ -67,6 +65,9 @@ export function useLeads(options: UseLeadsOptions = {}) {
 
           return {
             ...lead,
+            name: lead.full_name, // Alias for compatibility
+            stage: lead.status, // Alias for compatibility
+            source: lead.lead_source, // Alias for compatibility
             last_activity: activity?.created_at || lead.updated_at,
           }
         })

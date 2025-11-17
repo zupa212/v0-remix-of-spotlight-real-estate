@@ -41,12 +41,12 @@ export function AdminAgentsLeagueTable() {
       // Get performance metrics for each agent
       const performance = await Promise.all(
         agents.map(async (agent) => {
-          // Deals won (leads with stage 'won' assigned to this agent)
+          // Deals won (leads with status 'closed_won' assigned to this agent)
           const { count: dealsWon } = await supabase
             .from("leads")
             .select("id", { count: "exact", head: true })
             .eq("agent_id", agent.id)
-            .eq("stage", "won")
+            .eq("status", "closed_won")
 
           // Viewings scheduled
           const { count: viewingsScheduled } = await supabase

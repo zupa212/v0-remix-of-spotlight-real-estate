@@ -49,12 +49,12 @@ export function useKpis(enableRealtime: boolean = true) {
         supabase
           .from("leads")
           .select("id", { count: "exact", head: true })
-          .in("stage", ["new", "contacted", "qualified"])
+          .in("status", ["new", "contacted", "qualified"])
           .gte("created_at", new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()),
         supabase
           .from("leads")
           .select("id", { count: "exact", head: true })
-          .in("stage", ["new", "contacted", "qualified"])
+          .in("status", ["new", "contacted", "qualified"])
           .gte("created_at", new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString())
           .lt("created_at", new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()),
       ])
@@ -69,13 +69,13 @@ export function useKpis(enableRealtime: boolean = true) {
         supabase
           .from("viewings")
           .select("id", { count: "exact", head: true })
-          .gte("scheduled_at", now.toISOString())
-          .lte("scheduled_at", nextWeek.toISOString()),
+          .gte("scheduled_date", now.toISOString())
+          .lte("scheduled_date", nextWeek.toISOString()),
         supabase
           .from("viewings")
           .select("id", { count: "exact", head: true })
-          .gte("scheduled_at", new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString())
-          .lt("scheduled_at", now.toISOString()),
+          .gte("scheduled_date", new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString())
+          .lt("scheduled_date", now.toISOString()),
       ])
 
       const scheduledViewings = viewingsThisWeek.count || 0
