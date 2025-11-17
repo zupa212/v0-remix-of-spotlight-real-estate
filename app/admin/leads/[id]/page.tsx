@@ -14,11 +14,11 @@ import Link from "next/link"
 
 type Lead = {
   id: string
-  name: string
+  full_name: string
   email: string
   phone: string | null
   status: string
-  source: string
+  lead_source: string
   budget_min: number | null
   budget_max: number | null
   message: string | null
@@ -27,13 +27,20 @@ type Lead = {
   created_at: string
   properties: { title_en: string; property_code: string; city_en: string } | null
   agents: { id: string; name_en: string; email: string; phone: string } | null
+  // Aliases for compatibility
+  name?: string
+  source?: string
 }
 
 type Viewing = {
   id: string
-  scheduled_at: string
+  scheduled_date: string
   status: string
   notes: string | null
+  property_id: string | null
+  agent_id: string | null
+  // Alias for compatibility
+  scheduled_at?: string
 }
 
 const statusColors = {
@@ -69,17 +76,34 @@ export default function LeadDetailPage() {
     const { data, error } = await supabase
       .from("leads")
       .select(`
-        *,
-        properties(title_en, property_code, city_en),
-        agents(id, name_en, email, phone)
+        id,
+        full_name,
+        email,
+        phone,
+        status,
+        lead_source,
+        budget_min,
+        budget_max,
+        message,
+        property_id,
+        agent_id,
+        created_at,
+        updated_at,
+        properties!leads_property_id_fkey(title_en, property_code, city_en),
+        agents!leads_agent_id_fkey(id, name_en, email, phone)
       `)
       .eq("id", params.id)
       .single()
 
     if (error) {
       console.error("Error fetching lead:", error)
-    } else {
-      setLead(data)
+    } else if (data) {
+      // Add aliases for compatibility
+      setLead({
+        ...data,
+        name: data.full_name,
+        source: data.lead_source,
+      })
     }
     setLoading(false)
   }
@@ -87,14 +111,19 @@ export default function LeadDetailPage() {
   async function fetchViewings() {
     const { data, error } = await supabase
       .from("viewings")
-      .select("*")
+      .select("id, scheduled_date, status, notes, property_id, agent_id")
       .eq("lead_id", params.id)
-      .order("scheduled_at", { ascending: false })
+      .order("scheduled_date", { ascending: false })
 
     if (error) {
       console.error("Error fetching viewings:", error)
-    } else {
-      setViewings(data || [])
+    } else if (data) {
+      // Add alias for compatibility
+      const viewingsWithAlias = data.map((v: any) => ({
+        ...v,
+        scheduled_at: v.scheduled_date,
+      }))
+      setViewings(viewingsWithAlias)
     }
   }
 
@@ -123,7 +152,7 @@ export default function LeadDetailPage() {
           {
             id: "1",
             type: "created",
-            description: `Lead created from ${lead.source}`,
+            description: `Lead created from ${lead.source || lead.lead_source || "website"}`,
             created_at: lead.created_at,
           },
         ])
@@ -204,7 +233,7 @@ export default function LeadDetailPage() {
 
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-bold">{lead.name}</h1>
+          <h1 className="font-heading text-3xl font-bold">{lead.name || lead.full_name || "Unnamed Lead"}</h1>
           <p className="text-muted-foreground">Lead ID: {lead.id.slice(0, 8)}</p>
         </div>
         <Badge className={statusColors[lead.status as keyof typeof statusColors]}>{lead.status}</Badge>
@@ -248,7 +277,7 @@ export default function LeadDetailPage() {
                   <Building className="h-4 w-4" />
                   <span>Source</span>
                 </div>
-                <p className="font-medium capitalize">{lead.source}</p>
+                <p className="font-medium capitalize">{lead.source || lead.lead_source || "website"}</p>
               </div>
             </div>
 
@@ -366,7 +395,7 @@ export default function LeadDetailPage() {
               {viewings.map((viewing) => (
                 <div key={viewing.id} className="flex items-start justify-between border-b pb-4 last:border-0">
                   <div className="space-y-1">
-                    <p className="font-medium">{new Date(viewing.scheduled_at).toLocaleString()}</p>
+                    <p className="font-medium">{new Date(viewing.scheduled_at || viewing.scheduled_date).toLocaleString()}</p>
                     {viewing.notes && <p className="text-sm text-muted-foreground">{viewing.notes}</p>}
                   </div>
                   <Badge variant="outline" className="capitalize">
