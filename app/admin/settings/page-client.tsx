@@ -9,6 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Upload, X, Loader2 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,6 +25,124 @@ import {
 export function AdminSettingsPageClient() {
   const [hotThreshold, setHotThreshold] = React.useState([75])
   const [warmThreshold, setWarmThreshold] = React.useState([50])
+  const [logoUrl, setLogoUrl] = React.useState<string | null>(null)
+  const [logoPreview, setLogoPreview] = React.useState<string | null>(null)
+  const [uploadingLogo, setUploadingLogo] = React.useState(false)
+  const supabase = createClient()
+
+  // Load existing logo on mount
+  React.useEffect(() => {
+    loadLogo()
+  }, [])
+
+  async function loadLogo() {
+    try {
+      // Try to load from localStorage first (for demo)
+      const savedLogo = localStorage.getItem("admin-logo-url")
+      if (savedLogo) {
+        setLogoUrl(savedLogo)
+        setLogoPreview(savedLogo)
+      }
+    } catch (error) {
+      console.error("Error loading logo:", error)
+    }
+  }
+
+  async function handleLogoUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml"]
+    if (!validTypes.includes(file.type)) {
+      toast.error("Invalid file type. Please upload PNG, JPEG, WebP, or SVG.")
+      return
+    }
+
+    // Validate file size (2MB)
+    const maxSize = 2 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("File size exceeds 2MB limit.")
+      return
+    }
+
+    // Create preview
+    const previewUrl = URL.createObjectURL(file)
+    setLogoPreview(previewUrl)
+
+    // Upload to Supabase Storage
+    setUploadingLogo(true)
+    try {
+      const fileExt = file.name.split(".").pop()
+      const timestamp = Date.now()
+      const fileName = `logo/${timestamp}.${fileExt}`
+
+      // Upload to storage bucket (create 'logos' bucket if it doesn't exist)
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("logos")
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: true, // Replace existing logo
+        })
+
+      if (uploadError) {
+        // If bucket doesn't exist, try 'general' or 'assets' bucket
+        const fallbackBuckets = ["general", "assets", "uploads"]
+        let uploaded = false
+
+        for (const bucket of fallbackBuckets) {
+          try {
+            const { data, error } = await supabase.storage.from(bucket).upload(fileName, file, {
+              cacheControl: "3600",
+              upsert: true,
+            })
+            if (!error && data) {
+              const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName)
+              setLogoUrl(publicUrl)
+              localStorage.setItem("admin-logo-url", publicUrl)
+              toast.success("Logo uploaded successfully!")
+              uploaded = true
+              break
+            }
+          } catch (e) {
+            continue
+          }
+        }
+
+        if (!uploaded) {
+          throw uploadError
+        }
+      } else {
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage.from("logos").getPublicUrl(fileName)
+        setLogoUrl(publicUrl)
+        localStorage.setItem("admin-logo-url", publicUrl)
+        toast.success("Logo uploaded successfully!")
+      }
+    } catch (error) {
+      console.error("Error uploading logo:", error)
+      toast.error("Failed to upload logo. Please try again.")
+      setLogoPreview(null)
+      if (previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
+  async function handleSaveLogo() {
+    if (!logoUrl) return
+
+    try {
+      // Save to localStorage (for now - can be moved to database later)
+      localStorage.setItem("admin-logo-url", logoUrl)
+      toast.success("Logo saved successfully!")
+    } catch (error) {
+      console.error("Error saving logo:", error)
+      toast.error("Failed to save logo.")
+    }
+  }
 
   return (
     <AdminPageWrapper
