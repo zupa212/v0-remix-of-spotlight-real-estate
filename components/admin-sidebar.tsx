@@ -28,11 +28,18 @@ import {
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { useSettings } from "@/lib/hooks/use-settings"
 
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { settings } = useSettings()
+  
+  // Get logo URL from settings or localStorage fallback
+  const logoUrl = typeof window !== "undefined" 
+    ? (settings?.logo_url || localStorage.getItem("admin-logo-url"))
+    : settings?.logo_url
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },

@@ -69,23 +69,35 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center gap-4 px-6">
-        {/* Logo */}
-        {logoUrl && (
-          <Link href="/admin" className="flex items-center gap-2 mr-4">
-            <div className="relative h-10 w-10 flex-shrink-0">
-              <Image
-                src={logoUrl}
-                alt={settings?.company_name || "Logo"}
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-            {settings?.company_name && (
-              <span className="font-semibold text-lg hidden md:block">{settings.company_name}</span>
-            )}
-          </Link>
-        )}
+        {/* Logo - Always visible, more prominent */}
+        <Link href="/admin" className="flex items-center gap-3 mr-4 flex-shrink-0">
+          {logoUrl ? (
+            <>
+              <div className="relative h-12 w-12 flex-shrink-0">
+                <Image
+                  src={logoUrl}
+                  alt={settings?.company_name || "Logo"}
+                  fill
+                  className="object-contain"
+                  priority
+                  unoptimized
+                />
+              </div>
+              {settings?.company_name && (
+                <span className="font-bold text-xl hidden lg:block text-white">{settings.company_name}</span>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="h-12 w-12 flex items-center justify-center bg-primary/10 rounded-lg flex-shrink-0">
+                <span className="text-xl font-bold text-primary">S</span>
+              </div>
+              <span className="font-bold text-xl hidden lg:block text-white">
+                {settings?.company_name || "Spotlight Estate"}
+              </span>
+            </>
+          )}
+        </Link>
         
         {/* Search */}
         <div className="flex-1 max-w-md">
