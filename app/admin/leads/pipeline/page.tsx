@@ -11,17 +11,22 @@ import { Phone, Mail, MessageSquare, User, Calendar, DollarSign, MapPin } from '
 
 interface Lead {
   id: string
-  name: string
+  full_name: string
   email: string
-  phone: string
+  phone: string | null
   status: string
   priority: string
-  budget_min: number
-  budget_max: number
+  budget_min?: number | null
+  budget_max?: number | null
   created_at: string
+  updated_at: string
+  property_id?: string | null
+  agent_id?: string | null
+  property?: { id: string; title_en: string; property_code: string } | null
+  agent?: { id: string; name_en: string } | null
+  // Aliases for compatibility
+  name?: string
   score?: number
-  property?: { title_en: string; property_code: string }
-  agent?: { name_en: string }
 }
 
 const STATUS_COLUMNS = [
@@ -61,14 +66,56 @@ export default function LeadsPipelinePage() {
     const { data, error } = await supabase
       .from('leads')
       .select(`
-        *,
-        property:property_id(title_en, property_code),
-        agent:agent_id(name_en)
+        id,
+        full_name,
+        email,
+        phone,
+        status,
+        priority,
+        budget_min,
+        budget_max,
+        property_id,
+        agent_id,
+        created_at,
+        updated_at
       `)
       .order('created_at', { ascending: false })
 
     if (!error && data) {
-      setLeads(data)
+      // Fetch related property and agent data
+      const leadsWithRelations = await Promise.all(
+        data.map(async (lead: any) => {
+          let property = null
+          let agent = null
+
+          if (lead.property_id) {
+            const { data: propData } = await supabase
+              .from('properties')
+              .select('id, title_en, property_code')
+              .eq('id', lead.property_id)
+              .single()
+            property = propData
+          }
+
+          if (lead.agent_id) {
+            const { data: agentData } = await supabase
+              .from('agents')
+              .select('id, name_en')
+              .eq('id', lead.agent_id)
+              .single()
+            agent = agentData
+          }
+
+          return {
+            ...lead,
+            name: lead.full_name, // Alias for compatibility
+            property,
+            agent,
+          }
+        })
+      )
+
+      setLeads(leadsWithRelations)
     }
     setLoading(false)
   }
@@ -86,8 +133,9 @@ export default function LeadsPipelinePage() {
 
   // Filter leads
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         lead.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const name = lead.name || lead.full_name || ""
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         lead.email?.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesPriority = priorityFilter === 'all' || lead.priority === priorityFilter
     return matchesSearch && matchesPriority
   })
@@ -164,14 +212,9 @@ export default function LeadsPipelinePage() {
                   style={{ borderLeftColor: lead.priority === 'high' ? '#ef4444' : lead.priority === 'medium' ? '#f59e0b' : '#6b7280' }}
                 >
                   <div className="space-y-2">
-                    {/* Name & Score */}
+                    {/* Name */}
                     <div className="flex items-start justify-between">
-                      <p className="font-medium text-sm">{lead.name}</p>
-                      {lead.score && (
-                        <Badge variant="secondary" className="text-xs">
-                          {lead.score}
-                        </Badge>
-                      )}
+                      <p className="font-medium text-sm">{lead.name || lead.full_name || "Unnamed Lead"}</p>
                     </div>
 
                     {/* Contact Info */}
@@ -189,7 +232,7 @@ export default function LeadsPipelinePage() {
                     </div>
 
                     {/* Property */}
-                    {lead.property && (
+                    {lead.property?.title_en && (
                       <div className="text-xs text-muted-foreground truncate">
                         🏠 {lead.property.title_en}
                       </div>
