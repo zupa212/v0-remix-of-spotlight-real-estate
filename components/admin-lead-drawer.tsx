@@ -207,14 +207,14 @@ export function AdminLeadDrawer({ lead, open, onOpenChange }: AdminLeadDrawerPro
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
                     <AvatarFallback>
-                      {lead.name?.charAt(0)?.toUpperCase() || "L"}
+                      {(lead.name || lead.full_name)?.charAt(0)?.toUpperCase() || "L"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="text-lg font-semibold">{lead.name || "Unnamed Lead"}</h3>
+                    <h3 className="text-lg font-semibold">{lead.name || lead.full_name || "Unnamed Lead"}</h3>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant={scoring.variant}>{scoring.label}</Badge>
-                      <Badge variant="outline">{lead.stage}</Badge>
+                      <Badge variant="outline">{lead.stage || lead.status || "new"}</Badge>
                     </div>
                   </div>
                 </div>
@@ -254,7 +254,7 @@ export function AdminLeadDrawer({ lead, open, onOpenChange }: AdminLeadDrawerPro
               <div className="flex gap-2">
                 <QuickReplyButtons
                   leadId={lead.id}
-                  leadName={lead.name || ""}
+                  leadName={lead.name || lead.full_name || ""}
                   leadPhone={lead.phone || undefined}
                 />
               </div>
