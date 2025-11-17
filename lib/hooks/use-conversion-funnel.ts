@@ -24,17 +24,17 @@ export function useConversionFunnel() {
         return []
       }
 
-      // Get counts by stage
-      const stages = ["new", "contacted", "qualified", "viewing", "offer", "won", "lost"]
+      // Get counts by status (using status column, not stage)
+      const statuses = ["new", "contacted", "qualified", "viewing", "offer", "won", "lost"]
       const stageCounts = await Promise.all(
-        stages.map(async (stage) => {
+        statuses.map(async (status) => {
           const { count } = await supabase
             .from("leads")
             .select("id", { count: "exact", head: true })
-            .eq("stage", stage)
+            .eq("status", status)
 
           return {
-            stage,
+            stage: status,
             count: count || 0,
             percentage: totalLeads > 0 ? ((count || 0) / totalLeads) * 100 : 0,
           }
