@@ -29,6 +29,8 @@ import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useSettings } from "@/lib/hooks/use-settings"
+import Image from "next/image"
+import Link from "next/link"
 
 export function AdminSidebar() {
   const pathname = usePathname()
@@ -112,22 +114,47 @@ export function AdminSidebar() {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex items-center gap-3 px-6 py-6 border-b border-border"
-          >
-            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
-              <div className="text-primary-foreground font-bold text-lg">▢</div>
-            </div>
-            <div>
-              <div className="text-base font-semibold text-foreground font-display">
-                Spotlight
-              </div>
-              <div className="text-xs text-muted-foreground">Admin Panel</div>
-            </div>
-          </motion.div>
+          <Link href="/admin">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center gap-3 px-6 py-6 border-b border-border hover:bg-accent/5 transition-colors cursor-pointer"
+            >
+              {logoUrl ? (
+                <>
+                  <div className="relative h-10 w-10 flex-shrink-0">
+                    <Image
+                      src={logoUrl}
+                      alt={settings?.company_name || "Logo"}
+                      fill
+                      className="object-contain"
+                      priority
+                      unoptimized
+                    />
+                  </div>
+                  <div>
+                    <div className="text-base font-bold text-white font-display">
+                      {settings?.company_name || "Spotlight"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Admin Panel</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="h-10 w-10 rounded-md bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-bold text-primary">S</span>
+                  </div>
+                  <div>
+                    <div className="text-base font-bold text-white font-display">
+                      {settings?.company_name || "Spotlight"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Admin Panel</div>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </Link>
 
           {/* Navigation */}
           <ScrollArea className="flex-1">
