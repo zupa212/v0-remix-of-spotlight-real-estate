@@ -25,6 +25,7 @@ import {
   Shield,
   FileText,
 } from "lucide-react"
+import * as React from "react"
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -34,12 +35,22 @@ export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const { settings } = useSettings()
   
-  // Get logo URL from settings or localStorage fallback
-  const logoUrl = typeof window !== "undefined" 
-    ? (settings?.logo_url || localStorage.getItem("admin-logo-url"))
-    : settings?.logo_url
+  // Prevent hydration mismatch by only accessing localStorage after mount
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Get logo URL from settings or localStorage fallback (only after mount)
+  const logoUrl = React.useMemo(() => {
+    if (settings?.logo_url) return settings.logo_url
+    if (mounted && typeof window !== "undefined") {
+      return localStorage.getItem("admin-logo-url")
+    }
+    return null
+  }, [settings?.logo_url, mounted])
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
