@@ -29,8 +29,6 @@ import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useSettings } from "@/lib/hooks/use-settings"
-import Image from "next/image"
-import Link from "next/link"
 
 export function AdminSidebar() {
   const pathname = usePathname()
