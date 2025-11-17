@@ -86,9 +86,63 @@ export function AdminSettingsPageClient() {
                   <Input id="accent-color" type="color" defaultValue="#F59E0B" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="logo-upload">Logo Upload</Label>
-                <Input id="logo-upload" type="file" accept="image/*" />
+              <div className="space-y-4">
+                <Label>Logo</Label>
+                <div className="flex items-center gap-4">
+                  {/* Logo Preview */}
+                  <div className="relative">
+                    <Avatar className="h-24 w-24 border-2 border-border">
+                      <AvatarImage src={logoPreview || logoUrl || undefined} alt="Logo" />
+                      <AvatarFallback className="text-lg">LOGO</AvatarFallback>
+                    </Avatar>
+                    {logoPreview && (
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                        onClick={() => {
+                          setLogoPreview(null)
+                          if (logoPreview.startsWith("blob:")) {
+                            URL.revokeObjectURL(logoPreview)
+                          }
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Upload Button */}
+                  <div className="flex-1 space-y-2">
+                    <Input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      onChange={handleLogoUpload}
+                      disabled={uploadingLogo}
+                      className="cursor-pointer"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Recommended: PNG or SVG, max 2MB. Logo will be displayed in the header.
+                    </p>
+                    {uploadingLogo && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Uploading logo...
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {logoUrl && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSaveLogo}
+                    disabled={uploadingLogo}
+                  >
+                    Save Logo
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
