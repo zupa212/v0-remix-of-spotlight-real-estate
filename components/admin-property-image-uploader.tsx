@@ -125,8 +125,17 @@ export function AdminPropertyImageUploader({
   )
 
   React.useEffect(() => {
-    setImages(initialImages)
-  }, [initialImages])
+    // Update images when initialImages prop changes
+    // Only update if the IDs or URLs are different to avoid unnecessary re-renders
+    const initialIds = new Set(initialImages.map(img => img.id))
+    const currentIds = new Set(images.map(img => img.id))
+    const idsMatch = initialIds.size === currentIds.size && 
+                     Array.from(initialIds).every(id => currentIds.has(id))
+    
+    if (!idsMatch || initialImages.length !== images.length) {
+      setImages(initialImages)
+    }
+  }, [initialImages, images])
 
   React.useEffect(() => {
     onImagesChange?.(images)

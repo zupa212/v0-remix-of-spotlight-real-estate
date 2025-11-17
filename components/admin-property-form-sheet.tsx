@@ -16,6 +16,7 @@ import { createProperty, updateProperty, type PropertyInput } from "@/lib/action
 import type { Property } from "@/lib/hooks/use-properties"
 import { AdminPropertyImageUploader } from "@/components/admin-property-image-uploader"
 import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/client"
 
 type PropertyFormValues = {
   title_en: string
@@ -104,6 +105,7 @@ export function AdminPropertyFormSheet({ open, onOpenChange, property }: AdminPr
   const [isPending, startTransition] = useTransition()
   const [tab, setTab] = React.useState("basics")
   const [formValues, setFormValues] = React.useState<PropertyFormValues>(defaultValues)
+  const [propertyImages, setPropertyImages] = React.useState<Array<{ id: string; url: string; alt_text: string | null; display_order: number }>>([])
 
   React.useEffect(() => {
     if (property) {
@@ -147,8 +149,44 @@ export function AdminPropertyFormSheet({ open, onOpenChange, property }: AdminPr
     } else {
       setFormValues(defaultValues)
       setTab("basics")
+      setPropertyImages([])
     }
   }, [property, open])
+
+  // Fetch property images when property changes
+  React.useEffect(() => {
+    async function fetchImages() {
+      if (!property?.id) {
+        setPropertyImages([])
+        return
+      }
+
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from("property_images")
+        .select("id, image_url, alt_text, display_order")
+        .eq("property_id", property.id)
+        .order("display_order", { ascending: true })
+
+      if (error) {
+        console.error("Error fetching property images:", error)
+        setPropertyImages([])
+      } else {
+        setPropertyImages(
+          (data || []).map((img) => ({
+            id: img.id,
+            url: img.image_url,
+            alt_text: img.alt_text,
+            display_order: img.display_order,
+          }))
+        )
+      }
+    }
+
+    if (open && property?.id) {
+      fetchImages()
+    }
+  }, [property?.id, open])
 
   const setValue = <K extends keyof PropertyFormValues>(key: K, value: PropertyFormValues[K]) => {
     setFormValues((prev) => ({ ...prev, [key]: value }))
@@ -386,9 +424,10 @@ export function AdminPropertyFormSheet({ open, onOpenChange, property }: AdminPr
                     <Label>Property Images</Label>
                     <AdminPropertyImageUploader
                       propertyId={property.id}
+                      initialImages={propertyImages}
                       onImagesChange={(images) => {
-                        // Images are automatically saved to database
-                        console.log("Images updated:", images)
+                        // Update local state when images change
+                        setPropertyImages(images)
                       }}
                     />
                   </div>
