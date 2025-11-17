@@ -1,15 +1,23 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Space_Grotesk } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
-// Framer-style: Use Inter for both body and headings (clean, modern)
+// Body font: Inter (clean, modern)
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-  display: "swap", // Better font loading
+  display: "swap",
+})
+
+// Display font: Space Grotesk (for headings h1-h3)
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 })
 
 export const metadata: Metadata = {
@@ -25,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         {children}
         <Toaster />
         <Analytics />

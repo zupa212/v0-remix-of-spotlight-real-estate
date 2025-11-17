@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { MessageCircle, Send } from "lucide-react"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { replyWhatsApp, replyTelegram } from "@/lib/actions/leads"
+import { toast } from "sonner"
+import { useState } from "react"
 
 type QuickReplyButtonsProps = {
   leadId: string
@@ -11,41 +13,54 @@ type QuickReplyButtonsProps = {
 }
 
 export function QuickReplyButtons({ leadId, leadName, leadPhone }: QuickReplyButtonsProps) {
-  const supabase = createBrowserClient()
+  const [isLoading, setIsLoading] = useState(false)
 
   async function handleWhatsAppReply() {
     if (!leadPhone) {
-      alert("No phone number available for this lead")
+      toast.error("No phone number available for this lead")
       return
     }
 
-    // Log activity
-    await supabase.from("lead_activity").insert({
-      lead_id: leadId,
-      type: "whatsapp",
-      content: `Opened WhatsApp conversation with ${leadName}`,
-    })
-
-    // Open WhatsApp
-    const cleanPhone = leadPhone.replace(/\D/g, "")
-    window.open(`https://wa.me/${cleanPhone}`, "_blank")
+    setIsLoading(true)
+    try {
+      const result = await replyWhatsApp(leadId)
+      
+      if (result.success && result.data) {
+        // Open WhatsApp in new tab
+        window.open(result.data.url, "_blank")
+        toast.success("WhatsApp conversation opened")
+      } else {
+        toast.error(result.error || "Failed to open WhatsApp")
+      }
+    } catch (error) {
+      toast.error("Failed to open WhatsApp")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   async function handleTelegramReply() {
     if (!leadPhone) {
-      alert("No phone number available for this lead")
+      toast.error("No phone number available for this lead")
       return
     }
 
-    // Log activity
-    await supabase.from("lead_activity").insert({
-      lead_id: leadId,
-      type: "telegram",
-      content: `Opened Telegram conversation with ${leadName}`,
-    })
-
-    // Open Telegram (requires username, this is a placeholder)
-    alert("Telegram integration requires username. Please configure in settings.")
+    setIsLoading(true)
+    try {
+      const result = await replyTelegram(leadId)
+      
+      if (result.success && result.data) {
+        // Open Telegram in new tab
+        window.open(result.data.url, "_blank")
+        toast.success("Telegram conversation opened")
+      } else {
+        toast.error(result.error || "Failed to open Telegram")
+      }
+    } catch (error) {
+      toast.error("Failed to open Telegram")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -54,8 +69,9 @@ export function QuickReplyButtons({ leadId, leadName, leadPhone }: QuickReplyBut
         variant="outline"
         size="sm"
         onClick={handleWhatsAppReply}
-        className="gap-2 bg-transparent"
-        disabled={!leadPhone}
+        className="gap-2"
+        disabled={!leadPhone || isLoading}
+        aria-label="Reply via WhatsApp"
       >
         <MessageCircle className="h-4 w-4 text-green-600" />
         WhatsApp
@@ -64,8 +80,9 @@ export function QuickReplyButtons({ leadId, leadName, leadPhone }: QuickReplyBut
         variant="outline"
         size="sm"
         onClick={handleTelegramReply}
-        className="gap-2 bg-transparent"
-        disabled={!leadPhone}
+        className="gap-2"
+        disabled={!leadPhone || isLoading}
+        aria-label="Reply via Telegram"
       >
         <Send className="h-4 w-4 text-blue-600" />
         Telegram

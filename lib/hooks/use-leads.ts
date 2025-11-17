@@ -1,0 +1,124 @@
+"use client"
+
+import { useQuery } from "@tanstack/react-query"
+import { createClient } from "@/lib/supabase/client"
+import { useEffect } from "react"
+
+export interface Lead {
+  id: string
+  name: string
+  email: string | null
+  phone: string | null
+  stage: string
+  score: number | null
+  property_code: string | null
+  property_id: string | null
+  agent_id: string | null
+  source: string | null
+  created_at: string
+  updated_at: string
+  last_activity: string | null
+}
+
+interface UseLeadsOptions {
+  stage?: string
+  agent?: string
+  limit?: number
+  enableRealtime?: boolean
+}
+
+export function useLeads(options: UseLeadsOptions = {}) {
+  const supabase = createClient()
+  const enableRealtime = options.enableRealtime !== false // Default to true
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["leads", options],
+    queryFn: async (): Promise<Lead[]> => {
+      let query = supabase
+        .from("leads")
+        .select("id, name, email, phone, stage, score, property_code, property_id, agent_id, source, created_at, updated_at")
+
+      if (options.stage) {
+        query = query.eq("stage", options.stage)
+      }
+      if (options.agent) {
+        query = query.eq("agent_id", options.agent)
+      }
+      if (options.limit) {
+        query = query.limit(options.limit)
+      }
+
+      query = query.order("updated_at", { ascending: false })
+
+      const { data, error } = await query
+
+      if (error) throw error
+
+      // Fetch last activity for each lead
+      const leadsWithActivity = await Promise.all(
+        (data || []).map(async (lead) => {
+          const { data: activity } = await supabase
+            .from("lead_activity")
+            .select("created_at")
+            .eq("lead_id", lead.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .single()
+
+          return {
+            ...lead,
+            last_activity: activity?.created_at || lead.updated_at,
+          }
+        })
+      )
+
+      return leadsWithActivity
+    },
+  })
+
+  // Real-time subscription for leads
+  useEffect(() => {
+    if (!enableRealtime) return
+
+    const channel = supabase
+      .channel(`leads-changes-${JSON.stringify(options)}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "leads",
+        },
+        () => {
+          // Refetch on any change
+          refetch()
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "lead_activity",
+        },
+        () => {
+          // Refetch when activity changes
+          refetch()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [enableRealtime, refetch, JSON.stringify(options)])
+
+  return {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  }
+}
+

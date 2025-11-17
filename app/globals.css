@@ -73,6 +73,13 @@
   --property-gray-light: #E0E0E0; /* Borders */
   --property-gray-very-light: #F0F0F0; /* Tag backgrounds */
   --property-gray-ultra-light: #F8F8F8; /* Subtle backgrounds */
+  
+  /* Spotlight Brand Colors */
+  --brand-primary: #0EA5E9; /* Sky blue */
+  --brand-ink: #111827; /* Dark ink */
+  --brand-accent: #F59E0B; /* Amber accent */
+  --brand-success: #10B981; /* Emerald success */
+  --brand-danger: #EF4444; /* Red danger */
 }
 
 .dark {
@@ -115,7 +122,8 @@
   /* Primary: Inter (modern, clean) */
   /* Fallback: Roboto, Arial, Helvetica, system fonts */
   --font-sans: "Inter", "Roboto", "Arial", "Helvetica Neue", system-ui, -apple-system, sans-serif;
-  --font-heading: "Inter", "Roboto", "Arial", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --font-heading: "Space Grotesk", "Inter", "Roboto", "Arial", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", "Inter", "Roboto", "Arial", "Helvetica Neue", system-ui, -apple-system, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", "Courier New", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);

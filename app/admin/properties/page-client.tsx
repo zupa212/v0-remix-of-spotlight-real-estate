@@ -1,321 +1,189 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import React from "react"
-import { createClient } from "@/lib/supabase/client"
+import * as React from "react"
+import { useState } from "react"
+import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import { PropertyDeleteDialog } from "@/components/property-delete-dialog"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Trash2, Eye, Edit, MoreVertical, Search } from "lucide-react"
-import { showToast } from "@/lib/toast"
-import { AdminTableSkeleton } from "@/components/admin-loading-skeleton"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { AdminPropertiesTable } from "@/components/admin-properties-table"
+import { AdminPageWrapper } from "@/components/admin-page-wrapper"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Card, CardContent } from "@/components/ui/card"
+import { AdminPropertyFormSheet } from "@/components/admin-property-form-sheet"
+import type { Property } from "@/lib/hooks/use-properties"
+import { useRegions } from "@/lib/hooks/use-regions"
+import { useAgents } from "@/lib/hooks/use-agents"
 
-type AdminPropertyRow = {
-  id: string
-  propertyCode: string
-  titleEn: string
-  location: string
-  propertyType: string
-  listingType: string
-  priceSale: number | null
-  priceRent: number | null
-  currency: string
-  status: string
-  published: boolean
-  createdAt: string
-  displayPrice: string
-}
+export function AdminPropertiesPageClient() {
+  const [filters, setFilters] = React.useState({
+    status: "all",
+    type: "all",
+    region: "all",
+    agent: "all",
+    published: undefined as boolean | undefined,
+  })
+  
+  const { data: regions } = useRegions()
+  const { data: agents } = useAgents()
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
 
-interface PropertiesTableClientProps {
-  properties: AdminPropertyRow[]
-}
-
-export function PropertiesTableClient({ properties: initialProperties }: PropertiesTableClientProps) {
-  const [properties, setProperties] = useState(initialProperties)
-  const [filteredProperties, setFilteredProperties] = useState(initialProperties)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
-  const [deleteDialog, setDeleteDialog] = useState<{ id: string; title: string } | null>(null)
-  const [updating, setUpdating] = useState<Set<string>>(new Set())
-
-  // Filter properties based on search term
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredProperties(properties)
-      return
-    }
-
-    const filtered = properties.filter(
-      (property) =>
-        property.titleEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        property.propertyCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        property.location.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    setFilteredProperties(filtered)
-  }, [searchTerm, properties])
-
-  const handleTogglePublished = async (propertyId: string, currentPublished: boolean) => {
-    setUpdating((prev) => new Set(prev).add(propertyId))
-    try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from("properties")
-        .update({ published: !currentPublished })
-        .eq("id", propertyId)
-
-      if (error) throw error
-
-      setProperties((prev) =>
-        prev.map((p) => (p.id === propertyId ? { ...p, published: !currentPublished } : p))
-      )
-      showToast.success(
-        "Property updated",
-        `Property ${!currentPublished ? "published" : "unpublished"} successfully`
-      )
-    } catch (error) {
-      console.error("Error updating property:", error)
-      showToast.error("Failed to update property", "Please try again")
-    } finally {
-      setUpdating((prev) => {
-        const next = new Set(prev)
-        next.delete(propertyId)
-        return next
-      })
-    }
+  const handleCreate = () => {
+    setEditingProperty(null)
+    setIsSheetOpen(true)
   }
 
-  const handleBulkDelete = async () => {
-    if (selectedIds.size === 0) return
-    if (!confirm(`Are you sure you want to delete ${selectedIds.size} property/properties?`)) return
-
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.from("properties").delete().in("id", Array.from(selectedIds))
-
-      if (error) throw error
-
-      setProperties((prev) => prev.filter((p) => !selectedIds.has(p.id)))
-      setSelectedIds(new Set())
-      showToast.success("Properties deleted", `${selectedIds.size} property/properties deleted successfully`)
-      window.location.reload()
-    } catch (error) {
-      console.error("Error deleting properties:", error)
-      showToast.error("Failed to delete properties", "Please try again")
-    }
-  }
-
-  const handleBulkPublish = async (publish: boolean) => {
-    if (selectedIds.size === 0) return
-
-    try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from("properties")
-        .update({ published: publish })
-        .in("id", Array.from(selectedIds))
-
-      if (error) throw error
-
-      setProperties((prev) =>
-        prev.map((p) => (selectedIds.has(p.id) ? { ...p, published: publish } : p))
-      )
-      setSelectedIds(new Set())
-      showToast.success(
-        "Properties updated",
-        `${selectedIds.size} property/properties ${publish ? "published" : "unpublished"} successfully`
-      )
-      window.location.reload()
-    } catch (error) {
-      console.error("Error updating properties:", error)
-      showToast.error("Failed to update properties", "Please try again")
-    }
-  }
-
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const toggleSelectAll = () => {
-    if (selectedIds.size === properties.length) {
-      setSelectedIds(new Set())
-    } else {
-      setSelectedIds(new Set(properties.map((p) => p.id)))
-    }
+  const handleEditProperty = (property: Property) => {
+    setEditingProperty(property)
+    setIsSheetOpen(true)
   }
 
   return (
-    <>
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
-          <Input
-            placeholder="Search properties..."
-            className="pl-10 bg-white/60 backdrop-blur-sm border-white/30"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+    <AdminPageWrapper
+      title="Properties"
+      description="Manage your property listings"
+      headerActions={
+        <Button onClick={handleCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          New Property
+        </Button>
+      }
+    >
+      {/* Breadcrumbs */}
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Properties</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
-      {/* Bulk Actions */}
-      {selectedIds.size > 0 && (
-        <div className="mb-4 flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl">
-          <span className="text-sm font-medium text-slate-700">
-            {selectedIds.size} property/properties selected
-          </span>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => handleBulkPublish(true)} className="bg-white/40 backdrop-blur-sm border-white/30">
-              Publish Selected
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleBulkPublish(false)} className="bg-white/40 backdrop-blur-sm border-white/30">
-              Unpublish Selected
-            </Button>
-            <Button size="sm" variant="destructive" onClick={handleBulkDelete} className="bg-red-500/80 backdrop-blur-sm border-red-300/30">
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Selected
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())} className="bg-white/40 backdrop-blur-sm border-white/30">
-              Clear Selection
-            </Button>
+      {/* Filters */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="grid gap-4 md:grid-cols-5">
+            <Select
+              value={filters.status}
+              onValueChange={(value) => setFilters({ ...filters, status: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="available">Available</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="sold">Sold</SelectItem>
+                <SelectItem value="rented">Rented</SelectItem>
+                <SelectItem value="off-market">Off Market</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.type}
+              onValueChange={(value) => setFilters({ ...filters, type: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="apartment">Apartment</SelectItem>
+                <SelectItem value="house">House</SelectItem>
+                <SelectItem value="villa">Villa</SelectItem>
+                <SelectItem value="land">Land</SelectItem>
+                <SelectItem value="commercial">Commercial</SelectItem>
+                <SelectItem value="office">Office</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.region}
+              onValueChange={(value) => setFilters({ ...filters, region: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Region" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Regions</SelectItem>
+                {(regions || []).map((region) => (
+                  <SelectItem key={region.id} value={region.id}>
+                    {region.name_en}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.agent}
+              onValueChange={(value) => setFilters({ ...filters, agent: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Agent" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Agents</SelectItem>
+                {(agents || []).map((agent) => (
+                  <SelectItem key={agent.id} value={agent.id}>
+                    {agent.name_en}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={
+                filters.published === undefined
+                  ? "all"
+                  : filters.published
+                    ? "published"
+                    : "draft"
+              }
+              onValueChange={(value) =>
+                setFilters({
+                  ...filters,
+                  published: value === "all" ? undefined : value === "published",
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Published" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-      )}
+        </CardContent>
+      </Card>
 
       {/* Properties Table */}
-      <div className="overflow-x-auto">
-        {properties.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedIds.size === properties.length && properties.length > 0}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </TableHead>
-                <TableHead>Property Code</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Published</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-        <TableBody>
-          {filteredProperties.map((property) => (
-                <TableRow key={property.id} className="border-b border-white/10 hover:bg-white/30 transition-all duration-300">
-                  <TableCell>
-                    <Checkbox checked={selectedIds.has(property.id)} onCheckedChange={() => toggleSelect(property.id)} />
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-slate-900">{property.propertyCode}</TableCell>
-                  <TableCell className="font-medium text-slate-900">{property.titleEn}</TableCell>
-                  <TableCell className="text-slate-600">{property.location}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="capitalize border border-white/30 backdrop-blur-sm">
-                      {property.propertyType}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-slate-700 font-medium">{property.displayPrice}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="secondary"
-                      className={`border border-white/30 backdrop-blur-sm ${
-                        property.status === "available"
-                          ? "bg-green-100/80 text-green-700"
-                          : property.status === "pending"
-                            ? "bg-amber-100/80 text-amber-700"
-                            : "bg-slate-100/80 text-slate-700"
-                      }`}
-                    >
-                      {property.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={property.published}
-                      onCheckedChange={() => handleTogglePublished(property.id, property.published)}
-                      disabled={updating.has(property.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="bg-white/40 backdrop-blur-sm border border-white/30">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-xl border-white/20">
-                        <DropdownMenuItem asChild>
-                          <Link href={`/admin/properties/${property.id}`}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/properties/${property.id}`} target="_blank">
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Public
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/admin/properties/${property.id}/edit`}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => setDeleteDialog({ id: property.id, title: property.titleEn })}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="p-8 text-center text-slate-600">
-            No properties found. Create your first listing to get started.
-          </div>
-        )}
-      </div>
+      <AdminPropertiesTable filters={filters} onEditProperty={handleEditProperty} />
 
-      {/* Delete Dialog */}
-      {deleteDialog && (
-        <PropertyDeleteDialog
-          propertyId={deleteDialog.id}
-          propertyTitle={deleteDialog.title}
-          open={!!deleteDialog}
-          onOpenChange={(open) => !open && setDeleteDialog(null)}
-        />
-      )}
-    </>
+      <AdminPropertyFormSheet
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        property={editingProperty}
+      />
+    </AdminPageWrapper>
   )
 }
-

@@ -4,10 +4,14 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard,
+  Building2,
   Users,
   MessageSquare,
   Calendar,
@@ -57,6 +61,7 @@ export function AdminSidebar() {
       <motion.button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-background border border-border rounded-md shadow-lg"
+        aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
@@ -106,55 +111,59 @@ export function AdminSidebar() {
             transition={{ delay: 0.1 }}
             className="flex items-center gap-3 px-6 py-6 border-b border-border"
           >
-            <Image
-              src="/dJThP8wqUxol9ACI3BIfmtSAqE.png"
-              alt="spot-less logo"
-              width={120}
-              height={40}
-              className="h-8 w-auto object-contain"
-              priority
-            />
+            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
+              <div className="text-primary-foreground font-bold text-lg">▢</div>
+            </div>
+            <div>
+              <div className="text-base font-semibold text-foreground font-display">
+                Spotlight
+              </div>
+              <div className="text-xs text-muted-foreground">Admin Panel</div>
+            </div>
           </motion.div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            {navigation.map((item, index) => {
-              const isActive = pathname === item.href
-              return (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + index * 0.03 }}
-                >
-                  <Link
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                      "relative flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
-                      "group text-sm font-medium",
-                      isActive
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-                    )}
+          <ScrollArea className="flex-1">
+            <nav className="px-4 py-6 space-y-1">
+              {navigation.map((item, index) => {
+                const isActive = pathname === item.href
+                return (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + index * 0.03 }}
                   >
-                    <item.icon className={cn(
-                      "h-4 w-4",
-                      isActive ? "text-accent-foreground" : "text-muted-foreground group-hover:text-foreground"
-                    )} />
-                    <span>{item.name}</span>
-                  </Link>
-                </motion.div>
-              )
-            })}
-          </nav>
+                    <Button
+                      asChild
+                      variant={isActive ? "secondary" : "ghost"}
+                      className={cn(
+                        "w-full justify-start gap-3 text-white",
+                        isActive && "bg-accent text-white"
+                      )}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-white font-bold"
+                      >
+                        <item.icon className="h-4 w-4 text-white" />
+                        <span className="text-white font-bold">{item.name}</span>
+                      </Link>
+                    </Button>
+                  </motion.div>
+                )
+              })}
+            </nav>
+          </ScrollArea>
 
+          <Separator />
           {/* User Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="p-4 border-t border-border"
+            className="p-4"
           >
             <div className="flex items-center gap-3 px-3 py-2 mb-2 rounded-md">
               <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
