@@ -37,7 +37,6 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
       const supabase = createClient()
 
       // Prepare lead data with all required fields
-      // Only include fields that exist in the schema
       const leadData: any = {
         full_name: formData.fullName.trim(),
         email: formData.email.trim(),
@@ -48,14 +47,10 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
         status: "new",
       }
       
-      // Only add lead_type and priority if they exist (will be added by migration)
-      // For now, we'll try to add them and let the database handle it
-      try {
-        leadData.lead_type = "property_inquiry"
-        leadData.priority = "medium"
-      } catch {
-        // If columns don't exist, they'll be ignored
-      }
+      // Try to insert with optional fields first
+      // If they don't exist, the migration will add them
+      leadData.lead_type = "property_inquiry"
+      leadData.priority = "medium"
       
       const { error: insertError, data } = await supabase
         .from("leads")
@@ -64,7 +59,31 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
       
       if (insertError) {
         console.error("Lead insert error:", insertError)
-        throw new Error(insertError.message || "Failed to submit inquiry. Please try again.")
+        
+        // If error is about missing columns, try without optional fields
+        if (insertError.message?.includes("lead_type") || insertError.message?.includes("column") && insertError.message?.includes("does not exist")) {
+          // Retry without lead_type and priority
+          const minimalLeadData: any = {
+            full_name: formData.fullName.trim(),
+            email: formData.email.trim(),
+            phone: formData.phone?.trim() || null,
+            message: formData.message?.trim() || null,
+            lead_source: "website",
+            property_id: propertyId || null,
+            status: "new",
+          }
+          
+          const { error: retryError, data: retryData } = await supabase
+            .from("leads")
+            .insert(minimalLeadData)
+            .select()
+          
+          if (retryError) {
+            throw new Error(retryError.message || "Failed to submit inquiry. Please try again.")
+          }
+        } else {
+          throw new Error(insertError.message || "Failed to submit inquiry. Please try again.")
+        }
       }
 
       // Track form submission (non-blocking - don't wait for it)
