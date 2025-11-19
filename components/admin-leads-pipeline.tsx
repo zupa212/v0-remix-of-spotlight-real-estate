@@ -101,50 +101,52 @@ function LeadCard({ lead, onOpenDrawer }: LeadCardProps) {
   })
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      className="mb-2 cursor-move hover:shadow-md transition-shadow"
-    >
-      <CardContent className="p-3">
-        <div className="flex items-start gap-2">
-          <div
-            {...attributes}
-            {...listeners}
-            className="mt-1 cursor-grab active:cursor-grabbing"
-          >
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div
-            className="flex-1 min-w-0 cursor-pointer"
-            onClick={() => onOpenDrawer(lead)}
-          >
-            <div className="font-medium text-sm mb-1">{lead.name || lead.full_name || "Unnamed Lead"}</div>
-            {lead.email && (
-              <div className="text-xs text-muted-foreground mb-1">{lead.email}</div>
-            )}
-            {lead.phone && (
-              <div className="text-xs text-muted-foreground mb-2">{lead.phone}</div>
-            )}
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant={scoring.variant} className="text-xs">
-                {scoring.label} ({scoring.score})
-              </Badge>
-              {lead.property_id && (
-                <Badge variant="outline" className="text-xs">
-                  Has Property
-                </Badge>
-              )}
-            </div>
-            {lead.last_activity && (
-              <div className="text-xs text-muted-foreground mt-2">
-                {format(new Date(lead.last_activity), "MMM d")}
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <Card
+          ref={setNodeRef}
+          style={style}
+          className="mb-2 cursor-move hover:shadow-md transition-shadow"
+        >
+          <CardContent className="p-3">
+            <div className="flex items-start gap-2">
+              <div
+                {...attributes}
+                {...listeners}
+                className="mt-1 cursor-grab active:cursor-grabbing"
+              >
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
               </div>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+              <div
+                className="flex-1 min-w-0 cursor-pointer"
+                onClick={() => onOpenDrawer(lead)}
+              >
+                <div className="font-medium text-sm mb-1">{lead.name || lead.full_name || "Unnamed Lead"}</div>
+                {lead.email && (
+                  <div className="text-xs text-muted-foreground mb-1">{lead.email}</div>
+                )}
+                {lead.phone && (
+                  <div className="text-xs text-muted-foreground mb-2">{lead.phone}</div>
+                )}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant={scoring.variant} className="text-xs">
+                    {scoring.label} ({scoring.score})
+                  </Badge>
+                  {lead.property_id && (
+                    <Badge variant="outline" className="text-xs">
+                      Has Property
+                    </Badge>
+                  )}
+                </div>
+                {lead.last_activity && (
+                  <div className="text-xs text-muted-foreground mt-2">
+                    {format(new Date(lead.last_activity), "MMM d")}
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onClick={() => onOpenDrawer(lead)}>
