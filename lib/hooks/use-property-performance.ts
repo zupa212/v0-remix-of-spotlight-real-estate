@@ -39,13 +39,19 @@ export function usePropertyPerformance(limit: number = 10, rangeDays: number = 3
 
       if (viewsError) throw viewsError
 
-      // Fetch clicks
-      const { data: clicks, error: clicksError } = await supabase
+      // Fetch clicks (handle gracefully if table doesn't exist)
+      let clicks: any[] = []
+      const { data: clicksData, error: clicksError } = await supabase
         .from("analytics_clicks")
-        .select("route")
+        .select("route, element_id")
         .gte("clicked_at", startDate.toISOString())
 
-      if (clicksError) throw clicksError
+      if (clicksError) {
+        console.warn("analytics_clicks table not available:", clicksError.message)
+        // Continue without clicks data
+      } else {
+        clicks = clicksData || []
+      }
 
       // Fetch inquiries (leads with property_id)
       const { data: inquiries, error: inquiriesError } = await supabase
