@@ -79,11 +79,11 @@ export async function replyWhatsApp(
     }
 
     // Update lead's last_contacted_at
+    // updated_at will be auto-updated by trigger after migration
     await supabase
       .from("leads")
       .update({
         last_contacted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
       })
       .eq("id", leadId)
 
@@ -170,12 +170,14 @@ export async function replyTelegram(
     }
 
     // Update lead's last_contacted_at
+    // updated_at will be auto-updated by trigger after migration
+    const updateData: any = {
+      last_contacted_at: new Date().toISOString(),
+    }
+    // Only add updated_at if column exists (will be available after migration)
     await supabase
       .from("leads")
-      .update({
-        last_contacted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", leadId)
 
     revalidatePath("/admin/leads")

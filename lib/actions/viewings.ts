@@ -81,10 +81,11 @@ export async function createViewing(
     }
 
     // If lead_id is provided, update lead status to "viewing_scheduled"
+    // updated_at will be auto-updated by trigger after migration
     if (validated.lead_id) {
       await supabase
         .from("leads")
-        .update({ status: "viewing_scheduled", updated_at: new Date().toISOString() })
+        .update({ status: "viewing_scheduled" })
         .eq("id", validated.lead_id)
 
       // Create lead activity entry

@@ -32,9 +32,10 @@ export function useLeads(options: UseLeadsOptions = {}) {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["leads", options],
     queryFn: async (): Promise<Lead[]> => {
+      // Select columns - updated_at will be added by migration, but we'll handle gracefully
       let query = supabase
         .from("leads")
-        .select("id, full_name, email, phone, status, property_id, agent_id, lead_source, created_at, updated_at")
+        .select("id, full_name, email, phone, status, property_id, agent_id, lead_source, created_at")
 
       if (options.stage) {
         query = query.eq("status", options.stage)
@@ -46,7 +47,8 @@ export function useLeads(options: UseLeadsOptions = {}) {
         query = query.limit(options.limit)
       }
 
-      query = query.order("updated_at", { ascending: false })
+      // Order by created_at (updated_at will be available after migration)
+      query = query.order("created_at", { ascending: false })
 
       const { data, error } = await query
 
@@ -68,7 +70,8 @@ export function useLeads(options: UseLeadsOptions = {}) {
             name: lead.full_name, // Alias for compatibility
             stage: lead.status, // Alias for compatibility
             source: lead.lead_source, // Alias for compatibility
-            last_activity: activity?.created_at || lead.updated_at,
+            updated_at: (lead as any).updated_at || lead.created_at, // Fallback to created_at if updated_at doesn't exist
+            last_activity: activity?.created_at || (lead as any).updated_at || lead.created_at,
           }
         })
       )

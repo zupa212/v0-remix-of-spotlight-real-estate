@@ -121,13 +121,16 @@ export default function LeadsPipelinePage() {
   }
 
   async function updateLeadStatus(leadId: string, newStatus: string) {
+    // Update status - updated_at will be auto-updated by trigger after migration
     const { error } = await supabase
       .from('leads')
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ status: newStatus })
       .eq('id', leadId)
 
     if (!error) {
       fetchLeads()
+    } else {
+      console.error("Error updating lead status:", error)
     }
   }
 

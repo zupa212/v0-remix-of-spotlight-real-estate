@@ -88,7 +88,6 @@ export default function LeadDetailPage() {
         property_id,
         agent_id,
         created_at,
-        updated_at,
         properties!leads_property_id_fkey(title_en, property_code, city_en),
         agents!leads_agent_id_fkey(id, name_en, email, phone)
       `)
