@@ -25,11 +25,6 @@ import {
 interface AdminCommandDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-}
-
-interface AdminCommandDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
   initialSearch?: string
 }
 
