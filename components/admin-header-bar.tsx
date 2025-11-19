@@ -102,13 +102,19 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
         {/* Search */}
         <div className="flex-1 max-w-md">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input
               type="search"
               placeholder="Search... (⌘K)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setCommandOpen(true)}
+              onClick={() => setCommandOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setCommandOpen(true)
+                }
+              }}
               className="pl-9 cursor-pointer"
             />
           </div>
@@ -190,7 +196,11 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
           )}
         </div>
       </div>
-      <AdminCommandDialog open={commandOpen} onOpenChange={setCommandOpen} />
+      <AdminCommandDialog 
+        open={commandOpen} 
+        onOpenChange={setCommandOpen}
+        initialSearch={searchQuery}
+      />
     </header>
   )
 }

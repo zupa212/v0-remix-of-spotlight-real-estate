@@ -27,9 +27,21 @@ interface AdminCommandDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function AdminCommandDialog({ open, onOpenChange }: AdminCommandDialogProps) {
+interface AdminCommandDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  initialSearch?: string
+}
+
+export function AdminCommandDialog({ open, onOpenChange, initialSearch = "" }: AdminCommandDialogProps) {
   const router = useRouter()
-  const [search, setSearch] = React.useState("")
+  const [search, setSearch] = React.useState(initialSearch)
+
+  React.useEffect(() => {
+    if (open) {
+      setSearch(initialSearch)
+    }
+  }, [open, initialSearch])
 
   const runCommand = React.useCallback(
     (command: () => void) => {
