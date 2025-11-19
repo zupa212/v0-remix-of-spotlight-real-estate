@@ -48,11 +48,6 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
     return null
   }, [settings?.logo_url, mounted])
 
-  // Prevent hydration mismatch by only rendering dropdowns after mount
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const handleLocaleChange = (newLocale: Locale) => {
     onLocaleChange?.(newLocale)
     // You can persist this to localStorage or cookies
