@@ -59,8 +59,6 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
         throw new Error(insertError.message || "Failed to submit inquiry. Please try again.")
       }
 
-      if (insertError) throw insertError
-
       // Track form submission (non-blocking - don't wait for it)
       trackEvent("inquiry_form_submitted", {
         property_id: propertyId,
