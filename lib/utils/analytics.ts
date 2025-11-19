@@ -14,16 +14,32 @@ export interface ClickEvent {
 export async function trackClick(event: ClickEvent) {
   try {
     const supabase = createClient()
-    await supabase.from("analytics_clicks").insert({
-      element_type: event.element_type,
-      element_id: event.element_id,
-      property_id: event.property_id,
-      agent_id: event.agent_id,
-      url: event.url,
-      user_agent: typeof window !== "undefined" ? window.navigator.userAgent : undefined,
+    
+    // Get current URL and extract route
+    const url = event.url || (typeof window !== "undefined" ? window.location.href : "")
+    const route = typeof window !== "undefined" ? window.location.pathname : url.split("?")[0]
+    
+    // Get viewport dimensions and click position (default to center if not available)
+    const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920
+    const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 1080
+    
+    // Try to insert with the correct schema
+    const { error } = await supabase.from("analytics_clicks").insert({
+      route: route,
+      element_id: event.element_id || event.property_id || event.agent_id || null,
+      x: Math.floor(viewportWidth / 2), // Default to center if not tracking mouse position
+      y: Math.floor(viewportHeight / 2),
+      viewport_width: viewportWidth,
+      viewport_height: viewportHeight,
+      clicked_at: new Date().toISOString(),
     })
+    
+    if (error) {
+      console.warn("Error tracking click (non-critical):", error.message)
+      // Don't throw - analytics failures shouldn't break the app
+    }
   } catch (error) {
-    console.error("Error tracking click:", error)
+    console.warn("Error tracking click (non-critical):", error)
     // Don't throw - analytics failures shouldn't break the app
   }
 }
@@ -31,31 +47,62 @@ export async function trackClick(event: ClickEvent) {
 export async function trackPageView(url: string, pageType?: string) {
   try {
     const supabase = createClient()
-    // For now, we'll use analytics_clicks with a special type
-    // In the future, you might want a separate page_views table
-    await supabase.from("analytics_clicks").insert({
-      element_type: "other",
-      url,
-      metadata: pageType ? { page_type: pageType } : undefined,
+    const route = url.split("?")[0]
+    const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920
+    const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 1080
+    
+    // Use analytics_page_views table if available, otherwise skip
+    // Don't use analytics_clicks for page views as it has different schema
+    const { error } = await supabase.from("analytics_page_views").insert({
+      route: route,
+      session_id: typeof window !== "undefined" ? getSessionId() : null,
     })
+    
+    if (error) {
+      console.warn("Error tracking page view (non-critical):", error.message)
+    }
   } catch (error) {
-    console.error("Error tracking page view:", error)
+    console.warn("Error tracking page view (non-critical):", error)
   }
+}
+
+// Helper to get or create session ID
+function getSessionId(): string {
+  if (typeof window === "undefined") return ""
+  let sessionId = sessionStorage.getItem("analytics_session_id")
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    sessionStorage.setItem("analytics_session_id", sessionId)
+  }
+  return sessionId
 }
 
 export async function trackEvent(eventType: string, metadata?: Record<string, any>) {
   try {
     const supabase = createClient()
-    await supabase.from("analytics_clicks").insert({
-      element_type: "other",
-      url: typeof window !== "undefined" ? window.location.href : "",
-      metadata: {
-        event_type: eventType,
-        ...metadata,
-      },
+    const url = typeof window !== "undefined" ? window.location.href : ""
+    const route = url.split("?")[0]
+    const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920
+    const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 1080
+    
+    // Store event type in element_id as a way to track it
+    const elementId = `event:${eventType}${metadata?.property_id ? `:${metadata.property_id}` : ""}`
+    
+    const { error } = await supabase.from("analytics_clicks").insert({
+      route: route,
+      element_id: elementId,
+      x: Math.floor(viewportWidth / 2),
+      y: Math.floor(viewportHeight / 2),
+      viewport_width: viewportWidth,
+      viewport_height: viewportHeight,
+      clicked_at: new Date().toISOString(),
     })
+    
+    if (error) {
+      console.warn("Error tracking event (non-critical):", error.message)
+    }
   } catch (error) {
-    console.error("Error tracking event:", error)
+    console.warn("Error tracking event (non-critical):", error)
   }
 }
 

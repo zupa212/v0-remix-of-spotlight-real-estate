@@ -36,30 +36,47 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
     try {
       const supabase = createClient()
 
-      const { error: insertError } = await supabase.from("leads").insert({
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message,
+      // Prepare lead data with all required fields
+      const leadData: any = {
+        full_name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone?.trim() || null,
+        message: formData.message?.trim() || null,
         lead_type: "property_inquiry",
-        property_id: propertyId,
+        lead_source: "website", // Explicitly set lead_source
+        property_id: propertyId || null,
         status: "new",
-      })
+        priority: "medium", // Set default priority
+      }
+      
+      const { error: insertError, data } = await supabase
+        .from("leads")
+        .insert(leadData)
+        .select()
+      
+      if (insertError) {
+        console.error("Lead insert error:", insertError)
+        throw new Error(insertError.message || "Failed to submit inquiry. Please try again.")
+      }
 
       if (insertError) throw insertError
 
-      // Track form submission
+      // Track form submission (non-blocking - don't wait for it)
       trackEvent("inquiry_form_submitted", {
         property_id: propertyId,
         property_title: propertyTitle,
+      }).catch(() => {
+        // Silently fail - analytics shouldn't block form submission
       })
 
-      // Track click on inquiry form
+      // Track click on inquiry form (non-blocking)
       trackClick({
         element_type: "inquiry_form",
         element_id: propertyId,
         property_id: propertyId,
         url: typeof window !== "undefined" ? window.location.href : "",
+      }).catch(() => {
+        // Silently fail - analytics shouldn't block form submission
       })
 
       setSuccess(true)
