@@ -29,6 +29,14 @@ import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { AdminLeadDrawer } from "@/components/admin-lead-drawer"
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import { Phone, Mail, MessageSquare, Calendar, Edit, Trash2, Eye } from "lucide-react"
 
 const STAGES = [
   { id: "new", label: "New", color: "bg-blue-500" },
@@ -137,6 +145,40 @@ function LeadCard({ lead, onOpenDrawer }: LeadCardProps) {
         </div>
       </CardContent>
     </Card>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem onClick={() => onOpenDrawer(lead)}>
+          <Eye className="mr-2 h-4 w-4" />
+          View Details
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem>
+          <Phone className="mr-2 h-4 w-4" />
+          Call
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <Mail className="mr-2 h-4 w-4" />
+          Email
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <MessageSquare className="mr-2 h-4 w-4" />
+          Message
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <Calendar className="mr-2 h-4 w-4" />
+          Schedule Viewing
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem>
+          <Edit className="mr-2 h-4 w-4" />
+          Edit
+        </ContextMenuItem>
+        <ContextMenuItem className="text-destructive">
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }
 

@@ -21,6 +21,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
 import { MoreHorizontal } from "lucide-react"
 import { useRecentLeads, type RecentLead } from "@/lib/hooks/use-recent-leads"
 import { AdminEmptyState } from "@/components/admin-empty-state"
@@ -95,7 +101,9 @@ export function AdminRecentLeadsTable() {
       </TableHeader>
       <TableBody>
         {leads.map((lead) => (
-          <TableRow key={lead.id}>
+          <ContextMenu key={lead.id}>
+            <ContextMenuTrigger asChild>
+              <TableRow>
             <TableCell className="font-medium">{lead.name || lead.full_name || "Unnamed"}</TableCell>
             <TableCell>
               <Badge variant="secondary">{lead.stage || lead.status || "new"}</Badge>
@@ -131,6 +139,20 @@ export function AdminRecentLeadsTable() {
               </DropdownMenu>
             </TableCell>
           </TableRow>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuItem asChild>
+                <Link href={`/admin/leads/${lead.id}`}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  View
+                </Link>
+              </ContextMenuItem>
+              <ContextMenuItem>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Assign Agent
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         ))}
       </TableBody>
     </Table>

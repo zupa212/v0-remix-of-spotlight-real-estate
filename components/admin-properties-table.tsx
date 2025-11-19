@@ -25,6 +25,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -348,7 +355,9 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
         </TableHeader>
         <TableBody>
           {properties.map((property) => (
-            <TableRow key={property.id}>
+            <ContextMenu key={property.id}>
+              <ContextMenuTrigger asChild>
+                <TableRow>
               <TableCell>
                 <Checkbox
                   checked={selectedIds.has(property.id)}
@@ -440,6 +449,40 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
               </DropdownMenu>
             </TableCell>
           </TableRow>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem asChild>
+                  <Link href={`/admin/properties/${property.id}`}>
+                    <Eye className="mr-2 h-4 w-4" />
+                    View
+                  </Link>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  onClick={() => {
+                    if (onEditProperty) {
+                      onEditProperty(property)
+                    } else {
+                      window.location.href = `/admin/properties/${property.id}/edit`
+                    }
+                  }}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </ContextMenuItem>
+                <ContextMenuItem>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Duplicate
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+                <ContextMenuItem
+                  className="text-destructive"
+                  onClick={() => handleDeleteClick(property)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
         ))}
       </TableBody>
     </Table>
