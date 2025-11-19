@@ -14,8 +14,12 @@ export interface Lead {
   agent_id: string | null
   lead_source: string | null
   created_at: string
-  updated_at: string
+  updated_at?: string // Optional - will be available after migration
   last_activity: string | null
+  // Aliases for compatibility
+  name?: string
+  stage?: string
+  source?: string
 }
 
 interface UseLeadsOptions {
