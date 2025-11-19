@@ -70,10 +70,10 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center gap-4 px-6">
         {/* Logo - Always visible, more prominent */}
-        <Link href="/admin" className="flex items-center gap-3 mr-4 flex-shrink-0">
+        <Link href="/admin" className="flex items-center gap-2 sm:gap-3 mr-2 sm:mr-4 flex-shrink-0">
           {logoUrl ? (
             <>
-              <div className="relative h-12 w-12 flex-shrink-0">
+              <div className="relative h-8 w-8 sm:h-12 sm:w-12 flex-shrink-0">
                 <Image
                   src={logoUrl}
                   alt={settings?.company_name || "Logo"}
@@ -84,15 +84,15 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
                 />
               </div>
               {settings?.company_name && (
-                <span className="font-bold text-xl hidden lg:block text-white">{settings.company_name}</span>
+                <span className="font-bold text-base sm:text-xl hidden sm:block text-white">{settings.company_name}</span>
               )}
             </>
           ) : (
             <>
-              <div className="h-12 w-12 flex items-center justify-center bg-primary/10 rounded-lg flex-shrink-0">
-                <span className="text-xl font-bold text-primary">S</span>
+              <div className="h-8 w-8 sm:h-12 sm:w-12 flex items-center justify-center bg-primary/10 rounded-lg flex-shrink-0">
+                <span className="text-lg sm:text-xl font-bold text-primary">S</span>
               </div>
-              <span className="font-bold text-xl hidden lg:block text-white">
+              <span className="font-bold text-base sm:text-xl hidden sm:block text-white">
                 {settings?.company_name || "Spotlight Estate"}
               </span>
             </>

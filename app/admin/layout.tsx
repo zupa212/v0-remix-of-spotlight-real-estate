@@ -31,9 +31,9 @@ export default function AdminLayout({
           </div>
         ) : (
           <div className="min-h-screen bg-background">
+            <AdminHeaderBar />
             <AdminSidebar />
-            <div className="lg:pl-64">
-              <AdminHeaderBar />
+            <div className="pt-16 lg:pt-0 lg:pl-64">
               <main className="min-h-screen bg-background">
                 {children}
               </main>

@@ -78,7 +78,7 @@ export function AdminSidebar() {
       {/* Mobile Menu Button */}
       <motion.button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-background border border-border rounded-md shadow-lg"
+        className="lg:hidden fixed top-20 left-4 z-50 p-2 bg-background border border-border rounded-md shadow-lg"
         aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -114,10 +114,11 @@ export function AdminSidebar() {
         animate={{ x: isMobileMenuOpen ? 0 : undefined }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64",
+          "fixed inset-y-0 left-0 z-30 w-64",
           "bg-background border-r border-border",
           "transform transition-transform duration-200 ease-in-out",
           "lg:translate-x-0",
+          "top-16 lg:top-0",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
