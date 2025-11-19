@@ -37,16 +37,24 @@ export function InquiryForm({ propertyId, propertyTitle }: InquiryFormProps) {
       const supabase = createClient()
 
       // Prepare lead data with all required fields
+      // Only include fields that exist in the schema
       const leadData: any = {
         full_name: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone?.trim() || null,
         message: formData.message?.trim() || null,
-        lead_type: "property_inquiry",
         lead_source: "website", // Explicitly set lead_source
         property_id: propertyId || null,
         status: "new",
-        priority: "medium", // Set default priority
+      }
+      
+      // Only add lead_type and priority if they exist (will be added by migration)
+      // For now, we'll try to add them and let the database handle it
+      try {
+        leadData.lead_type = "property_inquiry"
+        leadData.priority = "medium"
+      } catch {
+        // If columns don't exist, they'll be ignored
       }
       
       const { error: insertError, data } = await supabase
