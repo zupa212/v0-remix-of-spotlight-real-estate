@@ -30,14 +30,21 @@ export function usePropertyPerformance(limit: number = 10, rangeDays: number = 3
 
       if (propertiesError) throw propertiesError
 
-      // Fetch page views
-      const { data: pageViews, error: viewsError } = await supabase
+      // Fetch page views (handle gracefully if table doesn't exist)
+      let pageViews: any[] = []
+      const { data: pageViewsData, error: viewsError } = await supabase
         .from("analytics_page_views")
-        .select("property_id")
-        .gte("viewed_at", startDate.toISOString())
-        .not("property_id", "is", null)
+        .select("entity_id")
+        .eq("entity_type", "property")
+        .gte("created_at", startDate.toISOString())
+        .not("entity_id", "is", null)
 
-      if (viewsError) throw viewsError
+      if (viewsError) {
+        console.warn("analytics_page_views table not available:", viewsError.message)
+        // Continue without page views data
+      } else {
+        pageViews = pageViewsData || []
+      }
 
       // Fetch clicks (handle gracefully if table doesn't exist)
       let clicks: any[] = []
@@ -84,9 +91,9 @@ export function usePropertyPerformance(limit: number = 10, rangeDays: number = 3
       })
 
       // Count views
-      pageViews?.forEach((view) => {
-        if (view.property_id) {
-          const perf = performanceMap.get(view.property_id)
+      pageViews.forEach((view) => {
+        if (view.entity_id) {
+          const perf = performanceMap.get(view.entity_id)
           if (perf) perf.views++
         }
       })
