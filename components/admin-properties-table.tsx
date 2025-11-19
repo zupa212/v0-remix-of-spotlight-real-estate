@@ -449,8 +449,8 @@ export function AdminPropertiesTable({ filters = {}, onEditProperty }: AdminProp
               </DropdownMenu>
             </TableCell>
           </TableRow>
-              </ContextMenuTrigger>
-              <ContextMenuContent>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
                 <ContextMenuItem asChild>
                   <Link href={`/admin/properties/${property.id}`}>
                     <Eye className="mr-2 h-4 w-4" />

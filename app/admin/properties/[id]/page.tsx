@@ -59,11 +59,15 @@ export default async function PropertyDetailPage({ params }: PropertyDetailParam
   }
 
   // Fetch property images
-  const { data: images } = await supabase
+  const { data: images, error: imagesError } = await supabase
     .from("property_images")
-    .select("*")
+    .select("id, property_id, image_url, caption_en, caption_gr, display_order, is_main, created_at")
     .eq("property_id", id)
     .order("display_order", { ascending: true })
+  
+  if (imagesError) {
+    console.error("Failed to load property images", imagesError)
+  }
 
   // Fetch property documents
   const { data: documents } = await supabase
