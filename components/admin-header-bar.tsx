@@ -34,14 +34,19 @@ export function AdminHeaderBar({ locale = "en", onLocaleChange }: AdminHeaderBar
   const [mounted, setMounted] = React.useState(false)
   const { settings } = useSettings()
   
-  // Get logo URL from settings or localStorage fallback
+  // Prevent hydration mismatch by only accessing localStorage after mount
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Get logo URL from settings or localStorage fallback (only after mount)
   const logoUrl = React.useMemo(() => {
     if (settings?.logo_url) return settings.logo_url
-    if (typeof window !== "undefined") {
+    if (mounted && typeof window !== "undefined") {
       return localStorage.getItem("admin-logo-url")
     }
     return null
-  }, [settings?.logo_url])
+  }, [settings?.logo_url, mounted])
 
   // Prevent hydration mismatch by only rendering dropdowns after mount
   React.useEffect(() => {
