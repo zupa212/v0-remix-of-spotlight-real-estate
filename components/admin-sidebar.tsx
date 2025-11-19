@@ -114,11 +114,12 @@ export function AdminSidebar() {
         animate={{ x: isMobileMenuOpen ? 0 : undefined }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className={cn(
-          "fixed inset-y-0 left-0 z-30 w-64",
+          "fixed inset-y-0 left-0 z-40 w-64",
           "bg-background border-r border-border",
           "transform transition-transform duration-200 ease-in-out",
           "lg:translate-x-0",
           "top-16 lg:top-0",
+          "shadow-xl lg:shadow-none",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -238,6 +239,7 @@ export function AdminSidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
+            style={{ top: "64px" }}
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
