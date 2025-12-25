@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgb(26,26,26);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgb(60,60,60);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path d="M40,70 L40,30 L70,30 L70,40 L50,40 L50,70 Z" fill="url(#grad1)" />
+  <path d="M80,70 L80,30 L90,30 L90,70 Z" fill="#1a1a1a" />
+  <text x="110" y="60" font-family="Arial, sans-serif" font-weight="bold" font-size="32" fill="#1a1a1a">KAPANDRITI</text>
+  <text x="110" y="80" font-family="Arial, sans-serif" font-size="14" fill="#666" letter-spacing="2">EXCLUSIVE ESTATE</text>
+</svg>
