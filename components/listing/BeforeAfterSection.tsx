@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Play } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { BeforeAfterSlider } from "@/components/kapandriti/before-after/BeforeAfterSlider"
-import { PhoneCompareModal } from "@/components/kapandriti/before-after/PhoneCompareModal"
 
 type CompareItem = {
     id: string
@@ -21,13 +19,6 @@ type BeforeAfterSectionProps = {
 }
 
 export function BeforeAfterSection({ compareItems }: BeforeAfterSectionProps) {
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [activeItemIndex, setActiveItemIndex] = useState(0)
-
-    const handleOpenModal = (index: number) => {
-        setActiveItemIndex(index)
-        setIsModalOpen(true)
-    }
 
     // If no items, return null or empty
     if (!compareItems || compareItems.length === 0) return null
@@ -81,8 +72,7 @@ export function BeforeAfterSection({ compareItems }: BeforeAfterSectionProps) {
                             className="flex flex-col gap-4 group"
                         >
                             <div
-                                className="relative w-full aspect-[9/16] bg-zinc-900 rounded-[2rem] overflow-hidden border border-zinc-800 shadow-2xl transition-all duration-500 group-hover:border-zinc-600 group-hover:shadow-zinc-900/50 cursor-pointer"
-                                onClick={() => handleOpenModal(index)}
+                                className="relative w-full aspect-[9/16] bg-zinc-900 rounded-[2rem] overflow-hidden border border-zinc-800 shadow-2xl transition-all duration-500 group-hover:border-zinc-600 group-hover:shadow-zinc-900/50"
                             >
                                 <BeforeAfterSlider
                                     beforeSrc={item.beforeSrc}
@@ -105,27 +95,12 @@ export function BeforeAfterSection({ compareItems }: BeforeAfterSectionProps) {
                                 <div className="hidden lg:block absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none">
                                     <h3 className="text-white text-xl font-bold text-center drop-shadow-md">{item.title}</h3>
                                 </div>
-
-                                {/* Hover overlay hints (Desktop only) */}
-                                <div className="hidden lg:flex absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center pointer-events-none">
-                                    <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium">
-                                        Προβολή
-                                    </div>
-                                </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
 
             </div>
-
-            <PhoneCompareModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                items={compareItems}
-                activeIndex={activeItemIndex}
-                onIndexChange={setActiveItemIndex}
-            />
         </section>
     )
 }

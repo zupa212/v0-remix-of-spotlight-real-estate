@@ -28,25 +28,25 @@ const COMPARE_ITEMS = [
     id: "yard",
     title: "Πίσω Αυλή",
     beforeSrc: "/kapandriti/before/1.jpg",
-    afterSrc: "/kapandriti/after/1.png",
+    afterSrc: "/kapandriti/after/1.jpg",
   },
   {
     id: "driveway",
     title: "Κεντρική Είσοδος",
     beforeSrc: "/kapandriti/before/2.jpg",
-    afterSrc: "/kapandriti/after/2.png",
+    afterSrc: "/kapandriti/after/2.jpg",
   },
   {
     id: "interior",
     title: "Σαλόνι",
     beforeSrc: "/kapandriti/before/3.jpg",
-    afterSrc: "/kapandriti/after/3.png",
+    afterSrc: "/kapandriti/after/3.jpg",
   },
   {
     id: "garden2",
     title: "Κήπος",
     beforeSrc: "/kapandriti/before/4.jpg",
-    afterSrc: "/kapandriti/after/4.png",
+    afterSrc: "/kapandriti/after/4.jpg",
   },
 ]
 
@@ -78,6 +78,7 @@ export default function KapandritiRealEstatePage() {
             fill
             className="object-cover"
             priority
+            sizes="100vw"
             onError={(e) => {
               e.currentTarget.src = "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1600&auto=format&fit=crop"
             }}
@@ -121,26 +122,29 @@ export default function KapandritiRealEstatePage() {
               <div className="grid grid-cols-2 gap-4 h-[500px] rounded-3xl overflow-hidden">
                 <div className="relative h-full bg-gray-100 group overflow-hidden">
                   <Image
-                    src="/kapandriti/after/1.png"
+                    src="/kapandriti/after/1.jpg"
                     alt="Backyard"
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 <div className="grid grid-rows-2 gap-4 h-full">
                   <div className="relative h-full bg-gray-100 group overflow-hidden">
                     <Image
-                      src="/kapandriti/after/2.png"
+                      src="/kapandriti/after/2.jpg"
                       alt="Driveway"
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>
                   <div className="relative h-full bg-gray-100 group overflow-hidden">
                     <Image
-                      src="/kapandriti/after/3.png"
+                      src="/kapandriti/after/3.jpg"
                       alt="Interior"
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>
