@@ -10,7 +10,7 @@ import {
   Bed, Maximize, MapPin, Check, Sun, Wind, Heater, Warehouse, ArrowUpCircle,
   Flame, Shrub, Phone, ShieldCheck, Bell, Lock, Grid, MoveVertical, Gamepad2,
   Antenna, Paintbrush, Car, Mountain, LayoutTemplate, Route, Home, Umbrella,
-  Accessibility, CornerUpRight, UtensilsCrossed, ArrowDown, ChevronDown
+  Accessibility, CornerUpRight, UtensilsCrossed, ArrowDown, ChevronDown, Armchair
 } from "lucide-react"
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
